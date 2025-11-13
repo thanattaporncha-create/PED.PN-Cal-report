@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPN Order Report</title>
+    <style>
+        @page {
+            margin: 20mm 10mm 10mm 10mm;
+            size: A4;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Sarabun', 'Noto Sans Thai', Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.3;
+            color: #000;
+            background: #fff;
+            padding: 0;
+        }
+        
+        .report-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 10mm;
+        }
+
+        /* ====== สเกล 80% สำหรับ export/print ====== */
+        .scale-80 { transform: scale(0.8); transform-origin: top left; }
+        .scale-wrap { position: relative; width: 210mm; }
+
+        .header {
+            text-align: left;
+            margin-bottom: 12px;
+            border-bottom: 3px solid #4facfe;
+            padding-bottom: 8px;
+            position: relative;
+            padding-top: 6px;
+        }
+        .header h1 {
+            font-size: 18pt;
+            color: #2d3748;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        
+        .section { margin-bottom: 10px; }
+        .section-title {
+            background: #4facfe;
+            color: white;
+            padding: 5px 10px;
+            font-size: 10pt;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 20px;
+            margin-bottom: 8px;
+        }
+        .info-item { display: flex; align-items: baseline; gap: 6px; }
+        .info-label { font-weight: 600; color: #2d3748; min-width: 90px; flex-shrink: 0; }
+        .info-value { color: #4a5568; flex: 1; }
+
+        .order-date-special {
+            background: #f0f9ff;
+            border: 2px solid #4facfe;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            position: absolute;
+            right: 0;
+            top: 6px;
+        }
+        .order-date-special .date-info {
+            font-size: 10pt; font-weight: 600; color: #0369a1; white-space: nowrap;
+        }
+        .order-date-special .day-badge {
+            background: #0369a1; color: white; padding: 3px 10px; border-radius: 20px;
+            font-size: 9pt; font-weight: 600; white-space: nowrap;
+        }
+        
+        .route-badge { display: inline-block; background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 10pt; font-weight: 600; }
+        .route-badge.peripheral { background: #f59e0b; }
+        
+        .composition-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
+        .composition-table th { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 6px; text-align: left; font-weight: 600; color: #2d3748; }
+        .composition-table td { border: 1px solid #e2e8f0; padding: 4px 6px; color: #4a5568; }
+        .composition-table tr:nth-child(even) { background: #f8fafc; }
+        .highlight-row { background: #fef3c7 !important; font-weight: 600; }
+        .input-badge { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 3px; font-size: 8pt; font-weight: 600; display: inline-block; }
+        
+        /* ปุ่มปฏิบัติการ */
+        .top-actions {
+            position: fixed; top: 20px; right: 20px; display: flex; gap: 10px;
+            z-index: 1000; flex-wrap: wrap; justify-content: flex-end;
+        }
+        .btn {
+            background: #4facfe; color: white; border: none; padding: 10px 16px;
+            border-radius: 25px; cursor: pointer; font-size: 12px; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        }
+        .btn:hover { background: #3b8ad6; }
+        .btn.secondary { background: #718096; box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4); }
+        .btn.secondary:hover { background: #4a5568; }
+        
+        @media print {
+            body { padding: 0; margin: 0; }
+            .top-actions { display: none; }
+            .report-container { box-shadow: none; padding: 0; max-width: 100%; }
+            #report-root.scale-80-print { transform: scale(0.8); transform-origin: top left; }
+            .header { margin-bottom: 10px; padding-bottom: 6px; }
+            .section { margin-bottom: 8px; }
+        }
+
+        /* Summary แบบตารางเรียบ */
+        .summary-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+        .summary-table th, .summary-table td { border: 1px solid #e2e8f0; padding: 6px 8px; }
+        .summary-table th { background: #f8fafc; text-align: left; font-weight: 600; color: #2d3748; width: 55%; }
+        .summary-value-strong { font-weight: 700; }
+        .osmol-ok { color: #166534; font-weight: 700; }
+        .osmol-high { color: #991b1b; font-weight: 700; }
+
+        /* iPhone / จอเล็ก */
+        @media (max-width: 480px) {
+            .info-grid { grid-template-columns: 1fr; gap: 6px 8px; }
+            .order-date-special { position: static; margin-top: 6px; width: 100%; justify-content: space-between; }
+            .top-actions { left: 10px; right: 10px; top: 10px; gap: 8px; justify-content: center; }
+            .btn { padding: 8px 12px; font-size: 11px; }
+        }
+
+        /* ============= โหมด export เท่านั้น ============= */
+        #report-root.exporting .header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        #report-root.exporting .order-date-special {
+            position: static;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- ปุ่มนำทางและบันทึก -->
+    <div class="top-actions">
+        <button class="btn secondary" onclick="goBack()">← ย้อนกลับ</button>
+        <button class="btn" onclick="saveAsImage()">🖼️ Save Image</button>
+        <button class="btn" onclick="saveAsPDF()">📄 Save PDF</button>
+        <button class="btn" onclick="printScaled()">🖨️ พิมพ์รายงาน</button>
+    </div>
+
+    <div class="scale-wrap">
+      <div class="report-container" id="report-root">
+          <!-- Header -->
+          <div class="header">
+              <h1>📋 TPN Order Report</h1>
+              <div class="order-date-special">
+                  <div class="date-info">
+                      📅 Order Date: <span id="display-order-date"></span>
+                  </div>
+                  <div class="day-badge" id="display-day-name"></div>
+              </div>
+          </div>
+
+          <!-- Patient Information -->
+          <div class="section">
+              <div class="section-title">👤 Patient Information</div>
+              <div class="info-grid">
+                  <div class="info-item"><span class="info-label">HN:</span><span class="info-value" id="display-hn"></span></div>
+                  <div class="info-item"><span class="info-label">Name:</span><span class="info-value" id="display-name"></span></div>
+                  <div class="info-item"><span class="info-label">Ward:</span><span class="info-value" id="display-ward"></span></div>
+                  <div class="info-item"><span class="info-label">Body Weight:</span><span class="info-value" id="display-bw"></span></div>
+                  <div class="info-item"><span class="info-label">Route:</span><span class="info-value"><span class="route-badge" id="display-route"></span></span></div>
+              </div>
+          </div>
+
+          <!-- TPN Configuration -->
+          <div class="section">
+              <div class="section-title">💊 TPN Configuration</div>
+              <div class="info-grid">
+                  <div class="info-item"><span class="info-label">Bag Volume:</span><span class="info-value" id="display-bag"></span></div>
+                  <div class="info-item"><span class="info-label">Rate:</span><span class="info-value" id="display-rate"></span></div>
+              </div>
+          </div>
+
+          <!-- TPN Composition -->
+          <div class="section">
+              <div class="section-title">🧪 TPN Composition</div>
+              <table class="composition-table" id="composition-table">
+                  <thead>
+                      <tr>
+                          <th style="width: 35%;">Component</th>
+                          <th style="width: 20%; text-align: center;">Dosage</th>
+                          <th style="width: 20%; text-align: center;">Volume (ml)</th>
+                          <th style="width: 25%; text-align: center;">Note</th>
+                      </tr>
+                  </thead>
+                  <tbody id="composition-body"></tbody>
+              </table>
+          </div>
+
+          <!-- Summary -->
+          <div class="section">
+              <div class="section-title">📊 Summary</div>
+              <table class="summary-table">
+                  <tbody>
+                      <tr>
+                          <th>Total PN calories per day</th>
+                          <td><span class="summary-value-strong" id="display-pn-cal">0</span> kcal/day</td>
+                      </tr>
+                      <tr>
+                          <th>Total mOsmol/L</th>
+                          <td>
+                              <span id="display-osmol">~0</span>
+                              <span id="osmol-note" class="osmol-ok" style="margin-left:8px;">✓ &lt; 900 (เหมาะสำหรับ Peripheral)</span>
+                          </td>
+                      </tr>
+                      <tr>
+                          <th>From PN</th>
+                          <td><span class="summary-value-strong" id="display-pn-total">0</span> kcal/kg/day</td>
+                      </tr>
+                      <tr>
+                          <th>From Milk</th>
+                          <td><span class="summary-value-strong" id="display-milk-total">0</span> kcal/kg/day</td>
+                      </tr>
+                      <tr>
+                          <th>Total</th>
+                          <td><span class="summary-value-strong" id="display-grand-total">0</span> kcal/kg/day</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+
+          <!-- Footer -->
+          <div class="footer">
+              <p>Generated on <span id="generated-date"></span></p>
+              <p style="margin-top: 5px;">โรงพยาบาลขอนแก่น TPN Calculator for Pediatrics © 2025</p>
+          </div>
+      </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        function goBack() { window.location.href = 'index.html'; }
+
+        // ===== ปัดแบบพิเศษ 2 ตำแหน่ง (เหมือน r2 ใน index.html) สำหรับ fallback =====
+        function specialRound2(v){
+            const n = Number(v);
+            if (!isFinite(n) || n === 0) return '0.00';
+            const h = Math.floor(n * 1000);
+            const d3 = h % 10; // หลักที่ 3
+            const out = (d3 === 9) ? Math.ceil(n * 100) / 100 : Math.floor(n * 100) / 100;
+            return out.toFixed(2);
+        }
+
+        // Load data
+        const data = JSON.parse(localStorage.getItem('tpnReportData') || '{}');
+
+        // Patient info
+        document.getElementById('display-hn').textContent = data.hn || '-';
+        document.getElementById('display-name').textContent = data.name || '-';
+        document.getElementById('display-ward').textContent = data.ward || '-';
+        document.getElementById('display-bw').textContent = data.bw ? `${data.bw} kg` : '-';
+
+        // ===== Order date (B.E.) + Day-of-week =====
+        let displayDate = data.orderDate || '-';
+        let dayNameText = data.orderDayName || '-';
+        if (data.orderDate && data.orderDate !== '-') {
+            const date = new Date(data.orderDate);
+            const thaiMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+            const day = date.getDate();
+            const month = thaiMonths[date.getMonth()];
+            const year = date.getFullYear() + 543;
+            displayDate = `${day} ${month} ${year}`;
+
+            const daysEn = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            dayNameText = daysEn[date.getDay()];
+        }
+        document.getElementById('display-order-date').textContent = displayDate;
+        document.getElementById('display-day-name').textContent = dayNameText;
+
+        // ===== Route badge: Central Line / Peripheral Line =====
+        const routeBadge = document.getElementById('display-route');
+        routeBadge.textContent = (data.route === 'central') ? 'Central Line' : 'Peripheral Line';
+        if (data.route === 'peripheral') routeBadge.classList.add('peripheral');
+
+        // Bag & Rate
+        document.getElementById('display-bag').textContent = data.bag ? `${data.bag} ml` : '-';
+        document.getElementById('display-rate').textContent = data.rate ? `${data.rate} ml/hr` : '-';
+
+        // Composition
+        const tbody = document.getElementById('composition-body');
+        const compositions = [];
+
+        // Macronutrients
+        if (parseFloat(data.proteinVol) > 0) {
+            compositions.push({ name: '10% Protein', input: `${data.protein || '0'} g/kg/day`, volume: data.proteinVol, note: '' });
+        }
+        if (parseFloat(data.dextroseVol) > 0) {
+            compositions.push({ name: '50% Dextrose', input: `${data.dextrose || '0'}%`, volume: data.dextroseVol, note: '' });
+        }
+
+        // Electrolytes
+        if (parseFloat(data.pVol) > 0) {
+            const pVolShow = parseFloat(String(data.pVol).replace(/[^0-9.]/g, '')).toFixed(1);
+            const naFromGly = (data.naFromGly !== undefined && data.naFromGly !== null && String(data.naFromGly).trim() !== '')
+                ? (String(data.naFromGly) + ' mEq')
+                : '';
+            compositions.push({
+                name: 'Glycophos® (P)',
+                input: `${data.p || '0'} mmol/kg/day`,
+                volume: pVolShow,
+                note: 'Contains Na ' + naFromGly
+            });
+        }
+        if (data.naSource === 'nacl' && parseFloat(data.naclVol) > 0) {
+            compositions.push({ name: '3% NaCl', input: `${data.na || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.naclVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+        } else if (data.naSource === 'na-acetate' && parseFloat(data.naAcVol) > 0) {
+            compositions.push({ name: 'Na Acetate', input: `${data.na || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.naAcVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+        }
+        if (data.kSource === 'kcl' && parseFloat(data.kclVol) > 0) {
+            compositions.push({ name: '15% KCl', input: `${data.k || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.kclVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+        } else if (data.kSource === 'k-acetate' && parseFloat(data.kAcVol) > 0) {
+            compositions.push({ name: 'K Acetate', input: `${data.k || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.kAcVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+        }
+        if (parseFloat(data.caVol) > 0) {
+            compositions.push({ name: 'Ca Gluconate', input: `${data.ca || '0'} mmol/kg/day`,
+                volume: parseFloat(String(data.caVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+        }
+
+        /* ===== MgSO₄: แสดง 2 ตำแหน่ง ===== */
+        (function handleMg() {
+            const mgRawStr = (data.mgVol !== undefined && data.mgVol !== null && String(data.mgVol).trim() !== '')
+                ? String(data.mgVol).replace(/[^0-9.\-]/g, '')
+                : '';
+            let mgDisplay2 = '';
+            if (mgRawStr) {
+                if (/^-?\d+(\.\d{2})$/.test(mgRawStr)) {
+                    mgDisplay2 = mgRawStr;
+                } else {
+                    mgDisplay2 = specialRound2(mgRawStr);
+                }
+            } else if (data.mg && data.bw) {
+                const mgCalc = (parseFloat(data.mg) * parseFloat(data.bw)) / 2;
+                mgDisplay2 = specialRound2(mgCalc);
+            }
+
+            if (mgDisplay2 && parseFloat(mgDisplay2) > 0) {
+                compositions.push({
+                    name: 'MgSO₄',
+                    input: `${data.mg || '0'} mmol/kg/day`,
+                    volume: mgDisplay2,
+                    note: ''
+                });
+            }
+        })();
+
+        // Micronutrients
+        const peditVol = data.peditrace ? parseFloat(String(data.peditrace).replace(/[^0-9.]/g, '')) : 0;
+        if (peditVol > 0) {
+            let peditNote = '';
+            if (data.peditFreq === 'daily') peditNote = 'Per day';
+            else if (data.peditFreq === 'mwf') peditNote = 'Mon, Wed, Fri';
+            else if (data.peditFreq === 'weekly') {
+                const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                peditNote = 'Weekly (' + days[parseInt(data.peditDay || 1)] + ')';
+            }
+            compositions.push({ name: 'Peditrace®', input: '1 ml/kg/day', volume: peditVol.toFixed(1), note: peditNote });
+        }
+        const cernVol = data.cernevit ? parseFloat(String(data.cernevit).replace(/[^0-9.]/g, '')) : 0;
+        if (cernVol > 0) {
+            let cernNote = '';
+            if (data.cernFreq === 'daily') cernNote = 'Per day';
+            else if (data.cernFreq === 'mwf') cernNote = 'Mon, Wed, Fri';
+            else if (data.cernFreq === 'weekly') {
+                const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                cernNote = 'Weekly (' + days[parseInt(data.cernDay || 1)] + ')';
+            }
+            compositions.push({ name: 'Cernevit®', input: '1 ml/kg/day', volume: cernVol.toFixed(1), note: cernNote });
+        }
+
+        // Vitamin K
+        if (data.vitKChoice === 'daily') {
+            const vitKVol = data.vitKDaily ? parseFloat(String(data.vitKDaily).replace(/[^0-9.]/g, '')) : 0;
+            if (vitKVol > 0) { compositions.push({ name: 'Vitamin K', input: '10 mcg/kg/day', volume: vitKVol.toFixed(3), note: 'Per day' }); }
+        } else if (data.vitKChoice === 'weekly') {
+            const vitKVol = data.vitKWeekly ? parseFloat(String(data.vitKWeekly).replace(/[^0-9.]/g, '')) : 0;
+            if (vitKVol > 0) {
+                const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                const dayName = days[parseInt(data.vitKDay || 1)];
+                compositions.push({ name: 'Vitamin K', input: '10 mcg/kg/week', volume: vitKVol.toFixed(3), note: 'Weekly (' + dayName + ')' });
+            }
+        }
+
+        // 20% Fat — ก่อน Sterile Water และ +6 ml
+        const fatVolNum = data.fatVol ? parseFloat(String(data.fatVol).replace(/[^0-9.]/g, '')) : 0;
+        if (fatVolNum > 0) {
+            const fatVolPlus6 = (fatVolNum + 6).toFixed(1);
+            compositions.push({
+                name: '20% Fat',
+                input: `${data.fat || '0'} g/kg/day`,
+                volume: fatVolPlus6,
+                note: '(+ 6ml เผื่อไล่สายแล้ว) IV drip in 24 hr.',
+                fat: true
+            });
+        }
+
+        // Sterile Water — ท้ายสุด
+        if (parseFloat(data.sterileWater) > 0) {
+            compositions.push({ name: 'Sterile Water', input: '-', volume: data.sterileWater, note: '', highlight: true });
+        }
+
+        // เติมตาราง
+        compositions.forEach(comp => {
+            const row = document.createElement('tr');
+            if (comp.highlight) row.classList.add('highlight-row');
+            const volumeCellStyle = comp.fat
+                ? 'text-align: center; font-weight: 600; color: #dc2626;'
+                : 'text-align: center; font-weight: 600;';
+            row.innerHTML = `
+                <td>${comp.name}</td>
+                <td style="text-align: center;"><span class="input-badge">${comp.input}</span></td>
+                <td style="${volumeCellStyle}">${comp.volume} ml</td>
+                <td style="text-align: center; font-size: 8pt;">${comp.note || ''}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // ===== Summary =====
+        const bwNum = parseFloat(String(data.bw).replace(/[^0-9.]/g, '')) || 0;
+        const pnCalKg = parseFloat(String(data.pnCalKg).replace(/[^0-9.]/g, '')) || 0;
+        const pnCalPerDay = bwNum * pnCalKg;
+        document.getElementById('display-pn-cal').textContent = isFinite(pnCalPerDay) ? pnCalPerDay.toFixed(0) : '0';
+
+        const osmolValue = data.totalOsmol ? String(data.totalOsmol).replace('~', '') : '0';
+        const osmolNum = parseInt(osmolValue || '0', 10);
+        document.getElementById('display-osmol').textContent = '~' + osmolValue;
+        const osmolNoteEl = document.getElementById('osmol-note');
+        if (osmolNum > 900) {
+            osmolNoteEl.textContent = '⚠️ > 900 (ไม่เหมาะสำหรับ Peripheral)';
+            osmolNoteEl.classList.remove('osmol-ok'); osmolNoteEl.classList.add('osmol-high');
+        } else {
+            osmolNoteEl.textContent = '✓ < 900 (เหมาะสำหรับ Peripheral)';
+            osmolNoteEl.classList.remove('osmol-high'); osmolNoteEl.classList.add('osmol-ok');
+        }
+
+        document.getElementById('display-pn-total').textContent = data.pnCalKg || '0';
+        document.getElementById('display-milk-total').textContent = data.milkCalKg || '0';
+        document.getElementById('display-grand-total').textContent = data.totalCalKg || '0';
+
+        // Generated date
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        document.getElementById('generated-date').textContent = dateStr;
+
+        // ===== Export / Print 80% + โหมด exporting =====
+        function toggleScale80(enable) {
+            const root = document.getElementById('report-root');
+            if (enable) root.classList.add('scale-80');
+            else root.classList.remove('scale-80');
+        }
+        function toggleExporting(enable) {
+            const root = document.getElementById('report-root');
+            if (enable) root.classList.add('exporting');
+            else root.classList.remove('exporting');
+        }
+
+        async function captureReportCanvas() {
+            toggleExporting(true);
+            toggleScale80(true);
+            await new Promise(r => requestAnimationFrame(r));
+
+            const target = document.getElementById('report-root');
+            const canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+
+            toggleScale80(false);
+            toggleExporting(false);
+            return canvas;
+        }
+
+        async function saveAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const canvas = await captureReportCanvas();
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 10;
+            const usableWidth = pageWidth - margin * 2;
+            const usableHeight = pageHeight - margin * 2;
+
+            let w = usableWidth;
+            let h = (canvas.height * w) / canvas.width;
+            if (h > usableHeight) {
+                const scale = usableHeight / h;
+                w = w * scale;
+                h = h * scale;
+            }
+            const x = (pageWidth - w) / 2;
+            const y = (pageHeight - h) / 2;
+
+            pdf.addImage(imgData, 'PNG', x, y, w, h);
+            pdf.save(`TPN_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+        }
+
+        async function saveAsImage() {
+            const canvas = await captureReportCanvas();
+            const imgData = canvas.toDataURL('image/png');
+
+            // สร้างลิงก์ดาวน์โหลดไฟล์รูป (ผู้ใช้ต้องกด Save Image อีกทีในมือถือ)
+            const link = document.createElement('a');
+            link.href = imgData;
+            link.download = `TPN_Report_${new Date().toISOString().slice(0,10)}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function printScaled() {
+            const root = document.getElementById('report-root');
+            root.classList.add('scale-80-print');
+            window.print();
+            setTimeout(() => root.classList.remove('scale-80-print'), 500);
+        }
+
+        window.saveAsPDF = saveAsPDF;
+        window.saveAsImage = saveAsImage;
+        window.printScaled = printScaled;
+    </script>
+</body>
+</html>
