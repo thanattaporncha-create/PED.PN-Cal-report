@@ -9,29 +9,48 @@
             margin: 20mm 10mm 10mm 10mm;
             size: A4;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: 'Sarabun', 'Noto Sans Thai', Arial, sans-serif;
             font-size: 10pt;
             line-height: 1.3;
             color: #000;
-            background: #fff;
+            background: #e5e7eb;
             padding: 0;
+            margin: 0;
+            overflow: hidden; /* ให้เห็นแค่หน้ากระดาษเดียวบนจอ */
         }
-        
+
+        /* พื้นที่สำหรับหน้า A4 บนจอ */
+        .screen-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            padding-top: 60px; /* เว้นให้ปุ่มด้านบน */
+        }
+
+        .report-viewport {
+            width: 100%;
+            height: calc(100vh - 60px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        /* ตัวกระดาษ A4 จริง ๆ */
         .report-container {
-            max-width: 210mm;
+            width: 210mm;
+            min-height: 297mm;
             margin: 0 auto;
             background: white;
             padding: 10mm;
-        }
-
-        .scale-wrap {
-            position: relative;
-            width: 210mm;
-            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform-origin: top center;
         }
 
         .header {
@@ -48,7 +67,7 @@
             margin-bottom: 4px;
             font-weight: 700;
         }
-        
+
         .section { margin-bottom: 10px; }
         .section-title {
             background: #4facfe;
@@ -59,7 +78,7 @@
             border-radius: 4px;
             margin-bottom: 6px;
         }
-        
+
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -81,49 +100,27 @@
             position: absolute;
             right: 0;
             top: 6px;
+            white-space: nowrap;
         }
         .order-date-special .date-info {
-            font-size: 10pt; font-weight: 600; color: #0369a1; white-space: nowrap;
+            font-size: 10pt; font-weight: 600; color: #0369a1;
         }
         .order-date-special .day-badge {
             background: #0369a1; color: white; padding: 3px 10px; border-radius: 20px;
-            font-size: 9pt; font-weight: 600; white-space: nowrap;
+            font-size: 9pt; font-weight: 600;
         }
-        
+
         .route-badge { display: inline-block; background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 10pt; font-weight: 600; }
         .route-badge.peripheral { background: #f59e0b; }
-        
+
         .composition-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
         .composition-table th { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 6px; text-align: left; font-weight: 600; color: #2d3748; }
         .composition-table td { border: 1px solid #e2e8f0; padding: 4px 6px; color: #4a5568; }
         .composition-table tr:nth-child(even) { background: #f8fafc; }
         .highlight-row { background: #fef3c7 !important; font-weight: 600; }
         .input-badge { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 3px; font-size: 8pt; font-weight: 600; display: inline-block; }
-        
-        /* ปุ่มปฏิบัติการ */
-        .top-actions {
-            position: fixed; top: 20px; right: 20px; display: flex; gap: 10px;
-            z-index: 1000; flex-wrap: wrap; justify-content: flex-end;
-        }
-        .btn {
-            background: #4facfe; color: white; border: none; padding: 10px 16px;
-            border-radius: 25px; cursor: pointer; font-size: 12px; font-weight: 600;
-            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
-        }
-        .btn:hover { background: #3b8ad6; }
-        .btn.secondary { background: #718096; box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4); }
-        .btn.secondary:hover { background: #4a5568; }
-        
-        @media print {
-            body { padding: 0; margin: 0; }
-            .top-actions { display: none; }
-            .report-container { box-shadow: none; padding: 0; max-width: 100%; }
-            #report-root.scale-80-print { transform: scale(0.8); transform-origin: top left; }
-            .header { margin-bottom: 10px; padding-bottom: 6px; }
-            .section { margin-bottom: 8px; }
-        }
 
-        /* Summary แบบตารางเรียบ */
+        /* Summary แบบตาราง */
         .summary-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
         .summary-table th, .summary-table td { border: 1px solid #e2e8f0; padding: 6px 8px; }
         .summary-table th { background: #f8fafc; text-align: left; font-weight: 600; color: #2d3748; width: 55%; }
@@ -131,55 +128,103 @@
         .osmol-ok { color: #166534; font-weight: 700; }
         .osmol-high { color: #991b1b; font-weight: 700; }
 
-        /* iPhone / จอเล็ก */
-        @media (max-width: 480px) {
-            .info-grid { grid-template-columns: 1fr; gap: 6px 8px; }
-            .order-date-special { position: static; margin-top: 6px; width: 100%; justify-content: space-between; }
-            .top-actions { left: 10px; right: 10px; top: 10px; gap: 8px; justify-content: center; }
-            .btn { padding: 8px 12px; font-size: 11px; }
+        .footer { margin-top: 8px; font-size: 8.5pt; color: #4b5563; }
 
-            body { padding-top: 70px; }
-            .scale-wrap { width: 100%; }
-            .report-container { padding: 10px 10px 20px; }
-        }
-
-        /* ============= โหมด export เท่านั้น ============= */
-        #report-root.exporting .header {
+        /* ปุ่มปฏิบัติการ */
+        .top-actions {
+            position: fixed;
+            top: 10px;
+            right: 10px;
             display: flex;
-            align-items: flex-start;
             gap: 10px;
+            z-index: 1000;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
-        #report-root.exporting .order-date-special {
-            position: static;
-            margin-left: auto;
+        .btn {
+            background: #4facfe; color: white; border: none; padding: 8px 14px;
+            border-radius: 25px; cursor: pointer; font-size: 12px; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
         }
+        .btn:hover { background: #3b8ad6; }
+        .btn.secondary { background: #718096; box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4); }
+        .btn.secondary:hover { background: #4a5568; }
 
-        /* Overlay สำหรับ preview รูป */
-        .image-preview-overlay {
+        /* viewer สำหรับรูป */
+        .image-viewer {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
+            background: #000;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            z-index: 2000;
+            justify-content: flex-start;
+            padding-top: 60px;
+            z-index: 1200;
         }
-        .image-preview-overlay img {
-            max-width: 100%;
-            max-height: 100%;
-            height: auto;
+        .image-viewer-header {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1300;
         }
-        .image-preview-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #ffffff;
-            border-radius: 999px;
-            padding: 8px 14px;
-            font-size: 12px;
+        .image-viewer-btn {
+            background: rgba(15,23,42,0.9);
+            color: #f9fafb;
             border: none;
-            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 12px;
             font-weight: 600;
+            cursor: pointer;
+        }
+        .image-viewer-btn:hover {
+            background: rgba(15,23,42,1);
+        }
+        .image-viewer-note {
+            color: #e5e7eb;
+            font-size: 11px;
+            text-align: right;
+        }
+        .image-viewer img {
+            max-width: 100%;
+            max-height: calc(100vh - 80px);
+            object-fit: contain;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .hidden { display: none !important; }
+
+        @media (max-width: 640px) {
+            .btn { padding: 7px 10px; font-size: 11px; }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                overflow: visible;
+            }
+            .top-actions,
+            .image-viewer { display: none !important; }
+            .screen-wrapper {
+                padding-top: 0;
+                height: auto;
+            }
+            .report-viewport {
+                height: auto;
+                padding: 0;
+                overflow: visible;
+            }
+            .report-container {
+                box-shadow: none;
+                transform: none !important;
+                width: 100%;
+                min-height: auto;
+                padding: 0;
+            }
         }
     </style>
 </head>
@@ -187,109 +232,116 @@
     <!-- ปุ่มนำทางและบันทึก -->
     <div class="top-actions">
         <button class="btn secondary" onclick="goBack()">← ย้อนกลับ</button>
-        <button class="btn" onclick="saveAsImage()">🖼️ Save Image</button>
-        <button class="btn" onclick="printScaled()">🖨️ พิมพ์รายงาน</button>
+        <button class="btn" onclick="saveImageInline()">🖼️ Save Image</button>
+        <button class="btn" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
     </div>
 
-    <div class="scale-wrap">
-      <div class="report-container" id="report-root">
-          <!-- Header -->
-          <div class="header">
-              <h1>📋 TPN Order Report</h1>
-              <div class="order-date-special">
-                  <div class="date-info">
-                      📅 Order Date: <span id="display-order-date"></span>
-                  </div>
-                  <div class="day-badge" id="display-day-name"></div>
-              </div>
-          </div>
+    <!-- โหมดแสดง report (A4) -->
+    <div class="screen-wrapper" id="screen-wrapper">
+        <div class="report-viewport">
+            <div class="report-container" id="report-root">
+                <!-- Header -->
+                <div class="header">
+                    <h1>📋 TPN Order Report</h1>
+                    <div class="order-date-special">
+                        <div class="date-info">
+                            📅 Order Date: <span id="display-order-date"></span>
+                        </div>
+                        <div class="day-badge" id="display-day-name"></div>
+                    </div>
+                </div>
 
-          <!-- Patient Information -->
-          <div class="section">
-              <div class="section-title">👤 Patient Information</div>
-              <div class="info-grid">
-                  <div class="info-item"><span class="info-label">HN:</span><span class="info-value" id="display-hn"></span></div>
-                  <div class="info-item"><span class="info-label">Name:</span><span class="info-value" id="display-name"></span></div>
-                  <div class="info-item"><span class="info-label">Ward:</span><span class="info-value" id="display-ward"></span></div>
-                  <div class="info-item"><span class="info-label">Body Weight:</span><span class="info-value" id="display-bw"></span></div>
-                  <div class="info-item"><span class="info-label">Route:</span><span class="info-value"><span class="route-badge" id="display-route"></span></span></div>
-              </div>
-          </div>
+                <!-- Patient Information -->
+                <div class="section">
+                    <div class="section-title">👤 Patient Information</div>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">HN:</span><span class="info-value" id="display-hn"></span></div>
+                        <div class="info-item"><span class="info-label">Name:</span><span class="info-value" id="display-name"></span></div>
+                        <div class="info-item"><span class="info-label">Ward:</span><span class="info-value" id="display-ward"></span></div>
+                        <div class="info-item"><span class="info-label">Body Weight:</span><span class="info-value" id="display-bw"></span></div>
+                        <div class="info-item"><span class="info-label">Route:</span><span class="info-value"><span class="route-badge" id="display-route"></span></span></div>
+                    </div>
+                </div>
 
-          <!-- TPN Configuration -->
-          <div class="section">
-              <div class="section-title">💊 TPN Configuration</div>
-              <div class="info-grid">
-                  <div class="info-item"><span class="info-label">Bag Volume:</span><span class="info-value" id="display-bag"></span></div>
-                  <div class="info-item"><span class="info-label">Rate:</span><span class="info-value" id="display-rate"></span></div>
-              </div>
-          </div>
+                <!-- TPN Configuration -->
+                <div class="section">
+                    <div class="section-title">💧 TPN Configuration</div>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Bag Volume:</span><span class="info-value" id="display-bag"></span></div>
+                        <div class="info-item"><span class="info-label">Rate:</span><span class="info-value" id="display-rate"></span></div>
+                    </div>
+                </div>
 
-          <!-- TPN Composition -->
-          <div class="section">
-              <div class="section-title">🧪 TPN Composition</div>
-              <table class="composition-table" id="composition-table">
-                  <thead>
-                      <tr>
-                          <th style="width: 35%;">Component</th>
-                          <th style="width: 20%; text-align: center;">Dosage</th>
-                          <th style="width: 20%; text-align: center;">Volume (ml)</th>
-                          <th style="width: 25%; text-align: center;">Note</th>
-                      </tr>
-                  </thead>
-                  <tbody id="composition-body"></tbody>
-              </table>
-          </div>
+                <!-- TPN Composition -->
+                <div class="section">
+                    <div class="section-title">🧪 TPN Composition</div>
+                    <table class="composition-table" id="composition-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 35%;">Component</th>
+                                <th style="width: 20%; text-align: center;">Dosage</th>
+                                <th style="width: 20%; text-align: center;">Volume (ml)</th>
+                                <th style="width: 25%; text-align: center;">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="composition-body"></tbody>
+                    </table>
+                </div>
 
-          <!-- Summary -->
-          <div class="section">
-              <div class="section-title">📊 Summary</div>
-              <table class="summary-table">
-                  <tbody>
-                      <tr>
-                          <th>Total PN calories per day</th>
-                          <td><span class="summary-value-strong" id="display-pn-cal">0</span> kcal/day</td>
-                      </tr>
-                      <tr>
-                          <th>Total mOsmol/L</th>
-                          <td>
-                              <span id="display-osmol">~0</span>
-                              <span id="osmol-note" class="osmol-ok" style="margin-left:8px;">✓ &lt; 900 (เหมาะสำหรับ Peripheral)</span>
-                          </td>
-                      </tr>
-                      <tr>
-                          <th>From PN</th>
-                          <td><span class="summary-value-strong" id="display-pn-total">0</span> kcal/kg/day</td>
-                      </tr>
-                      <tr>
-                          <th>From Milk</th>
-                          <td><span class="summary-value-strong" id="display-milk-total">0</span> kcal/kg/day</td>
-                      </tr>
-                      <tr>
-                          <th>Total</th>
-                          <td><span class="summary-value-strong" id="display-grand-total">0</span> kcal/kg/day</td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
+                <!-- Summary -->
+                <div class="section">
+                    <div class="section-title">📊 Summary</div>
+                    <table class="summary-table">
+                        <tbody>
+                            <tr>
+                                <th>Total PN calories per day</th>
+                                <td><span class="summary-value-strong" id="display-pn-cal">0</span> kcal/day</td>
+                            </tr>
+                            <tr>
+                                <th>Total mOsmol/L</th>
+                                <td>
+                                    <span id="display-osmol">~0</span>
+                                    <span id="osmol-note" class="osmol-ok" style="margin-left:8px;">✓ &lt; 900 (เหมาะสำหรับ Peripheral)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>From PN</th>
+                                <td><span class="summary-value-strong" id="display-pn-total">0</span> kcal/kg/day</td>
+                            </tr>
+                            <tr>
+                                <th>From Milk</th>
+                                <td><span class="summary-value-strong" id="display-milk-total">0</span> kcal/kg/day</td>
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <td><span class="summary-value-strong" id="display-grand-total">0</span> kcal/kg/day</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-          <!-- Footer -->
-          <div class="footer">
-              <p>Generated on <span id="generated-date"></span></p>
-              <p style="margin-top: 5px;">โรงพยาบาลขอนแก่น TPN Calculator for Pediatrics © 2025</p>
-          </div>
-      </div>
+                <!-- Footer -->
+                <div class="footer">
+                    <p>Generated on <span id="generated-date"></span></p>
+                    <p style="margin-top: 5px;">โรงพยาบาลขอนแก่น TPN Calculator for Pediatrics © 2025</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Overlay แสดงรูป -->
-    <div class="image-preview-overlay" id="image-preview-overlay">
-      <button class="image-preview-close" onclick="closeImagePreview()">ปิด / กลับสู่รายงาน</button>
-      <img id="image-preview-img" src="" alt="TPN Report Preview">
+    <!-- โหมดแสดงภาพ -->
+    <div class="image-viewer hidden" id="image-viewer">
+        <div class="image-viewer-header">
+            <button class="image-viewer-btn" onclick="backToReport()">← กลับไปหน้า Report</button>
+            <div class="image-viewer-note">
+                กดค้างที่รูปเพื่อบันทึกลงคลังภาพ 📲
+            </div>
+        </div>
+        <img id="report-image" alt="TPN Report Image">
     </div>
 
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
         function goBack() { window.location.href = 'index.html'; }
@@ -299,35 +351,12 @@
             const n = Number(v);
             if (!isFinite(n) || n === 0) return '0.00';
             const h = Math.floor(n * 1000);
-            const d3 = h % 10; // หลักที่ 3
+            const d3 = h % 10;
             const out = (d3 === 9) ? Math.ceil(n * 100) / 100 : Math.floor(n * 100) / 100;
             return out.toFixed(2);
         }
 
-        // ย่อหน้า report ให้พอดีจอ (ไม่ต้อง scroll)
-        function fitReportToScreen() {
-            const root = document.getElementById('report-root');
-            if (!root) return;
-
-            // เอา transform เดิมออกก่อนเพื่อวัดขนาดจริง
-            root.style.transform = 'none';
-            root.parentElement.style.height = 'auto';
-
-            const rect = root.getBoundingClientRect();
-            const availW = window.innerWidth - 20;
-            const availH = window.innerHeight - 20;
-
-            const scale = Math.min(availW / rect.width, availH / rect.height, 1);
-
-            root.style.transform = 'scale(' + scale + ')';
-            root.style.transformOrigin = 'top center';
-            root.parentElement.style.height = (rect.height * scale) + 'px';
-        }
-
-        window.addEventListener('load', fitReportToScreen);
-        window.addEventListener('resize', fitReportToScreen);
-
-        // Load data
+        // โหลดข้อมูลจาก index.html
         const data = JSON.parse(localStorage.getItem('tpnReportData') || '{}');
 
         // Patient info
@@ -336,7 +365,7 @@
         document.getElementById('display-ward').textContent = data.ward || '-';
         document.getElementById('display-bw').textContent = data.bw ? `${data.bw} kg` : '-';
 
-        // ===== Order date (B.E.) + Day-of-week =====
+        // Order date (B.E.) + Day-of-week
         let displayDate = data.orderDate || '-';
         let dayNameText = data.orderDayName || '-';
         if (data.orderDate && data.orderDate !== '-') {
@@ -353,7 +382,7 @@
         document.getElementById('display-order-date').textContent = displayDate;
         document.getElementById('display-day-name').textContent = dayNameText;
 
-        // ===== Route badge: Central Line / Peripheral Line =====
+        // Route badge
         const routeBadge = document.getElementById('display-route');
         routeBadge.textContent = (data.route === 'central') ? 'Central Line' : 'Peripheral Line';
         if (data.route === 'peripheral') routeBadge.classList.add('peripheral');
@@ -362,7 +391,7 @@
         document.getElementById('display-bag').textContent = data.bag ? `${data.bag} ml` : '-';
         document.getElementById('display-rate').textContent = data.rate ? `${data.rate} ml/hr` : '-';
 
-        // Composition
+        // Composition table
         const tbody = document.getElementById('composition-body');
         const compositions = [];
 
@@ -384,7 +413,7 @@
                 name: 'Glycophos® (P)',
                 input: `${data.p || '0'} mmol/kg/day`,
                 volume: pVolShow,
-                note: 'Contains Na ' + naFromGly
+                note: 'Contains Na ' + naFromGly + ' mEq'
             });
         }
         if (data.naSource === 'nacl' && parseFloat(data.naclVol) > 0) {
@@ -406,7 +435,7 @@
                 volume: parseFloat(String(data.caVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
         }
 
-        // MgSO4 – แสดง 2 ตำแหน่ง
+        // MgSO4 แสดง 2 ตำแหน่ง
         (function handleMg() {
             const mgRawStr = (data.mgVol !== undefined && data.mgVol !== null && String(data.mgVol).trim() !== '')
                 ? String(data.mgVol).replace(/[^0-9.\-]/g, '')
@@ -422,7 +451,6 @@
                 const mgCalc = (parseFloat(data.mg) * parseFloat(data.bw)) / 2;
                 mgDisplay2 = specialRound2(mgCalc);
             }
-
             if (mgDisplay2 && parseFloat(mgDisplay2) > 0) {
                 compositions.push({
                     name: 'MgSO₄',
@@ -470,7 +498,7 @@
             }
         }
 
-        // 20% Fat — ก่อน Sterile Water และ +6 ml
+        // 20% Fat (+6 ml)
         const fatVolNum = data.fatVol ? parseFloat(String(data.fatVol).replace(/[^0-9.]/g, '')) : 0;
         if (fatVolNum > 0) {
             const fatVolPlus6 = (fatVolNum + 6).toFixed(1);
@@ -483,12 +511,12 @@
             });
         }
 
-        // Sterile Water — ท้ายสุด
+        // Sterile Water ท้ายสุด
         if (parseFloat(data.sterileWater) > 0) {
             compositions.push({ name: 'Sterile Water', input: '-', volume: data.sterileWater, note: '', highlight: true });
         }
 
-        // เติมตาราง
+        // เติมลงตาราง
         compositions.forEach(comp => {
             const row = document.createElement('tr');
             if (comp.highlight) row.classList.add('highlight-row');
@@ -504,14 +532,12 @@
             tbody.appendChild(row);
         });
 
-        // ===== Summary =====
-        // Total PN calories per day = pnCalKg × BW
+        // Summary
         const bwNum = parseFloat(String(data.bw).replace(/[^0-9.]/g, '')) || 0;
         const pnCalKg = parseFloat(String(data.pnCalKg).replace(/[^0-9.]/g, '')) || 0;
         const pnCalPerDay = bwNum * pnCalKg;
         document.getElementById('display-pn-cal').textContent = isFinite(pnCalPerDay) ? pnCalPerDay.toFixed(0) : '0';
 
-        // mOsmol/L
         const osmolValue = data.totalOsmol ? String(data.totalOsmol).replace('~', '') : '0';
         const osmolNum = parseInt(osmolValue || '0', 10);
         document.getElementById('display-osmol').textContent = '~' + osmolValue;
@@ -524,97 +550,75 @@
             osmolNoteEl.classList.remove('osmol-high'); osmolNoteEl.classList.add('osmol-ok');
         }
 
-        // ค่าต่อ kg/day ตามเดิม
         document.getElementById('display-pn-total').textContent = data.pnCalKg || '0';
         document.getElementById('display-milk-total').textContent = data.milkCalKg || '0';
         document.getElementById('display-grand-total').textContent = data.totalCalKg || '0';
 
-        // Generated date
         const now = new Date();
         const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         document.getElementById('generated-date').textContent = dateStr;
 
-        // ===== Export / Print =====
-        function toggleScale80(enable) {
-            const root = document.getElementById('report-root');
-            if (enable) root.classList.add('scale-80');
-            else root.classList.remove('scale-80');
-        }
-        function toggleExporting(enable) {
-            const root = document.getElementById('report-root');
-            if (enable) root.classList.add('exporting');
-            else root.classList.remove('exporting');
-        }
-
-        async function saveAsImage() {
-            try {
-                const root = document.getElementById('report-root');
-                if (!root) return;
-
-                // เก็บ transform เดิม (จาก fitReportToScreen)
-                const prevTransform = root.style.transform;
-                const prevHeight = root.parentElement.style.height;
-
-                // ตอน capture เอา transform ออก เพื่อจับขนาดจริง
-                root.style.transform = 'none';
-                root.parentElement.style.height = 'auto';
-
-                const captureScale = Math.min(4, (window.devicePixelRatio || 1) * 2);
-
-                const canvas = await html2canvas(root, {
-                    scale: captureScale,
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                });
-
-                // คืน layout เดิม และ fit ให้พอดีจออีกครั้ง
-                root.style.transform = prevTransform;
-                root.parentElement.style.height = prevHeight;
-                fitReportToScreen();
-
-                const imgData = canvas.toDataURL('image/png');
-
-                const overlay = document.getElementById('image-preview-overlay');
-                const imgEl   = document.getElementById('image-preview-img');
-                if (overlay && imgEl) {
-                    imgEl.src = imgData;
-                    overlay.style.display = 'flex';
-                }
-            } catch (e) {
-                console.error(e);
-                alert('ไม่สามารถสร้างรูปภาพได้ ลองใหม่อีกครั้งค่ะ');
-            }
-        }
-
-        function closeImagePreview() {
-            const overlay = document.getElementById('image-preview-overlay');
-            if (overlay) overlay.style.display = 'none';
-        }
-
-        function printScaled() {
+        // ===== ย่อให้พอดีจอ (A4 ทั้งใบ) =====
+        function fitReportToScreen() {
             const root = document.getElementById('report-root');
             if (!root) return;
-
-            const prevTransform = root.style.transform;
-            const prevHeight = root.parentElement.style.height;
-
+            // reset ก่อนวัดขนาดจริง
             root.style.transform = 'none';
-            root.parentElement.style.height = 'auto';
-            root.classList.add('scale-80-print');
-
-            window.print();
-
-            setTimeout(() => {
-                root.classList.remove('scale-80-print');
-                root.style.transform = prevTransform;
-                root.parentElement.style.height = prevHeight;
-                fitReportToScreen();
-            }, 500);
+            const rect = root.getBoundingClientRect();
+            const vw = window.innerWidth;
+            const vh = window.innerHeight - 60; // หักพื้นที่ปุ่มด้านบน
+            const scale = Math.min((vw - 20) / rect.width, (vh - 20) / rect.height);
+            const finalScale = Math.min(scale, 1); // ไม่ขยายเกิน 1
+            root.style.transform = `scale(${finalScale})`;
         }
 
-        window.saveAsImage = saveAsImage;
-        window.printScaled = printScaled;
-        window.closeImagePreview = closeImagePreview;
+        window.addEventListener('load', fitReportToScreen);
+        window.addEventListener('resize', () => {
+            clearTimeout(window.__fitTimer);
+            window.__fitTimer = setTimeout(fitReportToScreen, 200);
+        });
+
+        // ===== Save Image แบบแสดงในหน้าเดิม =====
+        async function saveImageInline() {
+            const root = document.getElementById('report-root');
+            const screenWrapper = document.getElementById('screen-wrapper');
+            const viewer = document.getElementById('image-viewer');
+            const imgEl = document.getElementById('report-image');
+
+            if (!root || !viewer || !imgEl) return;
+
+            // ปิด scale ชั่วคราวให้ภาพคม
+            const prevTransform = root.style.transform;
+            root.style.transform = 'none';
+
+            const canvas = await html2canvas(root, {
+                scale: 3,          // เพิ่มความคมชัด
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            });
+
+            // คืนค่า transform
+            root.style.transform = prevTransform;
+
+            const dataUrl = canvas.toDataURL('image/png');
+
+            imgEl.src = dataUrl;
+            screenWrapper.classList.add('hidden');
+            viewer.classList.remove('hidden');
+        }
+
+        function backToReport() {
+            const screenWrapper = document.getElementById('screen-wrapper');
+            const viewer = document.getElementById('image-viewer');
+            const imgEl = document.getElementById('report-image');
+            imgEl.src = '';
+            viewer.classList.add('hidden');
+            screenWrapper.classList.remove('hidden');
+            fitReportToScreen();
+        }
+
+        window.saveImageInline = saveImageInline;
+        window.backToReport = backToReport;
     </script>
 </body>
 </html>
