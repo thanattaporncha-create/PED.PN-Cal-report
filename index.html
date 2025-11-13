@@ -671,8 +671,8 @@
     }
     
     document.querySelector('input[name="tpn-route"][value="central"]')?.click();
-    document.querySelector('input[name="na-source"]')?.checked && (document.querySelector('input[name="na-source"]').checked = false);
-    document.querySelector('input[name="k-source"]')?.checked && (document.querySelector('input[name="k-source"]').checked = false);
+    document.querySelectorAll('input[name="na-source"]').forEach(r=>{ r.checked=false; });
+    document.querySelectorAll('input[name="k-source"]').forEach(r=>{ r.checked=false; });
     document.querySelector('input[name="peditrace-freq"][value="daily"]')?.click();
     document.querySelector('input[name="cernevit-freq"][value="daily"]')?.click();
     document.querySelector('input[name="vitamin-k-choice"][value="none"]')?.click();
@@ -870,17 +870,17 @@
     document.getElementById('ca-volume').textContent = caVol_1.toFixed(1) + ' ml';
     document.getElementById('mg-volume').textContent = mgVol_2.toFixed(2) + ' ml';
 
-    const pedEl = document.getElementById('peditrace-volume');
+    const peditEl = document.getElementById('peditrace-volume');
     if (!includePeditrace) {
-      pedEl.textContent = '0 ml (ไม่ให้วันนี้)';
-      pedEl.style.background = '#fef3c7';
-      pedEl.style.color = '#92400e';
-      pedEl.style.border = '1px solid #fcd34d';
+      peditEl.textContent = '0 ml (ไม่ให้วันนี้)';
+      peditEl.style.background = '#fef3c7';
+      peditEl.style.color = '#92400e';
+      peditEl.style.border = '1px solid #fcd34d';
     } else {
-      pedEl.textContent = pedit_1.toFixed(1) + ' ml';
-      pedEl.style.background = (peditExceeded ? '#dc2626' : '#dcfce7');
-      pedEl.style.color = (peditExceeded ? 'white' : '#166534');
-      pedEl.style.border = (peditExceeded ? '1px solid #dc2626' : '1px solid #86efac');
+      peditEl.textContent = pedit_1.toFixed(1) + ' ml';
+      peditEl.style.background = (peditExceeded ? '#dc2626' : '#dcfce7');
+      peditEl.style.color = (peditExceeded ? 'white' : '#166534');
+      peditEl.style.border = (peditExceeded ? '1px solid #dc2626' : '1px solid #86efac');
     }
 
     const cerEl = document.getElementById('cernevit-volume');
