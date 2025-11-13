@@ -26,6 +26,19 @@
     .input-field input::-webkit-outer-spin-button,.input-field input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
     .input-field input:focus { outline:none; border-color:#4facfe; box-shadow:0 0 0 3px rgba(79,172,254,.1); }
     .unit { position:absolute; right:16px; color:#718096; font-size:.9em; font-weight:500; pointer-events:none; background:white; padding-left:8px; }
+    .date-warning { color:#dc2626; font-weight:700; font-size:0.85em; margin-top:6px; }
+
+    /* Product Selection Styles */
+    .product-selection { margin-top:20px; padding-top:20px; border-top:2px solid #e2e8f0; }
+    .product-selection h3 { color:#2d3748; margin:0 0 15px 0; font-size:1.05em; font-weight:600; }
+    .product-options { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+    .product-option { display:flex; align-items:center; padding:12px 15px; border-radius:8px; border:2px solid #e2e8f0; background:white; cursor:pointer; transition:all .3s ease; }
+    .product-option:hover { background:#f0f9ff; border-color:#4facfe; }
+    .product-option.selected { background:#e0f2fe; border-color:#0284c7; box-shadow:0 2px 8px rgba(2,132,199,0.2); }
+    .product-option input[type="radio"] { margin-right:12px; transform:scale(1.2); cursor:pointer; accent-color:#4facfe; }
+    .product-option-label { flex:1; cursor:pointer; }
+    .product-name { font-weight:600; color:#2d3748; font-size:0.95em; }
+    .product-info { font-size:0.85em; color:#64748b; margin-top:2px; }
 
     .tpn-table { background:white; border-radius:12px; overflow:hidden; margin-top:20px; border:2px solid #e2e8f0; width:100%; display:table; table-layout:fixed; }
     .table-header { display:table-row; background:#f8fafc; border-bottom:2px solid #e2e8f0; }
@@ -117,6 +130,8 @@
       .total-section{padding:20px}
       .total-section h2{font-size:1.3em}
       .total-calories{font-size:2em}
+      .product-options{gap:8px}
+      .product-option{padding:10px 12px}
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -144,6 +159,7 @@
           <div class="input-with-unit">
             <input type="date" id="order-date" style="padding-right:16px;">
           </div>
+          <div class="date-warning">⚠️ เลือกวันที่ให้ถูกต้องทุกครั้ง</div>
         </div>
         <div class="input-field"><!-- spacer --></div>
       </div>
@@ -213,9 +229,9 @@
       </div>
       <div class="input-group">
         <div class="input-field">
-          <label for="bag">ปริมาตร Bag TPN</label>
+          <label for="bag">ปริมาตร Bag TPN (คำนวนอัตโนมัติ)</label>
           <div class="input-with-unit">
-            <input type="number" inputmode="numeric" id="bag" step="1" placeholder="กรอกปริมาตรถุง TPN"/>
+            <input type="number" inputmode="numeric" id="bag" step="1" placeholder="คำนวนจาก Rate"/>
             <span class="unit">ml</span>
           </div>
         </div>
@@ -226,6 +242,8 @@
     <!-- Macronutrients -->
     <section class="section">
       <h2>Macronutrients</h2>
+
+      <!-- Order inputs first -->
       <div class="input-group">
         <div class="input-field">
           <label for="protein">Protein</label>
@@ -235,15 +253,6 @@
           </div>
         </div>
         <div class="input-field">
-          <label for="dextrose">%Dextrose</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="decimal" id="dextrose" step="0.1" placeholder="กรอกเปอร์เซ็นต์ Dextrose"/>
-            <span class="unit">%</span>
-          </div>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
           <label for="fat">Fat</label>
           <div class="input-with-unit">
             <input type="number" inputmode="decimal" id="fat" step="0.1" placeholder="กรอกปริมาณไขมัน"/>
@@ -252,6 +261,67 @@
         </div>
       </div>
 
+      <div class="input-group">
+        <div class="input-field">
+          <label for="dextrose">%Dextrose</label>
+          <div class="input-with-unit">
+            <input type="number" inputmode="decimal" id="dextrose" step="0.1" placeholder="กรอกเปอร์เซ็นต์ Dextrose"/>
+            <span class="unit">%</span>
+          </div>
+        </div>
+        <div class="input-field"><!-- spacer --></div>
+      </div>
+
+      <!-- Protein Product Selection -->
+      <div class="product-selection">
+        <h3>🧬 เลือก Protein Product</h3>
+        <div class="product-options">
+          <label class="product-option" data-product="protein">
+            <input type="radio" name="protein-product" value="aminoven" checked>
+            <div class="product-option-label">
+              <div class="product-name">10% Aminoven® infant</div>
+              <div class="product-info">สำหรับอายุ 0-1 เดือน</div>
+            </div>
+          </label>
+          <label class="product-option" data-product="protein">
+            <input type="radio" name="protein-product" value="amiparen">
+            <div class="product-option-label">
+              <div class="product-name">10% Amiparen®</div>
+              <div class="product-info">สำหรับอายุมากกว่า 1 เดือน</div>
+            </div>
+          </label>
+          <label class="product-option" data-product="protein">
+            <input type="radio" name="protein-product" value="aminoplasmal">
+            <div class="product-option-label">
+              <div class="product-name">15% Aminoplasmal®</div>
+              <div class="product-info">ความเข้มข้นสูง (ปริมาตรน้อยกว่า)</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Fat Product Selection -->
+      <div class="product-selection">
+        <h3>💧 เลือก Fat Product</h3>
+        <div class="product-options">
+          <label class="product-option" data-product="fat">
+            <input type="radio" name="fat-product" value="smof" checked>
+            <div class="product-option-label">
+              <div class="product-name">20% SMOF lipid</div>
+              <div class="product-info">Mixed lipid emulsion</div>
+            </div>
+          </label>
+          <label class="product-option" data-product="fat">
+            <input type="radio" name="fat-product" value="intralipid">
+            <div class="product-option-label">
+              <div class="product-name">20% Intralipid</div>
+              <div class="product-info">Soybean oil emulsion</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Summary Table -->
       <div class="tpn-table">
         <div class="table-header">
           <div class="table-cell header-cell">องค์ประกอบ</div>
@@ -260,7 +330,7 @@
           <div class="table-cell header-cell">mOsmol/L</div>
         </div>
         <div class="table-row">
-          <div class="table-cell component-cell">10% Protein</div>
+          <div class="table-cell component-cell" id="protein-label">10% Aminoven® infant</div>
           <div class="table-cell result-cell volume-yellow" id="protein-volume">0</div>
           <div class="table-cell result-cell" id="protein-calories">0</div>
           <div class="table-cell result-cell osmol-purple" id="protein-osmol">0</div>
@@ -272,7 +342,7 @@
           <div class="table-cell result-cell osmol-purple" id="dextrose-osmol">0</div>
         </div>
         <div class="table-row">
-          <div class="table-cell component-cell">20% Fat</div>
+          <div class="table-cell component-cell" id="fat-label">20% SMOF lipid</div>
           <div class="table-cell result-cell volume-yellow" id="fat-volume">0</div>
           <div class="table-cell result-cell" id="fat-calories">0</div>
           <div class="table-cell result-cell">-</div>
@@ -466,12 +536,8 @@
           </div>
           <div class="frequency-selection">
             <h4>เลือกวิธีการให้:</h4>
-            <label class="frequency-option">
-              <input type="radio" name="vitamin-k-choice" value="none" checked>
-              <span class="frequency-option-label">ไม่เติม</span>
-            </label>
-            <label class="frequency-option">
-              <input type="radio" name="vitamin-k-choice" value="daily">
+            <label class="frequency-option" id="vitamin-k-daily-option">
+              <input type="radio" name="vitamin-k-choice" value="daily" checked>
               <span class="frequency-option-label">Per day</span>
               <span class="source-option-value" id="vitamin-k-daily" style="margin-left:10px;">0 ml</span>
             </label>
@@ -491,6 +557,10 @@
                 <option value="0">Sunday</option>
               </select>
             </div>
+            <label class="frequency-option">
+              <input type="radio" name="vitamin-k-choice" value="none">
+              <span class="frequency-option-label">ไม่เติม</span>
+            </label>
           </div>
         </div>
 
@@ -599,7 +669,7 @@
 
     <!-- Submit -->
     <section class="submit-section">
-      <button id="submitBtn" class="submit-btn">📄 สร้างรายงาน PDF</button>
+      <button id="submitBtn" class="submit-btn">📄 สร้าง TPN Report</button>
     </section>
 
   </div>
@@ -607,6 +677,80 @@
 
 <script>
   const defaultConfig = { app_title:"TPN Calculator", subtitle:"สำหรับเด็ก" };
+
+  // ===== Auto Calculate Bag Volume =====
+  function calculateBagVolume(rate) {
+    if (!rate || rate <= 0) return 0;
+    
+    const rawVolume = rate * 24 + 20;
+    
+    // Round up to nearest 10
+    const rounded = Math.ceil(rawVolume / 10) * 10;
+    
+    return rounded;
+  }
+
+  // ===== Product Selection Visual Feedback =====
+  function initProductSelection() {
+    // Handle protein product selection
+    document.querySelectorAll('.product-option[data-product="protein"]').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.product-option[data-product="protein"]').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        this.classList.add('selected');
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+        updateProteinLabel();
+        calculateTPN();
+      });
+    });
+
+    // Handle fat product selection
+    document.querySelectorAll('.product-option[data-product="fat"]').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.product-option[data-product="fat"]').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        this.classList.add('selected');
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+        updateFatLabel();
+        calculateTPN();
+      });
+    });
+
+    // Set initial selected state
+    document.querySelector('.product-option[data-product="protein"] input:checked')?.closest('.product-option').classList.add('selected');
+    document.querySelector('.product-option[data-product="fat"] input:checked')?.closest('.product-option').classList.add('selected');
+  }
+
+  function updateProteinLabel() {
+    const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value;
+    const label = document.getElementById('protein-label');
+    if (!label) return;
+    
+    const names = {
+      'aminoven': '10% Aminoven® infant',
+      'amiparen': '10% Amiparen®',
+      'aminoplasmal': '15% Aminoplasmal®'
+    };
+    
+    label.textContent = names[proteinProduct] || '10% Aminoven® infant';
+  }
+
+  function updateFatLabel() {
+    const fatProduct = document.querySelector('input[name="fat-product"]:checked')?.value;
+    const label = document.getElementById('fat-label');
+    if (!label) return;
+    
+    const names = {
+      'smof': '20% SMOF lipid',
+      'intralipid': '20% Intralipid'
+    };
+    
+    label.textContent = names[fatProduct] || '20% SMOF lipid';
+  }
 
   // ===== Autosave/Restore =====
   const AUTOSAVE_KEY = 'tpnFormAutosave';
@@ -616,6 +760,8 @@
     const data = {};
     ids.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.value ?? ''; });
     const route = document.querySelector('input[name="tpn-route"]:checked')?.value || '';
+    const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value || 'aminoven';
+    const fatProduct = document.querySelector('input[name="fat-product"]:checked')?.value || 'smof';
     const naSrc = document.querySelector('input[name="na-source"]:checked')?.value || '';
     const kSrc  = document.querySelector('input[name="k-source"]:checked')?.value || '';
     const peditFreq = document.querySelector('input[name="peditrace-freq"]:checked')?.value || '';
@@ -626,7 +772,7 @@
     const vitKDay   = document.getElementById('vitamin-k-day')?.value || '1';
     const hasPicc   = document.getElementById('picc-line-checkbox')?.checked || false;
 
-    Object.assign(data, { route, naSrc, kSrc, peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc });
+    Object.assign(data, { route, proteinProduct, fatProduct, naSrc, kSrc, peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc });
     localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
   }
 
@@ -641,6 +787,20 @@
         }
       });
       if (data.route) document.querySelector(`input[name="tpn-route"][value="${data.route}"]`)?.click();
+      if (data.proteinProduct) {
+        const proteinRadio = document.querySelector(`input[name="protein-product"][value="${data.proteinProduct}"]`);
+        if (proteinRadio) {
+          proteinRadio.checked = true;
+          proteinRadio.closest('.product-option').classList.add('selected');
+        }
+      }
+      if (data.fatProduct) {
+        const fatRadio = document.querySelector(`input[name="fat-product"][value="${data.fatProduct}"]`);
+        if (fatRadio) {
+          fatRadio.checked = true;
+          fatRadio.closest('.product-option').classList.add('selected');
+        }
+      }
       if (data.naSrc) document.querySelector(`input[name="na-source"][value="${data.naSrc}"]`)?.click();
       if (data.kSrc)  document.querySelector(`input[name="k-source"][value="${data.kSrc}"]`)?.click();
       if (data.peditFreq) document.querySelector(`input[name="peditrace-freq"][value="${data.peditFreq}"]`)?.click();
@@ -652,6 +812,9 @@
       const vday = document.getElementById('vitamin-k-day'); if (vday) vday.value = data.vitKDay ?? '1';
 
       const picc = document.getElementById('picc-line-checkbox'); if (picc) picc.checked = !!data.hasPicc;
+      
+      updateProteinLabel();
+      updateFatLabel();
     } catch(e) { }
   }
 
@@ -671,11 +834,27 @@
     }
     
     document.querySelector('input[name="tpn-route"][value="central"]')?.click();
-    document.querySelectorAll('input[name="na-source"]').forEach(r=>{ r.checked=false; });
-    document.querySelectorAll('input[name="k-source"]').forEach(r=>{ r.checked=false; });
+    
+    // Reset product selections
+    const aminovenRadio = document.querySelector('input[name="protein-product"][value="aminoven"]');
+    if (aminovenRadio) {
+      aminovenRadio.checked = true;
+      document.querySelectorAll('.product-option[data-product="protein"]').forEach(opt => opt.classList.remove('selected'));
+      aminovenRadio.closest('.product-option').classList.add('selected');
+    }
+    
+    const smofRadio = document.querySelector('input[name="fat-product"][value="smof"]');
+    if (smofRadio) {
+      smofRadio.checked = true;
+      document.querySelectorAll('.product-option[data-product="fat"]').forEach(opt => opt.classList.remove('selected'));
+      smofRadio.closest('.product-option').classList.add('selected');
+    }
+    
+    document.querySelector('input[name="na-source"]')?.checked && (document.querySelector('input[name="na-source"]').checked = false);
+    document.querySelector('input[name="k-source"]')?.checked && (document.querySelector('input[name="k-source"]').checked = false);
     document.querySelector('input[name="peditrace-freq"][value="daily"]')?.click();
     document.querySelector('input[name="cernevit-freq"][value="daily"]')?.click();
-    document.querySelector('input[name="vitamin-k-choice"][value="none"]')?.click();
+    document.querySelector('input[name="vitamin-k-choice"][value="daily"]')?.click();
     
     const peditDay = document.getElementById('peditrace-day'); if (peditDay) peditDay.value = '1';
     const cernDay = document.getElementById('cernevit-day'); if (cernDay) cernDay.value = '1';
@@ -685,6 +864,8 @@
     
     localStorage.removeItem(AUTOSAVE_KEY);
     
+    updateProteinLabel();
+    updateFatLabel();
     calculateTPN();
     
     alert('✅ ล้างข้อมูลเรียบร้อยแล้ว');
@@ -745,7 +926,21 @@
 
     const orderDate = document.getElementById('order-date').value;
 
-    const proteinVol_raw = (bw*protein*100)/10;
+    // Get selected protein product
+    const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value || 'aminoven';
+    
+    // Calculate protein volume based on product
+    let proteinVol_raw;
+    if (proteinProduct === 'aminoplasmal') {
+      // 15% Aminoplasmal: 15g per 100ml = 0.15g per ml
+      // Volume (ml) = (BW × protein) / 0.15
+      proteinVol_raw = (bw * protein) / 0.15;
+    } else {
+      // 10% Aminoven or Amiparen: 10g per 100ml = 0.10g per ml
+      // Volume (ml) = (BW × protein × 100) / 10
+      proteinVol_raw = (bw * protein * 100) / 10;
+    }
+    
     const proteinCal_raw = bw*protein*4;
     const proteinOsm_raw = bag>0 ? (protein*bw*1000*10)/bag : 0;
 
@@ -755,6 +950,7 @@
 
     const gir_raw = (bw>0) ? (dextrose*rate)/(6*bw) : 0;
 
+    // Fat calculation (same for both products since both are 20%)
     const fatVol_1 = r1(fat*bw*5);
     const fatCal_raw = fat*bw*10;
 
@@ -795,7 +991,7 @@
     if(vitK_day_raw > 0.5){ vitK_day_raw = 0.5; vitKExceeded = true; }
     const vitK_week_raw = vitK_day_raw*7;
 
-    const vkChoice = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'none';
+    const vkChoice = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily';
     const vkDay = document.getElementById('vitamin-k-day')?.value || '1';
     let includeVitaminK = false;
     if(vkChoice === 'daily') includeVitaminK = true;
@@ -870,17 +1066,17 @@
     document.getElementById('ca-volume').textContent = caVol_1.toFixed(1) + ' ml';
     document.getElementById('mg-volume').textContent = mgVol_2.toFixed(2) + ' ml';
 
-    const peditEl = document.getElementById('peditrace-volume');
+    const pedEl = document.getElementById('peditrace-volume');
     if (!includePeditrace) {
-      peditEl.textContent = '0 ml (ไม่ให้วันนี้)';
-      peditEl.style.background = '#fef3c7';
-      peditEl.style.color = '#92400e';
-      peditEl.style.border = '1px solid #fcd34d';
+      pedEl.textContent = '0 ml (ไม่ให้วันนี้)';
+      pedEl.style.background = '#fef3c7';
+      pedEl.style.color = '#92400e';
+      pedEl.style.border = '1px solid #fcd34d';
     } else {
-      peditEl.textContent = pedit_1.toFixed(1) + ' ml';
-      peditEl.style.background = (peditExceeded ? '#dc2626' : '#dcfce7');
-      peditEl.style.color = (peditExceeded ? 'white' : '#166534');
-      peditEl.style.border = (peditExceeded ? '1px solid #dc2626' : '1px solid #86efac');
+      pedEl.textContent = pedit_1.toFixed(1) + ' ml';
+      pedEl.style.background = (peditExceeded ? '#dc2626' : '#dcfce7');
+      pedEl.style.color = (peditExceeded ? 'white' : '#166534');
+      pedEl.style.border = (peditExceeded ? '1px solid #dc2626' : '1px solid #86efac');
     }
 
     const cerEl = document.getElementById('cernevit-volume');
@@ -898,24 +1094,40 @@
 
     const dailyRadio = document.querySelector('input[name="vitamin-k-choice"][value="daily"]');
     const weeklyRadio = document.querySelector('input[name="vitamin-k-choice"][value="weekly"]');
-    const dailyLabel = dailyRadio?.parentElement;
-    const weeklyLabel = weeklyRadio?.parentElement;
+    const noneRadio = document.querySelector('input[name="vitamin-k-choice"][value="none"]');
+    const dailyOption = document.getElementById('vitamin-k-daily-option');
     const dailyEl = document.getElementById('vitamin-k-daily');
     const weeklyEl = document.getElementById('vitamin-k-weekly');
 
     if(vitK_day_raw < 0.01){
+      // Cannot prepare per day, switch to per week if daily is selected
       dailyEl.textContent = vitK_day_raw.toFixed(3) + ' ml (เตรียมไม่ได้)';
       dailyEl.style.background = '#fef3c7';
       dailyEl.style.color = '#92400e';
       dailyEl.style.border = '1px solid #fcd34d';
-      if(dailyRadio){ dailyRadio.disabled=true; if(dailyLabel){ dailyLabel.style.opacity='0.5'; dailyLabel.style.cursor='not-allowed'; } }
-      if(dailyRadio && weeklyRadio && dailyRadio.checked) weeklyRadio.checked = true;
+      if(dailyRadio){ 
+        dailyRadio.disabled=true; 
+        if(dailyOption){ 
+          dailyOption.style.opacity='0.5'; 
+          dailyOption.style.cursor='not-allowed'; 
+        } 
+      }
+      // Auto-switch to weekly if daily is currently selected
+      if(dailyRadio && dailyRadio.checked && weeklyRadio) {
+        weeklyRadio.checked = true;
+      }
     } else {
       dailyEl.textContent = vitK_day_raw.toFixed(3) + ' ml';
       dailyEl.style.background = (vitKExceeded ? '#dc2626' : '#dbeafe');
       dailyEl.style.color = (vitKExceeded ? 'white' : '#1e40af');
       dailyEl.style.border = (vitKExceeded ? '1px solid #dc2626' : '1px solid #bfdbfe');
-      if(dailyRadio){ dailyRadio.disabled=false; if(dailyLabel){ dailyLabel.style.opacity='1'; dailyLabel.style.cursor='pointer'; } }
+      if(dailyRadio){ 
+        dailyRadio.disabled=false; 
+        if(dailyOption){ 
+          dailyOption.style.opacity='1'; 
+          dailyOption.style.cursor='pointer'; 
+        } 
+      }
     }
     weeklyEl.textContent = vitK_week_raw.toFixed(3) + ' ml';
     weeklyEl.style.background = '#dbeafe';
@@ -950,6 +1162,25 @@
     return m ? m[0] : '0';
   }
 
+  function getProteinProductName() {
+    const value = document.querySelector('input[name="protein-product"]:checked')?.value;
+    const names = {
+      'aminoven': '10% Aminoven® infant',
+      'amiparen': '10% Amiparen®',
+      'aminoplasmal': '15% Aminoplasmal®'
+    };
+    return names[value] || '10% Aminoven® infant';
+  }
+
+  function getFatProductName() {
+    const value = document.querySelector('input[name="fat-product"]:checked')?.value;
+    const names = {
+      'smof': '20% SMOF lipid',
+      'intralipid': '20% Intralipid'
+    };
+    return names[value] || '20% SMOF lipid';
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     const dateEl = document.getElementById('order-date');
     if (dateEl && !dateEl.value) {
@@ -958,6 +1189,7 @@
       dateEl.value = dateStr;
     }
 
+    initProductSelection();
     autosaveRestore();
 
     const setSelectorDisplay = () => {
@@ -965,14 +1197,29 @@
       document.getElementById('peditrace-day-selector').style.display = (pf==='weekly') ? 'block' : 'none';
       const cf = document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily';
       document.getElementById('cernevit-day-selector').style.display = (cf==='weekly') ? 'block' : 'none';
-      const vk = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'none';
+      const vk = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily';
       document.getElementById('vitamin-k-day-selector').style.display = (vk==='weekly') ? 'block' : 'none';
     };
     setSelectorDisplay();
 
     document.getElementById('clearBtn')?.addEventListener('click', clearAllData);
 
-    ['bw','rate','bag','protein','dextrose','fat','p','na','k','ca','mg','order-date'].forEach(id=>{
+    // Auto-calculate bag when rate changes
+    const rateEl = document.getElementById('rate');
+    const bagEl = document.getElementById('bag');
+    
+    if (rateEl && bagEl) {
+      rateEl.addEventListener('input', function() {
+        const rate = parseFloat(this.value) || 0;
+        if (rate > 0) {
+          const calculatedBag = calculateBagVolume(rate);
+          bagEl.value = calculatedBag;
+        }
+        calculateTPN();
+      });
+    }
+
+    ['bw','bag','protein','dextrose','fat','p','na','k','ca','mg','order-date'].forEach(id=>{
       const el=document.getElementById(id);
       if(el){ el.addEventListener('input', ()=>{ calculateTPN(); }); }
     });
@@ -1039,6 +1286,8 @@
       orderDate,
       orderDayName: dayName,
       route: document.querySelector('input[name="tpn-route"]:checked')?.value || 'central',
+      proteinProduct: getProteinProductName(),
+      fatProduct: getFatProductName(),
       hn, name, ward, bw,
       rate: document.getElementById('rate')?.value || '0',
       bag: document.getElementById('bag')?.value || '0',
@@ -1083,7 +1332,7 @@
       cernFreq: document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily',
       cernDay: document.getElementById('cernevit-day')?.value || '1',
 
-      vitKChoice: document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'none',
+      vitKChoice: document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily',
       vitKDay: document.getElementById('vitamin-k-day')?.value || '1',
       vitKDaily: extractNumberString(dsel('vitamin-k-daily')),
       vitKWeekly: extractNumberString(dsel('vitamin-k-weekly')),
