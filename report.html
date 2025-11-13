@@ -28,9 +28,11 @@
             padding: 10mm;
         }
 
-        /* ====== สเกล 80% สำหรับ export/print ====== */
-        .scale-80 { transform: scale(0.8); transform-origin: top left; }
-        .scale-wrap { position: relative; width: 210mm; }
+        .scale-wrap {
+            position: relative;
+            width: 210mm;
+            margin: 0 auto;
+        }
 
         .header {
             text-align: left;
@@ -130,23 +132,15 @@
         .osmol-high { color: #991b1b; font-weight: 700; }
 
         /* iPhone / จอเล็ก */
-      @media (max-width: 480px) {
-    .info-grid { grid-template-columns: 1fr; gap: 6px 8px; }
-    .order-date-special { position: static; margin-top: 6px; width: 100%; justify-content: space-between; }
-    .top-actions { left: 10px; right: 10px; top: 10px; gap: 8px; justify-content: center; }
-    .btn { padding: 8px 12px; font-size: 11px; }
+        @media (max-width: 480px) {
+            .info-grid { grid-template-columns: 1fr; gap: 6px 8px; }
+            .order-date-special { position: static; margin-top: 6px; width: 100%; justify-content: space-between; }
+            .top-actions { left: 10px; right: 10px; top: 10px; gap: 8px; justify-content: center; }
+            .btn { padding: 8px 12px; font-size: 11px; }
 
-    /* เพิ่มตรงนี้ */
-    body {
-        padding-top: 70px;   /* กันปุ่ม fixed ทับหัวรายงาน */
-    }
-    .scale-wrap {
-        width: 100%;         /* ขยายเต็มจอมือถือ */
-    }
-    .report-container {
-        padding: 10px 10px 20px; /* ลด padding ข้าง */
-    }
-}
+            body { padding-top: 70px; }
+            .scale-wrap { width: 100%; }
+            .report-container { padding: 10px 10px 20px; }
         }
 
         /* ============= โหมด export เท่านั้น ============= */
@@ -159,13 +153,40 @@
             position: static;
             margin-left: auto;
         }
+
+        /* Overlay สำหรับ preview รูป */
+        .image-preview-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .image-preview-overlay img {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+        }
+        .image-preview-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #ffffff;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <!-- ปุ่มนำทางและบันทึก -->
     <div class="top-actions">
         <button class="btn secondary" onclick="goBack()">← ย้อนกลับ</button>
-        <!-- เปลี่ยนเป็น Save Image -->
         <button class="btn" onclick="saveAsImage()">🖼️ Save Image</button>
         <button class="btn" onclick="printScaled()">🖨️ พิมพ์รายงาน</button>
     </div>
@@ -260,9 +281,15 @@
       </div>
     </div>
 
+    <!-- Overlay แสดงรูป -->
+    <div class="image-preview-overlay" id="image-preview-overlay">
+      <button class="image-preview-close" onclick="closeImagePreview()">ปิด / กลับสู่รายงาน</button>
+      <img id="image-preview-img" src="" alt="TPN Report Preview">
+    </div>
+
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- jsPDF ถูกเอาออกแล้ว เพราะไม่ใช้ Save PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
         function goBack() { window.location.href = 'index.html'; }
@@ -276,6 +303,29 @@
             const out = (d3 === 9) ? Math.ceil(n * 100) / 100 : Math.floor(n * 100) / 100;
             return out.toFixed(2);
         }
+
+        // ย่อหน้า report ให้พอดีจอ (ไม่ต้อง scroll)
+        function fitReportToScreen() {
+            const root = document.getElementById('report-root');
+            if (!root) return;
+
+            // เอา transform เดิมออกก่อนเพื่อวัดขนาดจริง
+            root.style.transform = 'none';
+            root.parentElement.style.height = 'auto';
+
+            const rect = root.getBoundingClientRect();
+            const availW = window.innerWidth - 20;
+            const availH = window.innerHeight - 20;
+
+            const scale = Math.min(availW / rect.width, availH / rect.height, 1);
+
+            root.style.transform = 'scale(' + scale + ')';
+            root.style.transformOrigin = 'top center';
+            root.parentElement.style.height = (rect.height * scale) + 'px';
+        }
+
+        window.addEventListener('load', fitReportToScreen);
+        window.addEventListener('resize', fitReportToScreen);
 
         // Load data
         const data = JSON.parse(localStorage.getItem('tpnReportData') || '{}');
@@ -356,7 +406,7 @@
                 volume: parseFloat(String(data.caVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
         }
 
-        /* ===== MgSO₄: แสดง 2 ตำแหน่ง ===== */
+        // MgSO4 – แสดง 2 ตำแหน่ง
         (function handleMg() {
             const mgRawStr = (data.mgVol !== undefined && data.mgVol !== null && String(data.mgVol).trim() !== '')
                 ? String(data.mgVol).replace(/[^0-9.\-]/g, '')
@@ -420,7 +470,7 @@
             }
         }
 
-        // 20% Fat — ก่อน Sterile Water และ +6 ml (สีแดง)
+        // 20% Fat — ก่อน Sterile Water และ +6 ml
         const fatVolNum = data.fatVol ? parseFloat(String(data.fatVol).replace(/[^0-9.]/g, '')) : 0;
         if (fatVolNum > 0) {
             const fatVolPlus6 = (fatVolNum + 6).toFixed(1);
@@ -455,6 +505,7 @@
         });
 
         // ===== Summary =====
+        // Total PN calories per day = pnCalKg × BW
         const bwNum = parseFloat(String(data.bw).replace(/[^0-9.]/g, '')) || 0;
         const pnCalKg = parseFloat(String(data.pnCalKg).replace(/[^0-9.]/g, '')) || 0;
         const pnCalPerDay = bwNum * pnCalKg;
@@ -483,7 +534,7 @@
         const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         document.getElementById('generated-date').textContent = dateStr;
 
-        // ===== Export / Print 80% + โหมด exporting กัน layout หล่นขอบ =====
+        // ===== Export / Print =====
         function toggleScale80(enable) {
             const root = document.getElementById('report-root');
             if (enable) root.classList.add('scale-80');
@@ -495,60 +546,75 @@
             else root.classList.remove('exporting');
         }
 
-        // === Save เป็นรูปแล้วเปิดให้ดูเลย ===
         async function saveAsImage() {
             try {
-                toggleExporting(true);
-                toggleScale80(true);
-                await new Promise(r => requestAnimationFrame(r));
+                const root = document.getElementById('report-root');
+                if (!root) return;
 
-                const target = document.getElementById('report-root');
-                const canvas = await html2canvas(target, {
-                    scale: 2,
+                // เก็บ transform เดิม (จาก fitReportToScreen)
+                const prevTransform = root.style.transform;
+                const prevHeight = root.parentElement.style.height;
+
+                // ตอน capture เอา transform ออก เพื่อจับขนาดจริง
+                root.style.transform = 'none';
+                root.parentElement.style.height = 'auto';
+
+                const captureScale = Math.min(4, (window.devicePixelRatio || 1) * 2);
+
+                const canvas = await html2canvas(root, {
+                    scale: captureScale,
                     useCORS: true,
                     backgroundColor: '#ffffff'
                 });
 
-                toggleScale80(false);
-                toggleExporting(false);
+                // คืน layout เดิม และ fit ให้พอดีจออีกครั้ง
+                root.style.transform = prevTransform;
+                root.parentElement.style.height = prevHeight;
+                fitReportToScreen();
 
                 const imgData = canvas.toDataURL('image/png');
 
-                // เปิดรูปในแท็บ/หน้าต่างใหม่ ให้แตะค้างเพื่อเซฟลงคลังภาพ
-                const imgWindow = window.open('', '_blank');
-                if (imgWindow) {
-                    imgWindow.document.write(`
-                        <html>
-                          <head>
-                            <title>TPN Report Image</title>
-                          </head>
-                          <body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;">
-                            <img src="${imgData}" style="max-width:100%;height:auto;" />
-                          </body>
-                        </html>
-                    `);
-                    imgWindow.document.close();
-                } else {
-                    alert('เบราว์เซอร์บล็อกการเปิดหน้าต่างใหม่ กรุณาอนุญาต pop-up แล้วลองอีกครั้งค่ะ');
+                const overlay = document.getElementById('image-preview-overlay');
+                const imgEl   = document.getElementById('image-preview-img');
+                if (overlay && imgEl) {
+                    imgEl.src = imgData;
+                    overlay.style.display = 'flex';
                 }
             } catch (e) {
-                toggleScale80(false);
-                toggleExporting(false);
                 console.error(e);
                 alert('ไม่สามารถสร้างรูปภาพได้ ลองใหม่อีกครั้งค่ะ');
             }
         }
 
-        function printScaled() {
-            const root = document.getElementById('report-root');
-            root.classList.add('scale-80-print');
-            window.print();
-            setTimeout(() => root.classList.remove('scale-80-print'), 500);
+        function closeImagePreview() {
+            const overlay = document.getElementById('image-preview-overlay');
+            if (overlay) overlay.style.display = 'none';
         }
 
-        // export ฟังก์ชันให้ปุ่มเรียกใช้
+        function printScaled() {
+            const root = document.getElementById('report-root');
+            if (!root) return;
+
+            const prevTransform = root.style.transform;
+            const prevHeight = root.parentElement.style.height;
+
+            root.style.transform = 'none';
+            root.parentElement.style.height = 'auto';
+            root.classList.add('scale-80-print');
+
+            window.print();
+
+            setTimeout(() => {
+                root.classList.remove('scale-80-print');
+                root.style.transform = prevTransform;
+                root.parentElement.style.height = prevHeight;
+                fitReportToScreen();
+            }, 500);
+        }
+
         window.saveAsImage = saveAsImage;
         window.printScaled = printScaled;
+        window.closeImagePreview = closeImagePreview;
     </script>
 </body>
 </html>
