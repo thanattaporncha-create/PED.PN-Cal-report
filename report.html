@@ -17,39 +17,28 @@
             font-size: 10pt;
             line-height: 1.3;
             color: #000;
-            background: #e5e7eb;
+            background: #f1f5f9;
             padding: 0;
-            margin: 0;
-            overflow: hidden;
         }
 
-        .screen-wrapper {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            padding-top: 60px;
-        }
-
-        .report-viewport {
-            width: 100%;
-            height: calc(100vh - 60px);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            overflow: hidden;
-            padding: 10px;
-        }
-
+        /* กล่องหลักของรายงาน: ขนาดใกล้เคียง A4 แนวตั้ง */
         .report-container {
-            width: 210mm;
-            min-height: 297mm;
+            width: 900px;       /* ความกว้างคงที่ ไม่ให้บีบจนตัวหนังสือตกบรรทัด */
+            min-width: 900px;
             margin: 0 auto;
             background: white;
-            padding: 10mm;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            transform-origin: top center;
+            padding: 16px 20px;
         }
+
+        /* ครอบ report ทั้งใบ เอาไว้ให้มือถือเลื่อนซ้าย-ขวาได้ ถ้าจอแคบกว่ากระดาษ */
+        .scale-wrap {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* ====== สเกล 80% สำหรับ export/print (ยังเก็บไว้ เผื่อใช้กับ print) ====== */
+        .scale-80 { transform: scale(0.8); transform-origin: top left; }
 
         .header {
             text-align: left;
@@ -98,14 +87,13 @@
             position: absolute;
             right: 0;
             top: 6px;
-            white-space: nowrap;
         }
         .order-date-special .date-info {
-            font-size: 10pt; font-weight: 600; color: #0369a1;
+            font-size: 10pt; font-weight: 600; color: #0369a1; white-space: nowrap;
         }
         .order-date-special .day-badge {
             background: #0369a1; color: white; padding: 3px 10px; border-radius: 20px;
-            font-size: 9pt; font-weight: 600;
+            font-size: 9pt; font-weight: 600; white-space: nowrap;
         }
 
         .route-badge {
@@ -119,12 +107,7 @@
         }
         .route-badge.peripheral { background: #f59e0b; }
 
-        .composition-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            font-size: 9pt;
-        }
+        .composition-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
         .composition-table th {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -150,36 +133,11 @@
             display: inline-block;
         }
 
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9pt;
-        }
-        .summary-table th, .summary-table td {
-            border: 1px solid #e2e8f0;
-            padding: 6px 8px;
-        }
-        .summary-table th {
-            background: #f8fafc;
-            text-align: left;
-            font-weight: 600;
-            color: #2d3748;
-            width: 55%;
-        }
-        .summary-value-strong { font-weight: 700; }
-        .osmol-ok { color: #166534; font-weight: 700; }
-        .osmol-high { color: #991b1b; font-weight: 700; }
-
-        .footer {
-            margin-top: 8px;
-            font-size: 8.5pt;
-            color: #4b5563;
-        }
-
+        /* ปุ่มปฏิบัติการ */
         .top-actions {
             position: fixed;
-            top: 10px;
-            right: 10px;
+            top: 20px;
+            right: 20px;
             display: flex;
             gap: 10px;
             z-index: 1000;
@@ -190,7 +148,7 @@
             background: #4facfe;
             color: white;
             border: none;
-            padding: 8px 14px;
+            padding: 10px 16px;
             border-radius: 25px;
             cursor: pointer;
             font-size: 12px;
@@ -204,7 +162,57 @@
         }
         .btn.secondary:hover { background: #4a5568; }
 
-        /* ===== โหมดดูรูปที่แก้ให้เต็มความกว้างจอ ===== */
+        @media print {
+            body { padding: 0; margin: 0; background: #fff; }
+            .top-actions { display: none; }
+            .report-container { box-shadow: none; padding: 0; width: 100%; min-width: 0; }
+            #report-root.scale-80-print { transform: scale(0.8); transform-origin: top left; }
+            .header { margin-bottom: 10px; padding-bottom: 6px; }
+            .section { margin-bottom: 8px; }
+        }
+
+        /* Summary แบบตารางเรียบ */
+        .summary-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+        .summary-table th, .summary-table td { border: 1px solid #e2e8f0; padding: 6px 8px; }
+        .summary-table th {
+            background: #f8fafc;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            width: 55%;
+        }
+        .summary-value-strong { font-weight: 700; }
+        .osmol-ok { color: #166534; font-weight: 700; }
+        .osmol-high { color: #991b1b; font-weight: 700; }
+
+        /* iPhone / จอเล็ก: ปรับเฉพาะปุ่มเท่านั้น ไม่ยุ่งกับ layout ด้านใน */
+        @media (max-width: 480px) {
+            .top-actions {
+                left: 10px;
+                right: 10px;
+                top: 10px;
+                gap: 8px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .btn {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+        }
+
+        /* ============= โหมด export เท่านั้น ============= */
+        #report-root.exporting .header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        #report-root.exporting .order-date-special {
+            position: static;
+            margin-left: auto;
+        }
+
+        /* ===== Overlay ดูรูปหลัง Save Image ===== */
         .image-viewer {
             position: fixed;
             inset: 0;
@@ -213,9 +221,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 60px;
+            padding-top: 70px;
             z-index: 1200;
-            overflow-y: auto;         /* เลื่อนขึ้นลงได้ */
+            overflow-y: auto;
         }
         .image-viewer-header {
             position: fixed;
@@ -236,6 +244,9 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .image-viewer-btn:hover {
             background: rgba(15,23,42,1);
@@ -246,161 +257,142 @@
             text-align: right;
         }
         .image-viewer img {
-            width: 100%;             /* ใช้ความกว้างจอเต็ม ๆ */
-            max-width: 900px;        /* กันไม่ให้ใหญ่เกินเวลาเปิดใน iPad/คอม */
-            height: auto;            /* สูงตามสัดส่วน */
+            width: 900px;          /* ให้ภาพกว้างเท่าหน้ากระดาษ */
+            max-width: 100%;       /* ถ้าจอแคบลง ให้ย่อลงตามจอ */
+            height: auto;
+            display: block;
+            margin: 0 auto 40px auto;
             object-fit: contain;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            margin-bottom: 40px;
+            background: #fff;
         }
 
         .hidden { display: none !important; }
 
-        @media (max-width: 640px) {
-            .btn { padding: 7px 10px; font-size: 11px; }
-        }
-
-        @media print {
-            body {
-                background: #fff;
-                overflow: visible;
-            }
-            .top-actions,
-            .image-viewer { display: none !important; }
-            .screen-wrapper {
-                padding-top: 0;
-                height: auto;
-            }
-            .report-viewport {
-                height: auto;
-                padding: 0;
-                overflow: visible;
-            }
-            .report-container {
-                box-shadow: none;
-                transform: none !important;
-                width: 100%;
-                min-height: auto;
-                padding: 0;
-            }
+        .footer {
+            margin-top: 10px;
+            font-size: 8.5pt;
+            color: #4b5563;
+            text-align: left;
         }
     </style>
 </head>
 <body>
+    <!-- ปุ่มนำทางและบันทึก -->
     <div class="top-actions">
         <button class="btn secondary" onclick="goBack()">← ย้อนกลับ</button>
-        <button class="btn" onclick="saveImageInline()">🖼️ Save Image</button>
-        <button class="btn" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
+        <button class="btn" onclick="saveAsImage()">🖼️ Save Image</button>
+        <button class="btn" onclick="printScaled()">🖨️ พิมพ์รายงาน</button>
     </div>
 
-    <div class="screen-wrapper" id="screen-wrapper">
-        <div class="report-viewport">
-            <div class="report-container" id="report-root">
-                <!-- Header -->
-                <div class="header">
-                    <h1>📋 TPN Order Report</h1>
-                    <div class="order-date-special">
-                        <div class="date-info">
-                            📅 Order Date: <span id="display-order-date"></span>
-                        </div>
-                        <div class="day-badge" id="display-day-name"></div>
-                    </div>
-                </div>
-
-                <!-- Patient Information -->
-                <div class="section">
-                    <div class="section-title">👤 Patient Information</div>
-                    <div class="info-grid">
-                        <div class="info-item"><span class="info-label">HN:</span><span class="info-value" id="display-hn"></span></div>
-                        <div class="info-item"><span class="info-label">Name:</span><span class="info-value" id="display-name"></span></div>
-                        <div class="info-item"><span class="info-label">Ward:</span><span class="info-value" id="display-ward"></span></div>
-                        <div class="info-item"><span class="info-label">Body Weight:</span><span class="info-value" id="display-bw"></span></div>
-                        <div class="info-item"><span class="info-label">Route:</span><span class="info-value"><span class="route-badge" id="display-route"></span></span></div>
-                    </div>
-                </div>
-
-                <!-- TPN Configuration -->
-                <div class="section">
-                    <div class="section-title">💧 TPN Configuration</div>
-                    <div class="info-grid">
-                        <div class="info-item"><span class="info-label">Bag Volume:</span><span class="info-value" id="display-bag"></span></div>
-                        <div class="info-item"><span class="info-label">Rate:</span><span class="info-value" id="display-rate"></span></div>
-                    </div>
-                </div>
-
-                <!-- TPN Composition -->
-                <div class="section">
-                    <div class="section-title">🧪 TPN Composition</div>
-                    <table class="composition-table" id="composition-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 35%;">Component</th>
-                                <th style="width: 20%; text-align: center;">Dosage</th>
-                                <th style="width: 20%; text-align: center;">Volume (ml)</th>
-                                <th style="width: 25%; text-align: center;">Note</th>
-                            </tr>
-                        </thead>
-                        <tbody id="composition-body"></tbody>
-                    </table>
-                </div>
-
-                <!-- Summary -->
-                <div class="section">
-                    <div class="section-title">📊 Summary</div>
-                    <table class="summary-table">
-                        <tbody>
-                            <tr>
-                                <th>Total PN calories per day</th>
-                                <td><span class="summary-value-strong" id="display-pn-cal">0</span> kcal/day</td>
-                            </tr>
-                            <tr>
-                                <th>Total mOsmol/L</th>
-                                <td>
-                                    <span id="display-osmol">~0</span>
-                                    <span id="osmol-note" class="osmol-ok" style="margin-left:8px;">✓ &lt; 900 (เหมาะสำหรับ Peripheral)</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>From PN</th>
-                                <td><span class="summary-value-strong" id="display-pn-total">0</span> kcal/kg/day</td>
-                            </tr>
-                            <tr>
-                                <th>From Milk</th>
-                                <td><span class="summary-value-strong" id="display-milk-total">0</span> kcal/kg/day</td>
-                            </tr>
-                            <tr>
-                                <th>Total</th>
-                                <td><span class="summary-value-strong" id="display-grand-total">0</span> kcal/kg/day</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Footer -->
-                <div class="footer">
-                    <p>Generated on <span id="generated-date"></span></p>
-                    <p style="margin-top: 5px;">โรงพยาบาลขอนแก่น TPN Calculator for Pediatrics © 2025</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image viewer -->
-    <div class="image-viewer hidden" id="image-viewer">
+    <!-- Overlay แสดงรูปหลัง Save Image -->
+    <div id="image-viewer" class="image-viewer hidden">
         <div class="image-viewer-header">
-            <button class="image-viewer-btn" onclick="backToReport()">← กลับไปหน้า Report</button>
+            <button class="image-viewer-btn" onclick="closeImageViewer()">← กลับไปหน้า Report</button>
             <div class="image-viewer-note">
-                กดค้างที่รูปเพื่อบันทึกลงคลังภาพ 📲
+                กดค้างที่รูปเพื่อบันทึกลงคลังภาพ 📱
             </div>
         </div>
-        <img id="report-image" alt="TPN Report Image">
+        <img id="report-image" src="" alt="TPN Report Image">
     </div>
 
+    <div class="scale-wrap">
+      <div class="report-container" id="report-root">
+          <!-- Header -->
+          <div class="header">
+              <h1>📋 TPN Order Report</h1>
+              <div class="order-date-special">
+                  <div class="date-info">
+                      📅 Order Date: <span id="display-order-date"></span>
+                  </div>
+                  <div class="day-badge" id="display-day-name"></div>
+              </div>
+          </div>
+
+          <!-- Patient Information -->
+          <div class="section">
+              <div class="section-title">👤 Patient Information</div>
+              <div class="info-grid">
+                  <div class="info-item"><span class="info-label">HN:</span><span class="info-value" id="display-hn"></span></div>
+                  <div class="info-item"><span class="info-label">Name:</span><span class="info-value" id="display-name"></span></div>
+                  <div class="info-item"><span class="info-label">Ward:</span><span class="info-value" id="display-ward"></span></div>
+                  <div class="info-item"><span class="info-label">Body Weight:</span><span class="info-value" id="display-bw"></span></div>
+                  <div class="info-item"><span class="info-label">Route:</span><span class="info-value"><span class="route-badge" id="display-route"></span></span></div>
+              </div>
+          </div>
+
+          <!-- TPN Configuration -->
+          <div class="section">
+              <div class="section-title">💊 TPN Configuration</div>
+              <div class="info-grid">
+                  <div class="info-item"><span class="info-label">Bag Volume:</span><span class="info-value" id="display-bag"></span></div>
+                  <div class="info-item"><span class="info-label">Rate:</span><span class="info-value" id="display-rate"></span></div>
+              </div>
+          </div>
+
+          <!-- TPN Composition -->
+          <div class="section">
+              <div class="section-title">🧪 TPN Composition</div>
+              <table class="composition-table" id="composition-table">
+                  <thead>
+                      <tr>
+                          <th style="width: 35%;">Component</th>
+                          <th style="width: 20%; text-align: center;">Dosage</th>
+                          <th style="width: 20%; text-align: center;">Volume (ml)</th>
+                          <th style="width: 25%; text-align: center;">Note</th>
+                      </tr>
+                  </thead>
+                  <tbody id="composition-body"></tbody>
+              </table>
+          </div>
+
+          <!-- Summary -->
+          <div class="section">
+              <div class="section-title">📊 Summary</div>
+              <table class="summary-table">
+                  <tbody>
+                      <tr>
+                          <th>Total PN calories per day</th>
+                          <td><span class="summary-value-strong" id="display-pn-cal">0</span> kcal/day</td>
+                      </tr>
+                      <tr>
+                          <th>Total mOsmol/L</th>
+                          <td>
+                              <span id="display-osmol">~0</span>
+                              <span id="osmol-note" class="osmol-ok" style="margin-left:8px;">✓ &lt; 900 (เหมาะสำหรับ Peripheral)</span>
+                          </td>
+                      </tr>
+                      <tr>
+                          <th>From PN</th>
+                          <td><span class="summary-value-strong" id="display-pn-total">0</span> kcal/kg/day</td>
+                      </tr>
+                      <tr>
+                          <th>From Milk</th>
+                          <td><span class="summary-value-strong" id="display-milk-total">0</span> kcal/kg/day</td>
+                      </tr>
+                      <tr>
+                          <th>Total</th>
+                          <td><span class="summary-value-strong" id="display-grand-total">0</span> kcal/kg/day</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+
+          <!-- Footer -->
+          <div class="footer">
+              <p>Generated on <span id="generated-date"></span></p>
+              <p style="margin-top: 5px;">โรงพยาบาลขอนแก่น TPN Calculator for Pediatrics © 2025</p>
+          </div>
+      </div>
+    </div>
+
+    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
         function goBack() { window.location.href = 'index.html'; }
 
+        // ปัดแบบพิเศษ 2 ตำแหน่ง (เหมือน r2 ใน index.html) สำหรับ fallback Mg
         function specialRound2(v){
             const n = Number(v);
             if (!isFinite(n) || n === 0) return '0.00';
@@ -410,13 +402,16 @@
             return out.toFixed(2);
         }
 
+        // Load data จาก localStorage
         const data = JSON.parse(localStorage.getItem('tpnReportData') || '{}');
 
+        // Patient info
         document.getElementById('display-hn').textContent = data.hn || '-';
         document.getElementById('display-name').textContent = data.name || '-';
         document.getElementById('display-ward').textContent = data.ward || '-';
         document.getElementById('display-bw').textContent = data.bw ? `${data.bw} kg` : '-';
 
+        // Order date (B.E.) + Day-of-week
         let displayDate = data.orderDate || '-';
         let dayNameText = data.orderDayName || '-';
         if (data.orderDate && data.orderDate !== '-') {
@@ -433,21 +428,34 @@
         document.getElementById('display-order-date').textContent = displayDate;
         document.getElementById('display-day-name').textContent = dayNameText;
 
+        // Route badge
         const routeBadge = document.getElementById('display-route');
         routeBadge.textContent = (data.route === 'central') ? 'Central Line' : 'Peripheral Line';
         if (data.route === 'peripheral') routeBadge.classList.add('peripheral');
 
+        // Bag & Rate
         document.getElementById('display-bag').textContent = data.bag ? `${data.bag} ml` : '-';
         document.getElementById('display-rate').textContent = data.rate ? `${data.rate} ml/hr` : '-';
 
+        // Composition table
         const tbody = document.getElementById('composition-body');
         const compositions = [];
 
         if (parseFloat(data.proteinVol) > 0) {
-            compositions.push({ name: '10% Protein', input: `${data.protein || '0'} g/kg/day`, volume: data.proteinVol, note: '' });
+            compositions.push({
+                name: '10% Protein',
+                input: `${data.protein || '0'} g/kg/day`,
+                volume: data.proteinVol,
+                note: ''
+            });
         }
         if (parseFloat(data.dextroseVol) > 0) {
-            compositions.push({ name: '50% Dextrose', input: `${data.dextrose || '0'}%`, volume: data.dextroseVol, note: '' });
+            compositions.push({
+                name: '50% Dextrose',
+                input: `${data.dextrose || '0'}%`,
+                volume: data.dextroseVol,
+                note: ''
+            });
         }
 
         if (parseFloat(data.pVol) > 0) {
@@ -459,9 +467,10 @@
                 name: 'Glycophos® (P)',
                 input: `${data.p || '0'} mmol/kg/day`,
                 volume: pVolShow,
-                note: 'Contains Na ' + naFromGly + ' mEq'
+                note: 'Contains Na ' + naFromGly
             });
         }
+
         if (data.naSource === 'nacl' && parseFloat(data.naclVol) > 0) {
             compositions.push({
                 name: '3% NaCl',
@@ -477,6 +486,7 @@
                 note: ''
             });
         }
+
         if (data.kSource === 'kcl' && parseFloat(data.kclVol) > 0) {
             compositions.push({
                 name: '15% KCl',
@@ -492,6 +502,7 @@
                 note: ''
             });
         }
+
         if (parseFloat(data.caVol) > 0) {
             compositions.push({
                 name: 'Ca Gluconate',
@@ -501,6 +512,7 @@
             });
         }
 
+        // MgSO4: 2 ตำแหน่ง
         (function handleMg() {
             const mgRawStr = (data.mgVol !== undefined && data.mgVol !== null && String(data.mgVol).trim() !== '')
                 ? String(data.mgVol).replace(/[^0-9.\-]/g, '')
@@ -516,6 +528,7 @@
                 const mgCalc = (parseFloat(data.mg) * parseFloat(data.bw)) / 2;
                 mgDisplay2 = specialRound2(mgCalc);
             }
+
             if (mgDisplay2 && parseFloat(mgDisplay2) > 0) {
                 compositions.push({
                     name: 'MgSO₄',
@@ -526,6 +539,7 @@
             }
         })();
 
+        // Micronutrients
         const peditVol = data.peditrace ? parseFloat(String(data.peditrace).replace(/[^0-9.]/g, '')) : 0;
         if (peditVol > 0) {
             let peditNote = '';
@@ -542,6 +556,7 @@
                 note: peditNote
             });
         }
+
         const cernVol = data.cernevit ? parseFloat(String(data.cernevit).replace(/[^0-9.]/g, '')) : 0;
         if (cernVol > 0) {
             let cernNote = '';
@@ -559,6 +574,7 @@
             });
         }
 
+        // Vitamin K
         if (data.vitKChoice === 'daily') {
             const vitKVol = data.vitKDaily ? parseFloat(String(data.vitKDaily).replace(/[^0-9.]/g, '')) : 0;
             if (vitKVol > 0) {
@@ -583,6 +599,7 @@
             }
         }
 
+        // 20% Fat + 6 ml
         const fatVolNum = data.fatVol ? parseFloat(String(data.fatVol).replace(/[^0-9.]/g, '')) : 0;
         if (fatVolNum > 0) {
             const fatVolPlus6 = (fatVolNum + 6).toFixed(1);
@@ -595,6 +612,7 @@
             });
         }
 
+        // Sterile Water ท้ายสุด
         if (parseFloat(data.sterileWater) > 0) {
             compositions.push({
                 name: 'Sterile Water',
@@ -605,6 +623,7 @@
             });
         }
 
+        // เติมตาราง
         compositions.forEach(comp => {
             const row = document.createElement('tr');
             if (comp.highlight) row.classList.add('highlight-row');
@@ -620,11 +639,11 @@
             tbody.appendChild(row);
         });
 
+        // Summary
         const bwNum = parseFloat(String(data.bw).replace(/[^0-9.]/g, '')) || 0;
         const pnCalKg = parseFloat(String(data.pnCalKg).replace(/[^0-9.]/g, '')) || 0;
         const pnCalPerDay = bwNum * pnCalKg;
-        document.getElementById('display-pn-cal').textContent =
-            isFinite(pnCalPerDay) ? pnCalPerDay.toFixed(0) : '0';
+        document.getElementById('display-pn-cal').textContent = isFinite(pnCalPerDay) ? pnCalPerDay.toFixed(0) : '0';
 
         const osmolValue = data.totalOsmol ? String(data.totalOsmol).replace('~', '') : '0';
         const osmolNum = parseInt(osmolValue || '0', 10);
@@ -644,69 +663,60 @@
         document.getElementById('display-milk-total').textContent = data.milkCalKg || '0';
         document.getElementById('display-grand-total').textContent = data.totalCalKg || '0';
 
+        // Generated date
         const now = new Date();
         const dateStr = now.toLocaleDateString('th-TH', {
-            year: 'numeric', month: 'long', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
         document.getElementById('generated-date').textContent = dateStr;
 
-        function fitReportToScreen() {
+        // ฟังก์ชันสำหรับโหมด export / print
+        function toggleExporting(enable) {
             const root = document.getElementById('report-root');
-            if (!root) return;
-            root.style.transform = 'none';
-            const rect = root.getBoundingClientRect();
-            const vw = window.innerWidth;
-            const vh = window.innerHeight - 60;
-            const scale = Math.min((vw - 20) / rect.width, (vh - 20) / rect.height);
-            const finalScale = Math.min(scale, 1);
-            root.style.transform = `scale(${finalScale})`;
+            if (enable) root.classList.add('exporting');
+            else root.classList.remove('exporting');
         }
 
-        window.addEventListener('load', fitReportToScreen);
-        window.addEventListener('resize', () => {
-            clearTimeout(window.__fitTimer);
-            window.__fitTimer = setTimeout(fitReportToScreen, 200);
-        });
-
-        async function saveImageInline() {
+        async function saveAsImage() {
             const root = document.getElementById('report-root');
-            const screenWrapper = document.getElementById('screen-wrapper');
-            const viewer = document.getElementById('image-viewer');
-            const imgEl = document.getElementById('report-image');
-
-            if (!root || !viewer || !imgEl) return;
-
-            const prevTransform = root.style.transform;
-            root.style.transform = 'none';
+            toggleExporting(true);
+            await new Promise(r => requestAnimationFrame(r));
 
             const canvas = await html2canvas(root, {
-                scale: 3,
+                scale: 2,
                 useCORS: true,
                 backgroundColor: '#ffffff'
             });
 
-            root.style.transform = prevTransform;
+            toggleExporting(false);
 
             const dataUrl = canvas.toDataURL('image/png');
-
-            imgEl.src = dataUrl;
-            screenWrapper.classList.add('hidden');
-            viewer.classList.remove('hidden');
-        }
-
-        function backToReport() {
-            const screenWrapper = document.getElementById('screen-wrapper');
+            const img = document.getElementById('report-image');
             const viewer = document.getElementById('image-viewer');
-            const imgEl = document.getElementById('report-image');
-            imgEl.src = '';
-            viewer.classList.add('hidden');
-            screenWrapper.classList.remove('hidden');
-            fitReportToScreen();
+
+            img.src = dataUrl;
+            viewer.classList.remove('hidden');
+            window.scrollTo(0, 0);
         }
 
-        window.saveImageInline = saveImageInline;
-        window.backToReport = backToReport;
+        function closeImageViewer() {
+            document.getElementById('image-viewer').classList.add('hidden');
+        }
+
+        function printScaled() {
+            const root = document.getElementById('report-root');
+            root.classList.add('scale-80-print');
+            window.print();
+            setTimeout(() => root.classList.remove('scale-80-print'), 500);
+        }
+
+        window.saveAsImage = saveAsImage;
+        window.closeImageViewer = closeImageViewer;
+        window.printScaled = printScaled;
     </script>
 </body>
 </html>
