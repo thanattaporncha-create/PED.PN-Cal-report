@@ -22,13 +22,13 @@
         }
 
         /* กล่องหลักของรายงาน: ขนาดใกล้เคียง A4 แนวตั้ง */
-        .report-container {
-            width: 900px;       /* ความกว้างคงที่ ไม่ให้บีบจนตัวหนังสือตกบรรทัด */
-            min-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 16px 20px;
-        }
+   .report-container {
+    width: 820px;        /* หุบความกว้างลงนิดนึง */
+    min-width: 820px;
+    margin: 0 auto;
+    background: white;
+    padding: 16px 18px;  /* ลด padding ซ้าย-ขวาเล็กน้อย */
+}
 
         /* ครอบ report ทั้งใบ เอาไว้ให้มือถือเลื่อนซ้าย-ขวาได้ ถ้าจอแคบกว่ากระดาษ */
         .scale-wrap {
@@ -66,12 +66,12 @@
             margin-bottom: 6px;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 20px;
-            margin-bottom: 8px;
-        }
+        ..info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;   /* ช่องว่างระหว่างซ้าย-ขวาแคบลง */
+    margin-bottom: 8px;
+}
         .info-item { display: flex; align-items: baseline; gap: 6px; }
         .info-label { font-weight: 600; color: #2d3748; min-width: 90px; flex-shrink: 0; }
         .info-value { color: #4a5568; flex: 1; }
@@ -179,7 +179,7 @@
             text-align: left;
             font-weight: 600;
             color: #2d3748;
-            width: 55%;
+            width: 50%;
         }
         .summary-value-strong { font-weight: 700; }
         .osmol-ok { color: #166534; font-weight: 700; }
