@@ -20,16 +20,15 @@
             background: #e5e7eb;
             padding: 0;
             margin: 0;
-            overflow: hidden; /* ให้เห็นแค่หน้ากระดาษเดียวบนจอ */
+            overflow: hidden;
         }
 
-        /* พื้นที่สำหรับหน้า A4 บนจอ */
         .screen-wrapper {
             position: relative;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            padding-top: 60px; /* เว้นให้ปุ่มด้านบน */
+            padding-top: 60px;
         }
 
         .report-viewport {
@@ -42,7 +41,6 @@
             padding: 10px;
         }
 
-        /* ตัวกระดาษ A4 จริง ๆ */
         .report-container {
             width: 210mm;
             min-height: 297mm;
@@ -110,27 +108,74 @@
             font-size: 9pt; font-weight: 600;
         }
 
-        .route-badge { display: inline-block; background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 10pt; font-weight: 600; }
+        .route-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10pt;
+            font-weight: 600;
+        }
         .route-badge.peripheral { background: #f59e0b; }
 
-        .composition-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9pt; }
-        .composition-table th { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 6px; text-align: left; font-weight: 600; color: #2d3748; }
-        .composition-table td { border: 1px solid #e2e8f0; padding: 4px 6px; color: #4a5568; }
+        .composition-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 9pt;
+        }
+        .composition-table th {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 5px 6px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .composition-table td {
+            border: 1px solid #e2e8f0;
+            padding: 4px 6px;
+            color: #4a5568;
+        }
         .composition-table tr:nth-child(even) { background: #f8fafc; }
         .highlight-row { background: #fef3c7 !important; font-weight: 600; }
-        .input-badge { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 3px; font-size: 8pt; font-weight: 600; display: inline-block; }
+        .input-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 8pt;
+            font-weight: 600;
+            display: inline-block;
+        }
 
-        /* Summary แบบตาราง */
-        .summary-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-        .summary-table th, .summary-table td { border: 1px solid #e2e8f0; padding: 6px 8px; }
-        .summary-table th { background: #f8fafc; text-align: left; font-weight: 600; color: #2d3748; width: 55%; }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+        .summary-table th, .summary-table td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 8px;
+        }
+        .summary-table th {
+            background: #f8fafc;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            width: 55%;
+        }
         .summary-value-strong { font-weight: 700; }
         .osmol-ok { color: #166534; font-weight: 700; }
         .osmol-high { color: #991b1b; font-weight: 700; }
 
-        .footer { margin-top: 8px; font-size: 8.5pt; color: #4b5563; }
+        .footer {
+            margin-top: 8px;
+            font-size: 8.5pt;
+            color: #4b5563;
+        }
 
-        /* ปุ่มปฏิบัติการ */
         .top-actions {
             position: fixed;
             top: 10px;
@@ -142,15 +187,24 @@
             justify-content: flex-end;
         }
         .btn {
-            background: #4facfe; color: white; border: none; padding: 8px 14px;
-            border-radius: 25px; cursor: pointer; font-size: 12px; font-weight: 600;
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
             box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
         }
         .btn:hover { background: #3b8ad6; }
-        .btn.secondary { background: #718096; box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4); }
+        .btn.secondary {
+            background: #718096;
+            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
+        }
         .btn.secondary:hover { background: #4a5568; }
 
-        /* viewer สำหรับรูป */
+        /* ===== โหมดดูรูปที่แก้ให้เต็มความกว้างจอ ===== */
         .image-viewer {
             position: fixed;
             inset: 0;
@@ -161,6 +215,7 @@
             justify-content: flex-start;
             padding-top: 60px;
             z-index: 1200;
+            overflow-y: auto;         /* เลื่อนขึ้นลงได้ */
         }
         .image-viewer-header {
             position: fixed;
@@ -191,11 +246,14 @@
             text-align: right;
         }
         .image-viewer img {
-            max-width: 100%;
-            max-height: calc(100vh - 80px);
+            width: 100%;             /* ใช้ความกว้างจอเต็ม ๆ */
+            max-width: 900px;        /* กันไม่ให้ใหญ่เกินเวลาเปิดใน iPad/คอม */
+            height: auto;            /* สูงตามสัดส่วน */
             object-fit: contain;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            margin-bottom: 40px;
         }
+
         .hidden { display: none !important; }
 
         @media (max-width: 640px) {
@@ -229,14 +287,12 @@
     </style>
 </head>
 <body>
-    <!-- ปุ่มนำทางและบันทึก -->
     <div class="top-actions">
         <button class="btn secondary" onclick="goBack()">← ย้อนกลับ</button>
         <button class="btn" onclick="saveImageInline()">🖼️ Save Image</button>
         <button class="btn" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
     </div>
 
-    <!-- โหมดแสดง report (A4) -->
     <div class="screen-wrapper" id="screen-wrapper">
         <div class="report-viewport">
             <div class="report-container" id="report-root">
@@ -329,7 +385,7 @@
         </div>
     </div>
 
-    <!-- โหมดแสดงภาพ -->
+    <!-- Image viewer -->
     <div class="image-viewer hidden" id="image-viewer">
         <div class="image-viewer-header">
             <button class="image-viewer-btn" onclick="backToReport()">← กลับไปหน้า Report</button>
@@ -340,13 +396,11 @@
         <img id="report-image" alt="TPN Report Image">
     </div>
 
-    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
         function goBack() { window.location.href = 'index.html'; }
 
-        // ===== ปัดแบบพิเศษ 2 ตำแหน่ง (เหมือน r2 ใน index.html) สำหรับ fallback =====
         function specialRound2(v){
             const n = Number(v);
             if (!isFinite(n) || n === 0) return '0.00';
@@ -356,16 +410,13 @@
             return out.toFixed(2);
         }
 
-        // โหลดข้อมูลจาก index.html
         const data = JSON.parse(localStorage.getItem('tpnReportData') || '{}');
 
-        // Patient info
         document.getElementById('display-hn').textContent = data.hn || '-';
         document.getElementById('display-name').textContent = data.name || '-';
         document.getElementById('display-ward').textContent = data.ward || '-';
         document.getElementById('display-bw').textContent = data.bw ? `${data.bw} kg` : '-';
 
-        // Order date (B.E.) + Day-of-week
         let displayDate = data.orderDate || '-';
         let dayNameText = data.orderDayName || '-';
         if (data.orderDate && data.orderDate !== '-') {
@@ -382,20 +433,16 @@
         document.getElementById('display-order-date').textContent = displayDate;
         document.getElementById('display-day-name').textContent = dayNameText;
 
-        // Route badge
         const routeBadge = document.getElementById('display-route');
         routeBadge.textContent = (data.route === 'central') ? 'Central Line' : 'Peripheral Line';
         if (data.route === 'peripheral') routeBadge.classList.add('peripheral');
 
-        // Bag & Rate
         document.getElementById('display-bag').textContent = data.bag ? `${data.bag} ml` : '-';
         document.getElementById('display-rate').textContent = data.rate ? `${data.rate} ml/hr` : '-';
 
-        // Composition table
         const tbody = document.getElementById('composition-body');
         const compositions = [];
 
-        // Macronutrients
         if (parseFloat(data.proteinVol) > 0) {
             compositions.push({ name: '10% Protein', input: `${data.protein || '0'} g/kg/day`, volume: data.proteinVol, note: '' });
         }
@@ -403,7 +450,6 @@
             compositions.push({ name: '50% Dextrose', input: `${data.dextrose || '0'}%`, volume: data.dextroseVol, note: '' });
         }
 
-        // Electrolytes
         if (parseFloat(data.pVol) > 0) {
             const pVolShow = parseFloat(String(data.pVol).replace(/[^0-9.]/g, '')).toFixed(1);
             const naFromGly = (data.naFromGly !== undefined && data.naFromGly !== null && String(data.naFromGly).trim() !== '')
@@ -417,25 +463,44 @@
             });
         }
         if (data.naSource === 'nacl' && parseFloat(data.naclVol) > 0) {
-            compositions.push({ name: '3% NaCl', input: `${data.na || '0'} mEq/kg/day`,
-                volume: parseFloat(String(data.naclVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+            compositions.push({
+                name: '3% NaCl',
+                input: `${data.na || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.naclVol).replace(/[^0-9.]/g, '')).toFixed(1),
+                note: ''
+            });
         } else if (data.naSource === 'na-acetate' && parseFloat(data.naAcVol) > 0) {
-            compositions.push({ name: 'Na Acetate', input: `${data.na || '0'} mEq/kg/day`,
-                volume: parseFloat(String(data.naAcVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+            compositions.push({
+                name: 'Na Acetate',
+                input: `${data.na || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.naAcVol).replace(/[^0-9.]/g, '')).toFixed(1),
+                note: ''
+            });
         }
         if (data.kSource === 'kcl' && parseFloat(data.kclVol) > 0) {
-            compositions.push({ name: '15% KCl', input: `${data.k || '0'} mEq/kg/day`,
-                volume: parseFloat(String(data.kclVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+            compositions.push({
+                name: '15% KCl',
+                input: `${data.k || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.kclVol).replace(/[^0-9.]/g, '')).toFixed(1),
+                note: ''
+            });
         } else if (data.kSource === 'k-acetate' && parseFloat(data.kAcVol) > 0) {
-            compositions.push({ name: 'K Acetate', input: `${data.k || '0'} mEq/kg/day`,
-                volume: parseFloat(String(data.kAcVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+            compositions.push({
+                name: 'K Acetate',
+                input: `${data.k || '0'} mEq/kg/day`,
+                volume: parseFloat(String(data.kAcVol).replace(/[^0-9.]/g, '')).toFixed(1),
+                note: ''
+            });
         }
         if (parseFloat(data.caVol) > 0) {
-            compositions.push({ name: 'Ca Gluconate', input: `${data.ca || '0'} mmol/kg/day`,
-                volume: parseFloat(String(data.caVol).replace(/[^0-9.]/g, '')).toFixed(1), note: '' });
+            compositions.push({
+                name: 'Ca Gluconate',
+                input: `${data.ca || '0'} mmol/kg/day`,
+                volume: parseFloat(String(data.caVol).replace(/[^0-9.]/g, '')).toFixed(1),
+                note: ''
+            });
         }
 
-        // MgSO4 แสดง 2 ตำแหน่ง
         (function handleMg() {
             const mgRawStr = (data.mgVol !== undefined && data.mgVol !== null && String(data.mgVol).trim() !== '')
                 ? String(data.mgVol).replace(/[^0-9.\-]/g, '')
@@ -461,7 +526,6 @@
             }
         })();
 
-        // Micronutrients
         const peditVol = data.peditrace ? parseFloat(String(data.peditrace).replace(/[^0-9.]/g, '')) : 0;
         if (peditVol > 0) {
             let peditNote = '';
@@ -471,7 +535,12 @@
                 const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 peditNote = 'Weekly (' + days[parseInt(data.peditDay || 1)] + ')';
             }
-            compositions.push({ name: 'Peditrace®', input: '1 ml/kg/day', volume: peditVol.toFixed(1), note: peditNote });
+            compositions.push({
+                name: 'Peditrace®',
+                input: '1 ml/kg/day',
+                volume: peditVol.toFixed(1),
+                note: peditNote
+            });
         }
         const cernVol = data.cernevit ? parseFloat(String(data.cernevit).replace(/[^0-9.]/g, '')) : 0;
         if (cernVol > 0) {
@@ -482,23 +551,38 @@
                 const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 cernNote = 'Weekly (' + days[parseInt(data.cernDay || 1)] + ')';
             }
-            compositions.push({ name: 'Cernevit®', input: '1 ml/kg/day', volume: cernVol.toFixed(1), note: cernNote });
+            compositions.push({
+                name: 'Cernevit®',
+                input: '1 ml/kg/day',
+                volume: cernVol.toFixed(1),
+                note: cernNote
+            });
         }
 
-        // Vitamin K
         if (data.vitKChoice === 'daily') {
             const vitKVol = data.vitKDaily ? parseFloat(String(data.vitKDaily).replace(/[^0-9.]/g, '')) : 0;
-            if (vitKVol > 0) { compositions.push({ name: 'Vitamin K', input: '10 mcg/kg/day', volume: vitKVol.toFixed(3), note: 'Per day' }); }
+            if (vitKVol > 0) {
+                compositions.push({
+                    name: 'Vitamin K',
+                    input: '10 mcg/kg/day',
+                    volume: vitKVol.toFixed(3),
+                    note: 'Per day'
+                });
+            }
         } else if (data.vitKChoice === 'weekly') {
             const vitKVol = data.vitKWeekly ? parseFloat(String(data.vitKWeekly).replace(/[^0-9.]/g, '')) : 0;
             if (vitKVol > 0) {
                 const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 const dayName = days[parseInt(data.vitKDay || 1)];
-                compositions.push({ name: 'Vitamin K', input: '10 mcg/kg/week', volume: vitKVol.toFixed(3), note: 'Weekly (' + dayName + ')' });
+                compositions.push({
+                    name: 'Vitamin K',
+                    input: '10 mcg/kg/week',
+                    volume: vitKVol.toFixed(3),
+                    note: 'Weekly (' + dayName + ')'
+                });
             }
         }
 
-        // 20% Fat (+6 ml)
         const fatVolNum = data.fatVol ? parseFloat(String(data.fatVol).replace(/[^0-9.]/g, '')) : 0;
         if (fatVolNum > 0) {
             const fatVolPlus6 = (fatVolNum + 6).toFixed(1);
@@ -511,12 +595,16 @@
             });
         }
 
-        // Sterile Water ท้ายสุด
         if (parseFloat(data.sterileWater) > 0) {
-            compositions.push({ name: 'Sterile Water', input: '-', volume: data.sterileWater, note: '', highlight: true });
+            compositions.push({
+                name: 'Sterile Water',
+                input: '-',
+                volume: data.sterileWater,
+                note: '',
+                highlight: true
+            });
         }
 
-        // เติมลงตาราง
         compositions.forEach(comp => {
             const row = document.createElement('tr');
             if (comp.highlight) row.classList.add('highlight-row');
@@ -532,11 +620,11 @@
             tbody.appendChild(row);
         });
 
-        // Summary
         const bwNum = parseFloat(String(data.bw).replace(/[^0-9.]/g, '')) || 0;
         const pnCalKg = parseFloat(String(data.pnCalKg).replace(/[^0-9.]/g, '')) || 0;
         const pnCalPerDay = bwNum * pnCalKg;
-        document.getElementById('display-pn-cal').textContent = isFinite(pnCalPerDay) ? pnCalPerDay.toFixed(0) : '0';
+        document.getElementById('display-pn-cal').textContent =
+            isFinite(pnCalPerDay) ? pnCalPerDay.toFixed(0) : '0';
 
         const osmolValue = data.totalOsmol ? String(data.totalOsmol).replace('~', '') : '0';
         const osmolNum = parseInt(osmolValue || '0', 10);
@@ -544,10 +632,12 @@
         const osmolNoteEl = document.getElementById('osmol-note');
         if (osmolNum > 900) {
             osmolNoteEl.textContent = '⚠️ > 900 (ไม่เหมาะสำหรับ Peripheral)';
-            osmolNoteEl.classList.remove('osmol-ok'); osmolNoteEl.classList.add('osmol-high');
+            osmolNoteEl.classList.remove('osmol-ok');
+            osmolNoteEl.classList.add('osmol-high');
         } else {
             osmolNoteEl.textContent = '✓ < 900 (เหมาะสำหรับ Peripheral)';
-            osmolNoteEl.classList.remove('osmol-high'); osmolNoteEl.classList.add('osmol-ok');
+            osmolNoteEl.classList.remove('osmol-high');
+            osmolNoteEl.classList.add('osmol-ok');
         }
 
         document.getElementById('display-pn-total').textContent = data.pnCalKg || '0';
@@ -555,20 +645,21 @@
         document.getElementById('display-grand-total').textContent = data.totalCalKg || '0';
 
         const now = new Date();
-        const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('th-TH', {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
         document.getElementById('generated-date').textContent = dateStr;
 
-        // ===== ย่อให้พอดีจอ (A4 ทั้งใบ) =====
         function fitReportToScreen() {
             const root = document.getElementById('report-root');
             if (!root) return;
-            // reset ก่อนวัดขนาดจริง
             root.style.transform = 'none';
             const rect = root.getBoundingClientRect();
             const vw = window.innerWidth;
-            const vh = window.innerHeight - 60; // หักพื้นที่ปุ่มด้านบน
+            const vh = window.innerHeight - 60;
             const scale = Math.min((vw - 20) / rect.width, (vh - 20) / rect.height);
-            const finalScale = Math.min(scale, 1); // ไม่ขยายเกิน 1
+            const finalScale = Math.min(scale, 1);
             root.style.transform = `scale(${finalScale})`;
         }
 
@@ -578,7 +669,6 @@
             window.__fitTimer = setTimeout(fitReportToScreen, 200);
         });
 
-        // ===== Save Image แบบแสดงในหน้าเดิม =====
         async function saveImageInline() {
             const root = document.getElementById('report-root');
             const screenWrapper = document.getElementById('screen-wrapper');
@@ -587,17 +677,15 @@
 
             if (!root || !viewer || !imgEl) return;
 
-            // ปิด scale ชั่วคราวให้ภาพคม
             const prevTransform = root.style.transform;
             root.style.transform = 'none';
 
             const canvas = await html2canvas(root, {
-                scale: 3,          // เพิ่มความคมชัด
+                scale: 3,
                 useCORS: true,
                 backgroundColor: '#ffffff'
             });
 
-            // คืนค่า transform
             root.style.transform = prevTransform;
 
             const dataUrl = canvas.toDataURL('image/png');
