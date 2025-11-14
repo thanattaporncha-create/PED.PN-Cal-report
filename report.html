@@ -443,7 +443,7 @@
 
         if (parseFloat(data.proteinVol) > 0) {
             compositions.push({
-                name: '10% Protein',
+                name: data.proteinProduct || '10% Aminoven® infant',  // ✅ ดึงจาก index
                 input: `${data.protein || '0'} g/kg/day`,
                 volume: data.proteinVol,
                 note: ''
@@ -604,7 +604,7 @@
         if (fatVolNum > 0) {
             const fatVolPlus6 = (fatVolNum + 6).toFixed(1);
             compositions.push({
-                name: '20% Fat',
+                name: data.fatProduct || '20% SMOF lipid',  // ✅ ดึงจาก index
                 input: `${data.fat || '0'} g/kg/day`,
                 volume: fatVolPlus6,
                 note: '(+ 6ml เผื่อไล่สายแล้ว) IV drip in 24 hr.',
