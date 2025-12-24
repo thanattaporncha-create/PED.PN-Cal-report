@@ -1780,10 +1780,11 @@ const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
         const zincVolume = document.getElementById('zinc-volume')?.value || '0';
       
         Object.assign(data, {
-    route, proteinProduct, fatProduct, naSrc, kSrc,
-    peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,isPreterm,
-            zincChoice,
-            zincVolume
+            route, proteinProduct, fatProduct, naSrc, kSrc,
+            peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,
+            fatPriming, fatDripDuration, fatSplit,
+            isPreterm, zincChoice, zincVolume
+        });
     fatPriming, fatDripDuration, fatSplit
 });
 
@@ -2134,6 +2135,21 @@ const hep_disp_1 = picc ? hep_calc_1 : 0;
             if (vkChoice === 'daily') totalUsed += vitK_day_raw;
             else if (vkChoice === 'weekly') totalUsed += vitK_week_raw;
         }
+// ===== Zinc Calculation =====
+        let zincVolume = 0;
+        const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
+        const zincChoice = document.querySelector('input[name="zinc-choice"]:checked')?.value;
+        
+        if (isPreterm && zincChoice === 'add') {
+            zincVolume = parseFloat(document.getElementById('zinc-volume').value) || 0;
+        }
+        
+        // เพิ่ม zinc volume ใน totalUsed
+        totalUsed += zincVolume;
+        
+        // คำนวณ Zinc ที่ได้จาก Peditrace
+        const zincFromPeditrace = pedit_1 * 250; // Peditrace มี 250 mcg/ml
+        document.getElementById('zinc-from-peditrace').textContent = r0(zincFromPeditrace);
 
         const swVol = Math.floor(bag - totalUsed);
         const elyteOsm_raw = bag > 0 ? ((na + k) * bw * 2 * 1000) / bag : 0;
@@ -2273,21 +2289,6 @@ if (nitrogenGrams > 0) {
 
 document.getElementById('npc-n-ratio').textContent = npcnRatio > 0 ? `${npcnRatio}:1` : '0:1';
 
-        // ===== Zinc Calculation =====
-        let zincVolume = 0;
-        const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
-        const zincChoice = document.querySelector('input[name="zinc-choice"]:checked')?.value;
-        
-        if (isPreterm && zincChoice === 'add') {
-            zincVolume = parseFloat(document.getElementById('zinc-volume').value) || 0;
-        }
-        
-        // เพิ่ม zinc volume ใน totalUsed
-        totalUsed += zincVolume;
-        
-        // คำนวณ Zinc ที่ได้จาก Peditrace
-        const zincFromPeditrace = pedit_1 * 250; // Peditrace มี 250 mcg/ml
-        document.getElementById('zinc-from-peditrace').textContent = r0(zincFromPeditrace);
 autosaveCollect();
     }
     
@@ -2664,7 +2665,7 @@ if (picc) {
             isPreterm: document.getElementById('preterm-checkbox')?.checked || false,
             zincChoice: document.querySelector('input[name="zinc-choice"]:checked')?.value || 'none',
             zincVolume: document.getElementById('zinc-volume')?.value || '0',
-            zincFromPeditrace: document.getElementById('zinc-from-peditrace')?.textContent || '0'
+            zincFromPeditrace: document.getElementById('zinc-from-peditrace')?.textContent || '0',
             sterileWater: extractNumberString(dsel('sterile-water-volume')),
             totalOsmol: extractNumberString(dsel('total-osmol')),
             totalCalDay: extractNumberString(dsel('total-calories-day')),
