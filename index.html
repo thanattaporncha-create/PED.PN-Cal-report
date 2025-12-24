@@ -1856,16 +1856,6 @@ if (data.heparinConc) {
                 pretermCheck.checked = true;
                 const zincRec = document.getElementById('zinc-recommendation');
                 if (zincRec) zincRec.style.display = 'block';
-                
-                // ✅ คำนวณและแสดง recommended Zinc
-                const bw = parseFloat(document.getElementById('bw')?.value) || 0;
-                if (bw > 0) {
-                    const recommendedZinc = bw * 0.3;
-                    const zincRecommendedEl = document.getElementById('zinc-recommended');
-                    if (zincRecommendedEl) {
-                        zincRecommendedEl.textContent = recommendedZinc.toFixed(2) + ' ml';
-                    }
-                }
             }
             
             if (data.zincChoice) {
@@ -1880,7 +1870,20 @@ if (data.heparinConc) {
             
             updateProteinLabel();
             updateFatLabel();
-      calculateTPN(); // ✅ เพิ่มบรรทัดนี้เพื่อคำนวณและแสดง Zinc from Peditrace
+   // ✅ คำนวณทุกอย่างก่อน (รวม Zinc from Peditrace)
+            calculateTPN();
+            
+            // ✅ คำนวณ recommended Zinc หลังจากมี BW แล้ว
+            if (data.isPreterm) {
+                const bw = parseFloat(document.getElementById('bw')?.value) || 0;
+                if (bw > 0) {
+                    const recommendedZinc = bw * 0.3;
+                    const zincRecommendedEl = document.getElementById('zinc-recommended');
+                    if (zincRecommendedEl) {
+                        zincRecommendedEl.textContent = recommendedZinc.toFixed(2) + ' ml';
+                    }
+                }
+            }
         } catch(e) { }
     }
 
