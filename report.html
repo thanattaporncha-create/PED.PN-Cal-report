@@ -700,7 +700,19 @@ body {
             });
         }
     }
-
+// ✅ แสดง Zinc ถ้าเลือกเติม (อยู่ก่อน Heparin)
+    if (data.isPreterm && data.zincChoice === 'add') {
+        const zincVol = data.zincVolume || '0';
+        const zincFromPeditrace = data.zincFromPeditrace || '0';
+        
+        compositions.push({
+            name: 'Zinc Sulfate (500 mcg/ml)',
+            input: 'Preterm',
+            volume: parseFloat(zincVol).toFixed(2),
+            note: `Zinc จาก Peditrace: ${zincFromPeditrace} mcg`,
+            highlight: false
+        });
+    }
     // ✅ แสดง Heparin เมื่อมี PICC line (อยู่ก่อน Fat)
 if (data.hasPicc) {
     const heparinVol = data.heparinVol || '0';
