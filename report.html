@@ -461,22 +461,27 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-    function goBack() {
-        // report.html: บรรทัดประมาณ 470 (ในฟังก์ชัน goBack)
-        // ✅ บันทึกข้อมูล fat options กลับไปที่ autosave
-        const AUTOSAVE_KEY = 'tpnFormAutosave'; // << แก้จาก tpnCalculatorState เป็น tpnFormAutosave
-        const currentAutosave = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
-        
-        // อัพเดทค่า fat options จาก report data
-        if (data.fatPriming) currentAutosave.fatPriming = data.fatPriming;
-        if (data.fatDripDuration) currentAutosave.fatDripDuration = data.fatDripDuration;
-        if (data.fatSplit) currentAutosave.fatSplit = data.fatSplit;
-        if (data.heparinConc) currentAutosave.heparinConc = data.heparinConc;
-        
-        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(currentAutosave));
-        
-        window.location.href = 'index.html';
-    }
+  function goBack() {
+    // report.html: บรรทัดประมาณ 470 (ในฟังก์ชัน goBack)
+    // ✅ บันทึกข้อมูล fat options กลับไปที่ autosave
+    const AUTOSAVE_KEY = 'tpnFormAutosave';
+    const currentAutosave = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+    
+    // อัพเดทค่า fat options จาก report data
+    if (data.fatPriming) currentAutosave.fatPriming = data.fatPriming;
+    if (data.fatDripDuration) currentAutosave.fatDripDuration = data.fatDripDuration;
+    if (data.fatSplit) currentAutosave.fatSplit = data.fatSplit;
+    if (data.heparinConc) currentAutosave.heparinConc = data.heparinConc;
+    
+    // ✅ เพิ่ม Zinc options
+    if (data.isPreterm !== undefined) currentAutosave.isPreterm = data.isPreterm;
+    if (data.zincChoice) currentAutosave.zincChoice = data.zincChoice;
+    if (data.zincVolume) currentAutosave.zincVolume = data.zincVolume;
+    
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(currentAutosave));
+    
+    window.location.href = 'index.html';
+}
 
     function specialRound2(v){
         const n = Number(v);
