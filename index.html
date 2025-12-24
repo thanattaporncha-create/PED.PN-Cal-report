@@ -1,1359 +1,2750 @@
 <!doctype html>
+
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TPN Calculator</title>
-  <script src="/_sdk/element_sdk.js"></script>
-  <style>
-    body { box-sizing: border-box; font-family: 'Sarabun','Noto Sans Thai',Arial,sans-serif; margin:0; padding:20px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100%; }
-    .container { max-width:800px; margin:0 auto; background:white; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.1); overflow:hidden; position:relative; }
-    .clear-btn { position:absolute; top:20px; right:20px; background:#ef4444; color:white; border:none; padding:10px 20px; font-size:0.9em; border-radius:8px; cursor:pointer; box-shadow:0 2px 8px rgba(239,68,68,0.3); transition:all 0.3s; font-weight:600; z-index:10; }
-    .clear-btn:hover { background:#dc2626; transform:translateY(-2px); box-shadow:0 4px 12px rgba(239,68,68,0.5); }
-    .clear-btn:active { transform:translateY(0); }
-    .header { background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%); color:white; padding:30px; padding-top:60px; text-align:center; }
-    .header h1 { margin:0 0 10px 0; font-size:2.2em; font-weight:600; }
-    .header p { margin:0; font-size:1.1em; opacity:.9; }
-    .content { padding:30px; }
-    .section { background:#f8fafc; border-radius:12px; padding:25px; margin-bottom:25px; border-left:4px solid #4facfe; }
-    .section h2 { color:#2d3748; margin:0 0 20px 0; font-size:1.4em; font-weight:600; }
-    .input-group { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
-    .input-field { display:flex; flex-direction:column; }
-    .input-field label { color:#4a5568; font-weight:500; margin-bottom:8px; font-size:.95em; }
-    .input-with-unit { display:flex; align-items:center; position:relative; }
-    .input-field input { padding:12px 16px; border:2px solid #e2e8f0; border-radius:8px; font-size:1em; transition:all .3s ease; background:white; flex:1; padding-right:60px; -webkit-appearance:none; -moz-appearance:textfield; }
-    .input-field input[type="date"] { padding:12px 16px; padding-right:16px; }
-    .input-field input::-webkit-outer-spin-button,.input-field input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
-    .input-field input:focus { outline:none; border-color:#4facfe; box-shadow:0 0 0 3px rgba(79,172,254,.1); }
-    .unit { position:absolute; right:16px; color:#718096; font-size:.9em; font-weight:500; pointer-events:none; background:white; padding-left:8px; }
-    .date-warning { color:#dc2626; font-weight:700; font-size:0.85em; margin-top:6px; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TPN Calculator</title>
+    <script src="/_sdk/element_sdk.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Sarabun','Noto Sans Thai',Arial,sans-serif;
+            margin:0;
+            padding:20px;
+            background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            min-height:100%;
+        }
+        .container {
+            max-width:800px;
+            margin:0 auto;
+            background:white;
+            border-radius:16px;
+            box-shadow:0 20px 40px rgba(0,0,0,0.1);
+            overflow:hidden;
+            position:relative;
+        }
+        .clear-btn {
+            position:absolute;
+            top:20px;
+            right:20px;
+            background:#ef4444;
+            color:white;
+            border:none;
+            padding:10px 20px;
+            font-size:0.9em;
+            border-radius:8px;
+            cursor:pointer;
+            box-shadow:0 2px 8px rgba(239,68,68,0.3);
+            transition:all 0.3s;
+            font-weight:600;
+            z-index:10;
+        }
+        .clear-btn:hover {
+            background:#dc2626;
+            transform:translateY(-2px);
+            box-shadow:0 4px 12px rgba(239,68,68,0.5);
+        }
+        .clear-btn:active {
+            transform:translateY(0);
+        }
+        .header {
+            background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+            color:white;
+            padding:30px;
+            padding-top:60px;
+            text-align:center;
+        }
+        .header h1 {
+            margin:0 0 10px 0;
+            font-size:2.2em;
+            font-weight:600;
+        }
+        .header p {
+            margin:0;
+            font-size:1.1em;
+            opacity:.9;
+        }
+        .content {
+            padding:30px;
+        }
+        .section {
+            background:#f8fafc;
+            border-radius:12px;
+            padding:25px;
+            margin-bottom:25px;
+            border-left:4px solid #4facfe;
+        }
+        .section h2 {
+            color:#2d3748;
+            margin:0 0 20px 0;
+            font-size:1.4em;
+            font-weight:600;
+        }
+        .input-group {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:20px;
+            margin-bottom:20px;
+        }
+        .input-field {
+            display:flex;
+            flex-direction:column;
+        }
+        .input-field label {
+            color:#4a5568;
+            font-weight:500;
+            margin-bottom:8px;
+            font-size:.95em;
+        }
+        .input-with-unit {
+            display:flex;
+            align-items:center;
+            position:relative;
+        }
+        .input-field input {
+            padding:12px 16px;
+            border:2px solid #e2e8f0;
+            border-radius:8px;
+            font-size:1em;
+            transition:all .3s ease;
+            background:white;
+            flex:1;
+            padding-right:60px;
+            -webkit-appearance:none;
+            -moz-appearance:textfield;
+        }
+        .input-field input[type="date"] {
+            padding:12px 16px;
+            padding-right:16px;
+        }
+        .input-field input::-webkit-outer-spin-button,
+        .input-field input::-webkit-inner-spin-button {
+            -webkit-appearance:none;
+            margin:0;
+        }
+        .input-field input:focus {
+            outline:none;
+            border-color:#4facfe;
+            box-shadow:0 0 0 3px rgba(79,172,254,.1);
+        }
+        .unit {
+            position:absolute;
+            right:16px;
+            color:#718096;
+            font-size:.9em;
+            font-weight:500;
+            pointer-events:none;
+            background:white;
+            padding-left:8px;
+        }
+        .unit select {
+            pointer-events:auto;
+            cursor:pointer;
+        }
+        .date-warning {
+            color:#dc2626;
+            font-weight:700;
+            font-size:0.85em;
+            margin-top:6px;
+        }
 
-    /* Product Selection Styles */
-    .product-selection { margin-top:20px; padding-top:20px; border-top:2px solid #e2e8f0; }
-    .product-selection h3 { color:#2d3748; margin:0 0 15px 0; font-size:1.05em; font-weight:600; }
-    .product-options { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
-    .product-option { display:flex; align-items:center; padding:12px 15px; border-radius:8px; border:2px solid #e2e8f0; background:white; cursor:pointer; transition:all .3s ease; }
-    .product-option:hover { background:#f0f9ff; border-color:#4facfe; }
-    .product-option.selected { background:#e0f2fe; border-color:#0284c7; box-shadow:0 2px 8px rgba(2,132,199,0.2); }
-    .product-option input[type="radio"] { margin-right:12px; transform:scale(1.2); cursor:pointer; accent-color:#4facfe; }
-    .product-option-label { flex:1; cursor:pointer; }
-    .product-name { font-weight:600; color:#2d3748; font-size:0.95em; }
-    .product-info { font-size:0.85em; color:#64748b; margin-top:2px; }
+        
+/* Product Selection Styles */
+.product-selection {
+    margin-top:20px;
+    padding-top:20px;
+    border-top:2px solid #e2e8f0;
+}
+.product-selection h3 {
+    color:#2d3748;
+    margin:0 0 15px 0;
+    font-size:1.05em;
+    font-weight:600;
+}
+.product-options {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:20px;
+}
+.product-option {
+    display:flex;
+    align-items:center;
+    padding:12px 15px;
+    border-radius:8px;
+    border:2px solid #e2e8f0;
+    background:white;
+    cursor:pointer;
+    transition:all .3s ease;
+}
+.product-option:hover {
+    background:#f0f9ff;
+    border-color:#4facfe;
+}
+.product-option.selected {
+    background:#e0f2fe;
+    border-color:#0284c7;
+    box-shadow:0 2px 8px rgba(2,132,199,0.2);
+}
+.product-option input[type="radio"] {
+    margin-right:12px;
+    transform:scale(1.2);
+    cursor:pointer;
+    accent-color:#4facfe;
+}
+.product-option-label {
+    flex:1;
+    cursor:pointer;
+}
+.product-name {
+    font-weight:600;
+    color:#2d3748;
+    font-size:0.95em;
+}
+.product-info {
+    font-size:0.85em;
+    color:#64748b;
+    margin-top:2px;
+}
 
-    .tpn-table { background:white; border-radius:12px; overflow:hidden; margin-top:20px; border:2px solid #e2e8f0; width:100%; display:table; table-layout:fixed; }
-    .table-header { display:table-row; background:#f8fafc; border-bottom:2px solid #e2e8f0; }
-    .table-row { display:table-row; border-bottom:1px solid #f1f5f9; }
-    .table-row:last-child { border-bottom:none; }
-    .table-cell { display:table-cell; padding:10px 8px; text-align:center; vertical-align:middle; min-height:50px; box-sizing:border-box; border-right:1px solid #f1f5f9; }
-    .table-cell:last-child { border-right:none; }
-    .header-cell { font-weight:600; color:#2d3748; background:#f8fafc; font-size:.9em; width:25%; }
-    .component-cell { font-weight:500; color:#2d3748; text-align:left; padding-left:16px; font-size:.95em; width:25%; }
-    .result-cell { font-weight:600; color:#0369a1; background:#f0f9ff; font-size:.85em; text-align:center; width:25%; }
-    .result-cell.volume-yellow { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
-    .result-cell.osmol-purple { background:#f3e8ff; color:#7c3aed; border:1px solid #c4b5fd; }
+/* Fat Administration Styles */
+.fat-admin-section {
+    margin-top:20px;
+    padding:20px;
+    background:#f0f9ff;
+    border-radius:10px;
+    border:2px solid #bfdbfe;
+}
 
-    .gir-display { display:flex; justify-content:space-between; align-items:center; background:white; border-radius:8px; padding:15px; margin-top:15px; border:2px solid #e2e8f0; }
-    .gir-label { font-weight:500; color:#2d3748; }
-    .calc-result { background:#f0f9ff; padding:8px 12px; border-radius:6px; text-align:center; font-weight:600; color:#0369a1; border:1px solid #bae6fd; }
-    .calc-result.gir-pink { background:#fce7f3; color:#be185d; border:1px solid #f9a8d4; }
+.fat-admin-section h3 {
+    color:#1e40af;
+    margin:0 0 15px 0;
+    font-size:1.05em;
+    font-weight:600;
+}
 
-    .calculation-section { background:white; border-radius:12px; padding:20px; margin-top:15px; border:2px solid #e2e8f0; }
-    .calc-row { display:grid; grid-template-columns:2fr 1fr 1fr; gap:15px; align-items:center; padding:12px 0; border-bottom:1px solid #f1f5f9; }
-    .calc-row:last-child { border-bottom:none; }
-    .calc-label { font-weight:500; color:#2d3748; }
-    .calc-label.bold { font-weight:700; color:#1e293b; }
+.fat-admin-group {
+    margin-bottom:15px;
+    padding-bottom:15px;
+    border-bottom:1px solid #dbeafe;
+}
 
-    .total-section { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border-radius:12px; padding:25px; text-align:center; margin-top:25px; }
-    .total-section h2 { margin:0 0 15px 0; font-size:1.6em; }
-    .total-calories { font-size:2.5em; font-weight:700; margin:10px 0; }
+.fat-admin-group:last-child {
+    border-bottom:none;
+    margin-bottom:0;
+    padding-bottom:0;
+}
 
-    /* Route selection */
-    .route-selection { margin-top:20px; }
-    .route-selection h3 { color:#2d3748; margin:0 0 15px 0; font-size:1.1em; font-weight:600; }
-    .route-options { display:flex; gap:15px; }
-    .route-option { flex:1; display:flex; align-items:center; justify-content:center; padding:15px; border-radius:8px; border:2px solid #e2e8f0; background:#f8fafc; cursor:pointer; transition:all .3s ease; }
-    .route-option:hover { background:#f0f9ff; border-color:#4facfe; }
-    .route-option input[type="radio"] { margin-right:10px; transform:scale(1.3); cursor:pointer; }
-    .route-option label { font-weight:500; color:#2d3748; cursor:pointer; font-size:1em; }
-    .route-option input[type="radio"]:checked + label { color:#4facfe; font-weight:600; }
+.fat-admin-label {
+    display:block;
+    font-weight:600;
+    color:#1e40af;
+    margin-bottom:10px;
+    font-size:0.95em;
+}
 
-    /* Electrolyte styles */
-    .electrolyte-item { background:white; border-radius:8px; padding:20px; margin-bottom:15px; border:2px solid #e2e8f0; }
-    .electrolyte-header { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px; }
-    .electrolyte-input { display:flex; flex-direction:column; }
-    .electrolyte-input label { color:#4a5568; font-weight:600; margin-bottom:8px; font-size:1em; }
-    .electrolyte-input input { padding:12px 16px; border:2px solid #e2e8f0; border-radius:8px; font-size:1em; transition:all .3s ease; background:white; -webkit-appearance:none; -moz-appearance:textfield; }
-    .electrolyte-input input::-webkit-outer-spin-button,.electrolyte-input input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
-    .electrolyte-input input:focus { outline:none; border-color:#4facfe; box-shadow:0 0 0 3px rgba(79,172,254,.1); }
-    .electrolyte-result { background:#f0fdf4; border:2px solid #86efac; border-radius:8px; padding:12px; text-align:center; }
-    .electrolyte-result-label { font-size:0.85em; color:#166534; font-weight:500; margin-bottom:4px; }
-    .electrolyte-result-value { font-size:1.3em; color:#166534; font-weight:700; }
+.fat-admin-options {
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:10px;
+}
 
-    .source-selection { margin-top:15px; padding-top:15px; border-top:1px solid #e2e8f0; }
-    .source-selection h4 { margin:0 0 12px 0; color:#2d3748; font-size:0.95em; font-weight:600; }
-    .source-option { display:flex; align-items:center; padding:10px; margin-bottom:8px; border-radius:6px; background:#f8fafc; transition:all .2s ease; cursor:pointer; }
-    .source-option:hover { background:#f0f9ff; }
-    .source-option input[type="radio"] { margin-right:12px; transform:scale(1.3); cursor:pointer; }
-    .source-option-label { flex:1; font-weight:500; color:#2d3748; }
-    .source-option-value { background:#dbeafe; color:#1e40af; padding:6px 12px; border-radius:4px; font-weight:600; font-size:0.9em; min-width:60px; text-align:center; }
+.fat-admin-radio {
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+    padding:8px 12px;
+    background:white;
+    border:2px solid #e0e7ff;
+    border-radius:8px;
+    transition:all 0.3s;
+}
 
-    /* Frequency selection */
-    .frequency-selection { margin-top:15px; padding-top:15px; border-top:1px solid #e2e8f0; }
-    .frequency-selection h4 { margin:0 0 12px 0; color:#2d3748; font-size:0.95em; font-weight:600; }
-    .frequency-option { display:flex; align-items:center; padding:10px; margin-bottom:8px; border-radius:6px; background:#f8fafc; transition:all .2s ease; cursor:pointer; }
-    .frequency-option:hover { background:#f0f9ff; }
-    .frequency-option input[type="radio"] { margin-right:12px; transform:scale(1.3); cursor:pointer; }
-    .frequency-option-label { flex:1; font-weight:500; color:#2d3748; }
-    .day-selector { margin-left:30px; margin-top:8px; display:none; }
-    .day-selector select { padding:8px 12px; border:2px solid #e2e8f0; border-radius:6px; font-size:0.95em; }
+.fat-admin-radio:hover {
+    background:#eef2ff;
+    border-color:#818cf8;
+}
 
-    /* Submit */
-    .submit-section { text-align:center; margin-top:30px; }
-    .submit-btn { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border:none; padding:18px 50px; font-size:1.2em; border-radius:50px; cursor:pointer; box-shadow:0 4px 15px rgba(102,126,234,0.4); transition:all 0.3s; font-weight:600; }
-    .submit-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(102,126,234,0.6); }
-    .submit-btn:active { transform:translateY(0); }
+.fat-admin-radio input[type="radio"] {
+    margin-right:8px;
+    cursor:pointer;
+    accent-color:#4f46e5;
+}
 
-    @media (max-width:768px){
-      .clear-btn { top:10px; right:10px; padding:8px 16px; font-size:0.85em; }
-      .header { padding-top:50px; }
-      .input-group{grid-template-columns:1fr}
-      .route-options{flex-direction:column}
-      .electrolyte-header{grid-template-columns:1fr}
-      .tpn-table{font-size:.85em;border-radius:8px}
-      .table-cell{padding:8px 4px;min-height:45px}
-      .component-cell{padding-left:8px;font-size:.85em}
-      .result-cell{font-size:.8em}
-      .header-cell{font-size:.8em;padding:8px 4px}
-      .gir-display{flex-direction:column;gap:10px;text-align:center}
-      .container{margin:10px;border-radius:12px}
-      .content{padding:20px}
-      .total-section{padding:20px}
-      .total-section h2{font-size:1.3em}
-      .total-calories{font-size:2em}
-      .product-options{gap:8px}
-      .product-option{padding:10px 12px}
+.fat-admin-radio input[type="radio"]:checked + span {
+    font-weight:600;
+    color:#4f46e5;
+}
+
+.fat-rate-display {
+    background:white;
+    padding:12px 16px;
+    border-radius:8px;
+    border:2px solid #c7d2fe;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.fat-rate-label {
+    font-weight:600;
+    color:#4338ca;
+    font-size:0.95em;
+}
+
+.fat-rate-value {
+    font-weight:700;
+    color:#4f46e5;
+    font-size:1.1em;
+}
+
+.fat-split-display {
+    background:white;
+    padding:12px 16px;
+    border-radius:8px;
+    border:2px solid #c7d2fe;
+    font-weight:600;
+    color:#4338ca;
+    font-size:1em;
+}
+
+/* TPN Table */
+.tpn-table {
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    margin-top:20px;
+    border:2px solid #e2e8f0;
+    width:100%;
+    display:table;
+    table-layout:fixed;
+}
+.table-header {
+    display:table-row;
+    background:#f8fafc;
+    border-bottom:2px solid #e2e8f0;
+}
+.table-row {
+    display:table-row;
+    border-bottom:1px solid #f1f5f9;
+}
+.table-row:last-child {
+    border-bottom:none;
+}
+.table-cell {
+    display:table-cell;
+    padding:10px 8px;
+    text-align:center;
+    vertical-align:middle;
+    min-height:50px;
+    box-sizing:border-box;
+    border-right:1px solid #f1f5f9;
+}
+.table-cell:last-child {
+    border-right:none;
+}
+.header-cell {
+    font-weight:600;
+    color:#2d3748;
+    background:#f8fafc;
+    font-size:.9em;
+    width:25%;
+}
+.component-cell {
+    font-weight:500;
+    color:#2d3748;
+    text-align:left;
+    padding-left:16px;
+    font-size:.95em;
+    width:25%;
+}
+.result-cell {
+    font-weight:600;
+    color:#0369a1;
+    background:#f0f9ff;
+    font-size:.85em;
+    text-align:center;
+    width:25%;
+}
+.result-cell.volume-yellow {
+    background:#fef3c7;
+    color:#92400e;
+    border:1px solid #fcd34d;
+}
+.result-cell.osmol-purple {
+    background:#f3e8ff;
+    color:#7c3aed;
+    border:1px solid #c4b5fd;
+}
+
+/* GIR Display */
+.gir-display {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    border-radius:8px;
+    padding:15px;
+    margin-top:15px;
+    border:2px solid #e2e8f0;
+}
+.gir-label {
+    font-weight:600;
+    color:#be185d;
+}
+.calc-result {
+    background:#f0f9ff;
+    padding:8px 12px;
+    border-radius:6px;
+    text-align:center;
+    font-weight:600;
+    color:#0369a1;
+    border:1px solid #bae6fd;
+}
+.calc-result.gir-pink {
+    background:#fce7f3;
+    color:#be185d;
+    border:1px solid #f9a8d4;
+}
+
+/* Calculation Section */
+.calculation-section {
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    margin-top:15px;
+    border:2px solid #e2e8f0;
+}
+.calc-row {
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:15px;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid #f1f5f9;
+}
+.calc-row:last-child {
+    border-bottom:none;
+}
+.calc-label {
+    font-weight:500;
+    color:#2d3748;
+}
+.calc-label.bold {
+    font-weight:700;
+    color:#1e293b;
+}
+
+/* Total Section */
+.total-section {
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    color:white;
+    border-radius:12px;
+    padding:25px;
+    text-align:center;
+    margin-top:25px;
+}
+.total-section h2 {
+    margin:0 0 15px 0;
+    font-size:1.6em;
+}
+.total-calories {
+    font-size:2.5em;
+    font-weight:700;
+    margin:10px 0;
+}
+
+/* Route Selection */
+.route-selection {
+    margin-top:20px;
+}
+.route-selection h3 {
+    color:#2d3748;
+    margin:0 0 15px 0;
+    font-size:1.1em;
+    font-weight:600;
+}
+.route-options {
+    display:flex;
+    gap:15px;
+}
+.route-option {
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    border-radius:8px;
+    border:2px solid #e2e8f0;
+    background:#f8fafc;
+    cursor:pointer;
+    transition:all .3s ease;
+}
+.route-option:hover {
+    background:#f0f9ff;
+    border-color:#4facfe;
+}
+/* ✅ สีพื้นหลังตาม Route */
+.route-option:has(#route-central) {
+    background:#f0fdf4;
+}
+.route-option:has(#route-peripheral) {
+    background:#fff7ed;
+}
+.route-option input[type="radio"] {
+    margin-right:10px;
+    transform:scale(1.3);
+    cursor:pointer;
+}
+.route-option label {
+    font-weight:500;
+    color:#2d3748;
+    cursor:pointer;
+    font-size:1em;
+}
+.route-option input[type="radio"]:checked + label {
+    color:#4facfe;
+    font-weight:600;
+}
+
+/* Electrolyte Styles */
+.electrolyte-item {
+    background:white;
+    border-radius:8px;
+    padding:20px;
+    margin-bottom:15px;
+    border:2px solid #e2e8f0;
+}
+.electrolyte-header {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin-bottom:15px;
+}
+.electrolyte-input {
+    display:flex;
+    flex-direction:column;
+}
+.electrolyte-input label {
+    color:#4a5568;
+    font-weight:600;
+    margin-bottom:8px;
+    font-size:1em;
+}
+.electrolyte-input input {
+    padding:12px 16px;
+    border:2px solid #e2e8f0;
+    border-radius:8px;
+    font-size:1em;
+    transition:all .3s ease;
+    background:white;
+    -webkit-appearance:none;
+    -moz-appearance:textfield;
+}
+.electrolyte-input input::-webkit-outer-spin-button,
+.electrolyte-input input::-webkit-inner-spin-button {
+    -webkit-appearance:none;
+    margin:0;
+}
+.electrolyte-input input:focus {
+    outline:none;
+    border-color:#4facfe;
+    box-shadow:0 0 0 3px rgba(79,172,254,.1);
+}
+.electrolyte-result {
+    background:#f0fdf4;
+    border:2px solid #86efac;
+    border-radius:8px;
+    padding:12px;
+    text-align:center;
+}
+.electrolyte-result-label {
+    font-size:0.85em;
+    color:#166534;
+    font-weight:500;
+    margin-bottom:4px;
+}
+.electrolyte-result-value {
+    font-size:1.3em;
+    color:#166534;
+    font-weight:700;
+}
+
+/* Source Selection */
+.source-selection {
+    margin-top:15px;
+    padding-top:15px;
+    border-top:1px solid #e2e8f0;
+}
+.source-selection h4 {
+    margin:0 0 12px 0;
+    color:#2d3748;
+    font-size:0.95em;
+    font-weight:600;
+}
+.source-option {
+    display:flex;
+    align-items:center;
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:6px;
+    background:#f8fafc;
+    transition:all .2s ease;
+    cursor:pointer;
+}
+.source-option:hover {
+    background:#f0f9ff;
+}
+.source-option input[type="radio"] {
+    margin-right:12px;
+    transform:scale(1.3);
+    cursor:pointer;
+}
+.source-option-label {
+    flex:1;
+    font-weight:500;
+    color:#2d3748;
+}
+.source-option-value {
+    background:#dbeafe;
+    color:#1e40af;
+    padding:6px 12px;
+    border-radius:4px;
+    font-weight:600;
+    font-size:0.9em;
+    min-width:60px;
+    text-align:center;
+}
+
+/* Frequency Selection */
+.frequency-selection {
+    margin-top:15px;
+    padding-top:15px;
+    border-top:1px solid #e2e8f0;
+}
+.frequency-selection h4 {
+    margin:0 0 12px 0;
+    color:#2d3748;
+    font-size:0.95em;
+    font-weight:600;
+}
+.frequency-option {
+    display:flex;
+    align-items:center;
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:6px;
+    background:#f8fafc;
+    transition:all .2s ease;
+    cursor:pointer;
+}
+.frequency-option:hover {
+    background:#f0f9ff;
+}
+.frequency-option input[type="radio"] {
+    margin-right:12px;
+    transform:scale(1.3);
+    cursor:pointer;
+}
+.frequency-option-label {
+    flex:1;
+    font-weight:500;
+    color:#2d3748;
+}
+.day-selector {
+    margin-left:30px;
+    margin-top:8px;
+    display:none;
+}
+.day-selector select {
+    padding:8px 12px;
+    border:2px solid #e2e8f0;
+    border-radius:6px;
+    font-size:0.95em;
+}
+
+/* Additional Section */
+.additional-section {
+    background:#f8fafc;
+    padding:20px;
+    border-radius:10px;
+    border:2px solid #e2e8f0;
+}
+
+.additional-note {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Submit Button */
+.submit-section {
+    text-align:center;
+    margin-top:30px;
+}
+.submit-btn {
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    color:white;
+    border:none;
+    padding:18px 50px;
+    font-size:1.2em;
+    border-radius:50px;
+    cursor:pointer;
+    box-shadow:0 4px 15px rgba(102,126,234,0.4);
+    transition:all 0.3s;
+    font-weight:600;
+}
+.submit-btn:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(102,126,234,0.6);
+}
+.submit-btn:active {
+    transform:translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width:768px) {
+    .clear-btn {
+        top:10px;
+        right:10px;
+        padding:8px 16px;
+        font-size:0.85em;
     }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
-</head>
-<body>
-<main class="container">
-  <!-- Clear Data Button -->
-  <button id="clearBtn" class="clear-btn">🗑️ Clear data</button>
+    .header {
+        padding-top:50px;
+    }
+    .input-group {
+        grid-template-columns:1fr;
+    }
+    .route-options {
+        flex-direction:column;
+    }
+    .electrolyte-header {
+        grid-template-columns:1fr;
+    }
+    .tpn-table {
+        font-size:.85em;
+        border-radius:8px;
+    }
+    .table-cell {
+        padding:8px 4px;
+        min-height:45px;
+    }
+    .component-cell {
+        padding-left:8px;
+        font-size:.85em;
+    }
+    .result-cell {
+        font-size:.8em;
+    }
+    .header-cell {
+        font-size:.8em;
+        padding:8px 4px;
+    }
+    .gir-display {
+        flex-direction:column;
+        gap:10px;
+        text-align:center;
+    }
+    .container {
+        margin:10px;
+        border-radius:12px;
+    }
+    .content {
+        padding:20px;
+    }
+    .total-section {
+        padding:20px;
+    }
+    .total-section h2 {
+        font-size:1.3em;
+    }
+    .total-calories {
+        font-size:2em;
+    }
+    .product-options {
+        gap:8px;
+    }
+    .fat-admin-section {
+        padding:15px;
+    }
+    .fat-admin-options {
+        flex-direction:column;
+        gap:10px;
+    }
+    .fat-admin-radio {
+        width:100%;
+    }
+    .fat-rate-display,
+    .fat-split-display {
+        font-size:0.9em;
+    }
+    .product-option {
+        padding:10px 12px;
+    }
+/* ✅ เพิ่มส่วนนี้ */
+    .total-section > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+}
 
-  <header class="header">
+</style>
+<style>
+    @view-transition {
+        navigation: auto;
+    }
+</style>
+<script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+<script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+
+</head>
+
+<body>
+    <main class="container">
+        <!-- Clear Data Button -->
+        <button id="clearBtn" class="clear-btn">🗑️ Clear data</button>
+
+        
+<!-- Header -->
+<header class="header">
     <h1 id="app-title">TPN Calculator</h1>
     <p id="subtitle">สำหรับเด็ก</p>
-  </header>
+</header>
 
-  <div class="content">
-
-    <!-- Order Date -->
+<div class="content">
+    <!-- Order Date Section -->
     <section class="section">
-      <h2>วันที่ Order TPN</h2>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="order-date">วันที่</label>
-          <div class="input-with-unit">
-            <input type="date" id="order-date" style="padding-right:16px;">
-          </div>
-          <div class="date-warning">⚠️ เลือกวันที่ให้ถูกต้องทุกครั้ง</div>
+        <h2>วันที่ Order TPN</h2>
+        <div class="input-group">
+            <div class="input-field">
+                <label for="order-date">วันที่</label>
+                <div class="input-with-unit">
+                    <input type="date" id="order-date" style="padding-right:16px;">
+                </div>
+                <div class="date-warning">⚠️ เลือกวันที่ให้ถูกต้องทุกครั้ง</div>
+            </div>
+            <div class="input-field"><!-- spacer --></div>
         </div>
-        <div class="input-field"><!-- spacer --></div>
-      </div>
     </section>
-
-    <!-- Patient Info -->
+    
+    <!-- Patient Info Section -->
     <section class="section">
-      <h2>ข้อมูลผู้ป่วย</h2>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="patient-hn">HN</label>
-          <div class="input-with-unit">
-            <input type="text" id="patient-hn" placeholder="กรอก HN" style="padding-right:16px;">
-          </div>
+        <h2>ข้อมูลผู้ป่วย</h2>
+        
+        <!-- Camera Section for Patient Sticker -->
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #2d3748; font-size: 1.05em; font-weight: 600; margin-bottom: 12px;">
+                📸 ถ่ายรูป Patient Sticker
+            </h3>
+            
+            <!-- Camera Buttons -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <button type="button" id="openCameraBtn" class="btn" 
+                        style="background: #10b981; padding: 12px 20px; border-radius: 8px; 
+                               display: inline-flex; align-items: center; gap: 8px; 
+                               box-shadow: 0 4px 12px rgba(16,185,129,0.4); color: white; 
+                               border: none; cursor: pointer; font-weight: 600;">
+                    📷 เปิดกล้องถ่ายรูป
+                </button>
+                <button type="button" id="clearStickerBtn" class="btn" 
+                        style="background: #ef4444; padding: 12px 20px; border-radius: 8px; 
+                               display: none; box-shadow: 0 4px 12px rgba(239,68,68,0.4); 
+                               color: white; border: none; cursor: pointer; font-weight: 600;">
+                    🗑️ ลบรูป
+                </button>
+            </div>
+            
+            <!-- Sticker Preview -->
+            <div id="stickerPreviewContainer" 
+                 style="display: none; border: 2px dashed #4facfe; border-radius: 8px; 
+                        padding: 15px; background: #f0f9ff; text-align: center;">
+                <p style="margin-bottom: 10px; font-weight: 600; color: #0369a1;">
+                    ✅ รูป Patient Sticker:
+                </p>
+                <img id="stickerPreview" src="" alt="Patient Sticker" 
+                     style="max-width: 200px; max-height: 160px; border: 2px solid #e2e8f0; 
+                            border-radius: 4px; background: white;
+                            image-rendering: -webkit-optimize-contrast;
+                            image-rendering: crisp-edges;">
+            </div>
+            
+            <!-- Camera Modal -->
+            <div id="cameraModal" 
+                 style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
+                        z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+                <div style="background: white; border-radius: 12px; padding: 20px; 
+                            max-width: 90%; max-height: 90%; overflow: auto;">
+                    <h3 style="margin-bottom: 15px; text-align: center; color: #2d3748;">
+                        📸 ถ่ายรูป Patient Sticker
+                    </h3>
+                    <p style="text-align: center; color: #64748b; margin-bottom: 15px; font-size: 0.9em;">
+                        วางสติกเกอร์ให้อยู่ในกรอบแล้วกดถ่ายรูป
+                    </p>
+                    
+                    <!-- Camera Frame (5cm x 3cm) -->
+                    <div id="cameraFrame" 
+                         style="width: 5cm; height: 3cm; border: 2px solid #e2e8f0; 
+                                border-radius: 8px; margin: 0 auto 15px auto; position: relative; 
+                                overflow: hidden; background: #000;">
+                        <video id="cameraVideo" autoplay playsinline 
+                               style="position: absolute; top: 50%; left: 50%; 
+                                      transform: translate(-50%, -50%); min-width: 100%; 
+                                      min-height: 100%; object-fit: cover;">
+                        </video>
+                    </div>
+                    
+                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                    
+                    <!-- Camera Action Buttons -->
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button type="button" id="captureBtn" class="btn" 
+                                style="background: #10b981; padding: 12px 24px; border-radius: 8px; 
+                                       font-weight: 600; color: white; border: none; cursor: pointer;">
+                            📷 ถ่ายรูป
+                        </button>
+                        <button type="button" id="closeCameraBtn" class="btn secondary" 
+                                style="padding: 12px 24px; border-radius: 8px; font-weight: 600; 
+                                       background: #6b7280; color: white; border: none; cursor: pointer;">
+                            ❌ ยกเลิก
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="input-field">
-          <label for="patient-name">ชื่อ-นามสกุล</label>
-          <div class="input-with-unit">
-            <input type="text" id="patient-name" placeholder="กรอกชื่อผู้ป่วย" style="padding-right:16px;">
-          </div>
+        
+        <!-- Manual Input Section (Collapsible) -->
+        <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            <button type="button" id="toggleManualInputBtn" 
+                    style="background: #f8fafc; border: 2px solid #e2e8f0; padding: 10px 16px; 
+                           border-radius: 8px; cursor: pointer; font-weight: 600; color: #4a5568; 
+                           width: 100%; text-align: left; display: flex; justify-content: space-between; 
+                           align-items: center; transition: all 0.3s; 
+                           font-family: 'Sarabun', 'Noto Sans Thai', Arial, sans-serif;">
+                <span>📝 หรือกรอกข้อมูลเอง (ไม่ใช้รูป Sticker)</span>
+                <span id="toggleIcon" style="font-size: 0.8em;">▼</span>
+            </button>
+            
+            <div id="manualInputSection" 
+                 style="display: none; margin-top: 15px; padding: 15px; background: #f8fafc; 
+                        border-radius: 8px; border: 2px solid #e2e8f0;">
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="patient-hn">HN</label>
+                        <div class="input-with-unit">
+                            <input type="text" id="patient-hn" placeholder="กรอก HN" 
+                                   style="padding-right:16px;">
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label for="patient-name">ชื่อ-นามสกุล</label>
+                        <div class="input-with-unit">
+                            <input type="text" id="patient-name" placeholder="กรอกชื่อผู้ป่วย" 
+                                   style="padding-right:16px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="patient-ward">Ward</label>
+                        <div class="input-with-unit">
+                            <input type="text" id="patient-ward" placeholder="กรอก Ward" 
+                                   style="padding-right:16px;">
+                        </div>
+                    </div>
+                    <div class="input-field"><!-- spacer --></div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="patient-ward">Ward</label>
-          <div class="input-with-unit">
-            <input type="text" id="patient-ward" placeholder="กรอก Ward" style="padding-right:16px;">
-          </div>
+        
+        <!-- Route Selection -->
+        <div class="route-selection">
+            <h3>Route การให้ TPN</h3>
+            <div class="route-options">
+                <label class="route-option">
+                    <input type="radio" name="tpn-route" value="central" id="route-central" checked />
+                    <label for="route-central">Central Line</label>
+                </label>
+                <label class="route-option">
+                    <input type="radio" name="tpn-route" value="peripheral" id="route-peripheral" />
+                    <label for="route-peripheral">Peripheral Line</label>
+                </label>
+            </div>
         </div>
-        <div class="input-field"><!-- spacer --></div>
-      </div>
-
-      <!-- Route -->
-      <div class="route-selection">
-        <h3>Route การให้ TPN</h3>
-        <div class="route-options">
-          <label class="route-option">
-            <input type="radio" name="tpn-route" value="central" id="route-central" checked />
-            <label for="route-central">Central Line</label>
-          </label>
-          <label class="route-option">
-            <input type="radio" name="tpn-route" value="peripheral" id="route-peripheral" />
-            <label for="route-peripheral">Peripheral Line</label>
-          </label>
-        </div>
-      </div>
     </section>
-
-    <!-- Basic -->
+    
+    <!-- Basic Information Section -->
     <section class="section">
-      <h2>ข้อมูลพื้นฐาน</h2>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="bw">น้ำหนักตัว (BW)</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="decimal" id="bw" step="0.01" placeholder="กรอกน้ำหนักตัว"/>
-            <span class="unit">kg</span>
-          </div>
+        <h2>ข้อมูลพื้นฐาน</h2>
+        <div class="input-group">
+            <div class="input-field">
+                <label for="bw">น้ำหนักตัว (BW)</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="decimal" id="bw" step="0.01" 
+                           placeholder="กรอกน้ำหนักตัว"/>
+                    <span class="unit">kg</span>
+                </div>
+            </div>
+            <div class="input-field">
+                <label for="rate">Rate TPN</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="decimal" id="rate" step="0.1" 
+                           placeholder="กรอกอัตราการให้"/>
+                    <span class="unit">ml/hr</span>
+                </div>
+            </div>
         </div>
-        <div class="input-field">
-          <label for="rate">Rate TPN</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="decimal" id="rate" step="0.1" placeholder="กรอกอัตราการให้"/>
-            <span class="unit">ml/hr</span>
-          </div>
+        <div class="input-group">
+            <div class="input-field">
+                <label for="bag">ปริมาตร Bag TPN (คำนวนอัตโนมัติ)</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="numeric" id="bag" step="1" 
+                           placeholder="คำนวนจาก Rate"/>
+                    <span class="unit">ml</span>
+                </div>
+            </div>
+            <div class="input-field"><!-- spacer --></div>
         </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="bag">ปริมาตร Bag TPN (คำนวนอัตโนมัติ)</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="numeric" id="bag" step="1" placeholder="คำนวนจาก Rate"/>
-            <span class="unit">ml</span>
-          </div>
-        </div>
-        <div class="input-field"><!-- spacer --></div>
-      </div>
     </section>
-
-    <!-- Macronutrients -->
+    
+    <!-- Macronutrients Section -->
     <section class="section">
-      <h2>Macronutrients</h2>
-
-      <!-- Order inputs first -->
-      <div class="input-group">
-        <div class="input-field">
-          <label for="protein">Protein</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="decimal" id="protein" step="0.1" placeholder="กรอกปริมาณโปรตีน"/>
-            <span class="unit">g/kg/day</span>
-          </div>
-        </div>
-        <div class="input-field">
-          <label for="fat">Fat</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="decimal" id="fat" step="0.1" placeholder="กรอกปริมาณไขมัน"/>
-            <span class="unit">g/kg/day</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <div class="input-field">
-          <label for="dextrose">%Dextrose</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="decimal" id="dextrose" step="0.1" placeholder="กรอกเปอร์เซ็นต์ Dextrose"/>
-            <span class="unit">%</span>
-          </div>
-        </div>
-        <div class="input-field"><!-- spacer --></div>
-      </div>
-
-      <!-- Protein Product Selection -->
-      <div class="product-selection">
-        <h3>🧬 เลือก Protein Product</h3>
-        <div class="product-options">
-          <label class="product-option" data-product="protein">
-            <input type="radio" name="protein-product" value="aminoven" checked>
-            <div class="product-option-label">
-              <div class="product-name">10% Aminoven® infant</div>
-              <div class="product-info">สำหรับอายุ 0-1 เดือน</div>
+        <h2>Macronutrients</h2>
+        
+        <!-- Macronutrient Inputs -->
+        <div class="input-group">
+            <div class="input-field">
+                <label for="protein">Protein</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="decimal" id="protein" step="0.1" 
+                           placeholder="กรอกปริมาณโปรตีน"/>
+                    <span class="unit">g/kg/day</span>
+                </div>
             </div>
-          </label>
-          <label class="product-option" data-product="protein">
-            <input type="radio" name="protein-product" value="amiparen">
-            <div class="product-option-label">
-              <div class="product-name">10% Amiparen®</div>
-              <div class="product-info">สำหรับอายุมากกว่า 1 เดือน</div>
+            <div class="input-field">
+                <label for="fat">Fat</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="decimal" id="fat" step="0.1" 
+                           placeholder="กรอกปริมาณไขมัน"/>
+                    <span class="unit">g/kg/day</span>
+                </div>
             </div>
-          </label>
-          <label class="product-option" data-product="protein">
-            <input type="radio" name="protein-product" value="aminoplasmal">
-            <div class="product-option-label">
-              <div class="product-name">15% Aminoplasmal®</div>
-              <div class="product-info">ความเข้มข้นสูง (ปริมาตรน้อยกว่า)</div>
+        </div>
+        
+        <div class="input-group">
+            <div class="input-field">
+                <label for="dextrose">%Dextrose</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="decimal" id="dextrose" step="0.1" 
+                           placeholder="กรอกเปอร์เซ็นต์ Dextrose"/>
+                    <span class="unit">%</span>
+                </div>
             </div>
-          </label>
+            <div class="input-field"><!-- spacer --></div>
         </div>
-      </div>
-
-      <!-- Fat Product Selection -->
-      <div class="product-selection">
-        <h3>💧 เลือก Fat Product</h3>
-        <div class="product-options">
-          <label class="product-option" data-product="fat">
-            <input type="radio" name="fat-product" value="smof" checked>
-            <div class="product-option-label">
-              <div class="product-name">20% SMOF lipid</div>
-              <div class="product-info">Mixed lipid emulsion</div>
+        
+        <!-- ✅ GIR Display - Moved here under %Dextrose -->
+        <div class="gir-display">
+            <div class="gir-label">GIR (Glucose Infusion Rate)</div>
+            <div class="calc-result gir-pink" id="gir-result">0 mg/kg/min</div>
+        </div>
+        
+        <!-- Protein Product Selection -->
+        <div class="product-selection">
+            <h3>🧬 เลือก Protein Product</h3>
+            <div class="product-options">
+                <label class="product-option" data-product="protein">
+                    <input type="radio" name="protein-product" value="aminoven" checked>
+                    <div class="product-option-label">
+                        <div class="product-name">10% Aminoven® infant</div>
+                        <div class="product-info">สำหรับอายุ 0-1 เดือน</div>
+                    </div>
+                </label>
+                <label class="product-option" data-product="protein">
+                    <input type="radio" name="protein-product" value="amiparen">
+                    <div class="product-option-label">
+                        <div class="product-name">10% Amiparen®</div>
+                        <div class="product-info">สำหรับอายุมากกว่า 1 เดือน</div>
+                    </div>
+                </label>
+                <label class="product-option" data-product="protein">
+                    <input type="radio" name="protein-product" value="aminoplasmal">
+                    <div class="product-option-label">
+                        <div class="product-name">15% Aminoplasmal®</div>
+                        <div class="product-info">ความเข้มข้นสูง (ปริมาตรน้อยกว่า)</div>
+                    </div>
+                </label>
             </div>
-          </label>
-          <label class="product-option" data-product="fat">
-            <input type="radio" name="fat-product" value="intralipid">
-            <div class="product-option-label">
-              <div class="product-name">20% Intralipid</div>
-              <div class="product-info">Soybean oil emulsion</div>
+        </div>
+        
+        <!-- Fat Product Selection -->
+        <div class="product-selection">
+            <h3>💧 เลือก Fat Product</h3>
+            <div class="product-options">
+                <label class="product-option" data-product="fat">
+                    <input type="radio" name="fat-product" value="smof" checked>
+                    <div class="product-option-label">
+                        <div class="product-name">20% SMOF lipid</div>
+                        <div class="product-info">Mixed lipid emulsion</div>
+                    </div>
+                </label>
+                <label class="product-option" data-product="fat">
+                    <input type="radio" name="fat-product" value="intralipid">
+                    <div class="product-option-label">
+                        <div class="product-name">20% Intralipid</div>
+                        <div class="product-info">Soybean oil emulsion</div>
+                    </div>
+                </label>
             </div>
-          </label>
+            
+            <!-- Summary Table -->
+            <div class="tpn-table">
+                <div class="table-header">
+                    <div class="table-cell header-cell">องค์ประกอบ</div>
+                    <div class="table-cell header-cell">ปริมาตร (ml)</div>
+                    <div class="table-cell header-cell">แคลอรี่ (kcal)</div>
+                    <div class="table-cell header-cell">mOsmol/L</div>
+                </div>
+                <div class="table-row">
+                    <div class="table-cell component-cell" id="protein-label">10% Aminoven® infant</div>
+                    <div class="table-cell result-cell volume-yellow" id="protein-volume">0</div>
+                    <div class="table-cell result-cell" id="protein-calories">0</div>
+                    <div class="table-cell result-cell osmol-purple" id="protein-osmol">0</div>
+                </div>
+                <div class="table-row">
+                    <div class="table-cell component-cell">50% Dextrose</div>
+                    <div class="table-cell result-cell volume-yellow" id="dextrose-volume">0</div>
+                    <div class="table-cell result-cell" id="dextrose-calories">0</div>
+                    <div class="table-cell result-cell osmol-purple" id="dextrose-osmol">0</div>
+                </div>
+                <div class="table-row">
+                    <div class="table-cell component-cell" id="fat-label">20% SMOF lipid</div>
+                    <div class="table-cell result-cell volume-yellow" id="fat-volume">0</div>
+                    <div class="table-cell result-cell" id="fat-calories">0</div>
+                    <div class="table-cell result-cell">-</div>
+                </div>
+            </div>
+            
+            <!-- Fat Administration Options -->
+            <div class="fat-admin-section">
+                <h3>💉 วิธีการให้ Fat</h3>
+                
+                <!-- การไล่สาย -->
+                <div class="fat-admin-group">
+                    <label class="fat-admin-label">การไล่สาย:</label>
+                    <div class="fat-admin-options">
+                        <label class="fat-admin-radio">
+                            <input type="radio" name="fat-priming" value="no-priming">
+                            <span style="color: #dc2626; font-weight: 600;">ไม่ไล่สาย</span>
+                        </label>
+                        <label class="fat-admin-radio">
+                            <input type="radio" name="fat-priming" value="priming" checked>
+                            <span>+ 6 ml ไล่สาย</span>
+                        </label>
+                    </div>
+                    <div class="fat-priming-volume" id="fat-priming-volume" style="margin-top:10px; padding:10px 16px; background:white; border-radius:8px; border:2px solid #c7d2fe; font-weight:600; color:#4338ca; font-size:0.95em;">
+                        <span id="fat-priming-text">= 0 ml</span>
+                    </div>
+                </div>
+                
+                <!-- IV drip in -->
+                <div class="fat-admin-group">
+                    <label class="fat-admin-label">IV drip in:</label>
+                    <div class="fat-admin-options">
+                        <label class="fat-admin-radio">
+                            <input type="radio" name="fat-drip-duration" value="12">
+                            <span>12 hr</span>
+                        </label>
+                        <label class="fat-admin-radio">
+                            <input type="radio" name="fat-drip-duration" value="24" checked>
+                            <span>24 hr</span>
+                        </label>
+                    </div>
+                    <div class="fat-rate-display">
+                        <span class="fat-rate-label">Fat rate:</span>
+                        <span class="fat-rate-value" id="fat-rate-result">0 g/kg/hr</span>
+                    </div>
+                    <div style="margin-top:8px; padding:0 16px; font-size:0.85em; color:#9ca3af; font-style:italic;">
+                        Fat rate ควร ≤ 0.11 g/kg/hr
+                    </div>
+                </div>
+                
+                <!-- แบ่งเตรียม -->
+                <div class="fat-admin-group">
+                    <label class="fat-admin-label">ตัวเลือกแบ่งเตรียม:</label>
+                    <div class="fat-admin-options">
+                        <label class="fat-admin-radio">
+                            <input type="radio" name="fat-split" value="no-split" checked>
+                            <span>ไม่แบ่ง</span>
+                        </label>
+                        <label class="fat-admin-radio">
+                            <input type="radio" name="fat-split" value="split-2">
+                            <span>แบ่งเตรียม</span>
+                        </label>
+                    </div>
+                    <div class="fat-split-display" id="fat-split-info" style="display: none;">
+                        <span id="fat-split-text">0 ml × 2 syr</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Summary Table -->
-      <div class="tpn-table">
-        <div class="table-header">
-          <div class="table-cell header-cell">องค์ประกอบ</div>
-          <div class="table-cell header-cell">ปริมาตร (ml)</div>
-          <div class="table-cell header-cell">แคลอรี่ (kcal)</div>
-          <div class="table-cell header-cell">mOsmol/L</div>
-        </div>
-        <div class="table-row">
-          <div class="table-cell component-cell" id="protein-label">10% Aminoven® infant</div>
-          <div class="table-cell result-cell volume-yellow" id="protein-volume">0</div>
-          <div class="table-cell result-cell" id="protein-calories">0</div>
-          <div class="table-cell result-cell osmol-purple" id="protein-osmol">0</div>
-        </div>
-        <div class="table-row">
-          <div class="table-cell component-cell">50% Dextrose</div>
-          <div class="table-cell result-cell volume-yellow" id="dextrose-volume">0</div>
-          <div class="table-cell result-cell" id="dextrose-calories">0</div>
-          <div class="table-cell result-cell osmol-purple" id="dextrose-osmol">0</div>
-        </div>
-        <div class="table-row">
-          <div class="table-cell component-cell" id="fat-label">20% SMOF lipid</div>
-          <div class="table-cell result-cell volume-yellow" id="fat-volume">0</div>
-          <div class="table-cell result-cell" id="fat-calories">0</div>
-          <div class="table-cell result-cell">-</div>
-        </div>
-      </div>
-
-      <div class="gir-display">
-        <div class="gir-label">GIR (Glucose Infusion Rate)</div>
-        <div class="calc-result gir-pink" id="gir-result">0 mg/kg/min</div>
-      </div>
     </section>
-
-    <!-- Electrolytes -->
+    
+    <!-- Electrolytes Section -->
     <section class="section">
-      <h2>Electrolytes</h2>
-
-      <!-- Na -->
-      <div class="electrolyte-item">
-        <div class="electrolyte-header">
-          <div class="electrolyte-input">
-            <label for="na">Na (mEq/kg/day)</label>
-            <input type="text" inputmode="decimal" id="na" placeholder="กรอกปริมาณ Na">
-          </div>
-          <div class="electrolyte-result">
-            <div class="electrolyte-result-label">Na จาก Glycophos®</div>
-            <div class="electrolyte-result-value" id="na-from-glycophos">0 mEq</div>
-          </div>
+        <h2>Electrolytes</h2>
+        
+       <!-- Phosphorus (P) -->
+        <div class="electrolyte-item">
+            <div class="electrolyte-header">
+                <div class="electrolyte-input">
+                    <label for="p">P (Glycophos®) (mmol/kg/day)</label>
+                    <input type="text" inputmode="decimal" id="p" placeholder="กรอกปริมาณ P">
+                </div>
+                <div class="electrolyte-result">
+                    <div class="electrolyte-result-label">P Volume</div>
+                    <div class="electrolyte-result-value" id="p-volume">0 ml</div>
+                </div>
+            </div>
         </div>
-
-        <div class="source-selection">
-          <h4>เลือกแหล่ง Na ที่ต้องการ:</h4>
-          <label class="source-option">
-            <input type="radio" name="na-source" value="nacl" id="nacl-radio">
-            <span class="source-option-label">3%NaCl (0.5 mEq/ml)</span>
-            <span class="source-option-value" id="nacl-volume">0 ml</span>
-          </label>
-          <label class="source-option">
-            <input type="radio" name="na-source" value="na-acetate" id="na-acetate-radio">
-            <span class="source-option-label">Na acetate (3 mEq/ml)</span>
-            <span class="source-option-value" id="na-acetate-volume">0 ml</span>
-          </label>
+        
+        <!-- Sodium (Na) -->
+        <div class="electrolyte-item">
+            <div class="electrolyte-header">
+                <div class="electrolyte-input">
+                    <label for="na">Na (mEq/kg/day)</label>
+                    <input type="text" inputmode="decimal" id="na" placeholder="กรอกปริมาณ Na">
+                </div>
+                <div class="electrolyte-result">
+                    <div class="electrolyte-result-label">Na จาก Glycophos®</div>
+                    <div class="electrolyte-result-value" id="na-from-glycophos">0 mEq</div>
+                </div>
+            </div>
+            <div class="source-selection">
+                <h4>เลือกแหล่ง Na ที่ต้องการ:</h4>
+                <label class="source-option">
+                    <input type="radio" name="na-source" value="nacl" id="nacl-radio">
+                    <span class="source-option-label">3%NaCl (0.5 mEq/ml)</span>
+                    <span class="source-option-value" id="nacl-volume">0 ml</span>
+                </label>
+                <label class="source-option">
+                    <input type="radio" name="na-source" value="nacl20" id="nacl20-radio">
+                    <span class="source-option-label" style="color:#dc2626; font-weight:400;">20%NaCl (3.4 mEq/ml)</span>
+                    <span class="source-option-value" id="nacl20-volume">0 ml</span>
+                </label>
+                <label class="source-option">
+                    <input type="radio" name="na-source" value="na-acetate" id="na-acetate-radio">
+                    <span class="source-option-label">Na acetate (3 mEq/ml)</span>
+                    <span class="source-option-value" id="na-acetate-volume">0 ml</span>
+                </label>
+            </div>
         </div>
-      </div>
-
-      <!-- P -->
-      <div class="electrolyte-item">
-        <div class="electrolyte-header">
-          <div class="electrolyte-input">
-            <label for="p">P (Glycophos®) (mmol/kg/day)</label>
-            <input type="text" inputmode="decimal" id="p" placeholder="กรอกปริมาณ P">
-          </div>
-          <div class="electrolyte-result">
-            <div class="electrolyte-result-label">P Volume</div>
-            <div class="electrolyte-result-value" id="p-volume">0 ml</div>
-          </div>
+        
+        <!-- Calcium (Ca) -->
+        <div class="electrolyte-item">
+            <div class="electrolyte-header">
+                <div class="electrolyte-input">
+                    <label for="ca">Ca (mmol/kg/day)</label>
+                    <input type="text" inputmode="decimal" id="ca" placeholder="กรอกปริมาณ Ca">
+                </div>
+                <div class="electrolyte-result">
+                    <div class="electrolyte-result-label">Ca Volume</div>
+                    <div class="electrolyte-result-value" id="ca-volume">0 ml</div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Ca -->
-      <div class="electrolyte-item">
-        <div class="electrolyte-header">
-          <div class="electrolyte-input">
-            <label for="ca">Ca (mmol/kg/day)</label>
-            <input type="text" inputmode="decimal" id="ca" placeholder="กรอกปริมาณ Ca">
-          </div>
-          <div class="electrolyte-result">
-            <div class="electrolyte-result-label">Ca Volume</div>
-            <div class="electrolyte-result-value" id="ca-volume">0 ml</div>
-          </div>
+        
+        <!-- Magnesium (Mg) -->
+        <div class="electrolyte-item">
+            <div class="electrolyte-header">
+                <div class="electrolyte-input">
+                    <label for="mg">Mg (mmol/kg/day)</label>
+                    <input type="text" inputmode="decimal" id="mg" placeholder="กรอกปริมาณ Mg">
+                </div>
+                <div class="electrolyte-result">
+                    <div class="electrolyte-result-label">Mg Volume</div>
+                    <div class="electrolyte-result-value" id="mg-volume">0 ml</div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Mg -->
-      <div class="electrolyte-item">
-        <div class="electrolyte-header">
-          <div class="electrolyte-input">
-            <label for="mg">Mg (mmol/kg/day)</label>
-            <input type="text" inputmode="decimal" id="mg" placeholder="กรอกปริมาณ Mg">
-          </div>
-          <div class="electrolyte-result">
-            <div class="electrolyte-result-label">Mg Volume</div>
-            <div class="electrolyte-result-value" id="mg-volume">0 ml</div>
-          </div>
+        
+        <!-- Potassium (K) -->
+        <div class="electrolyte-item">
+            <div class="electrolyte-header">
+                <div class="electrolyte-input">
+                    <label for="k">K (mEq/kg/day)</label>
+                    <input type="text" inputmode="decimal" id="k" placeholder="กรอกปริมาณ K">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr; gap:0;"></div>
+            </div>
+            <div class="source-selection">
+                <h4>เลือกแหล่ง K ที่ต้องการ:</h4>
+                <label class="source-option">
+                    <input type="radio" name="k-source" value="kcl" id="kcl-radio">
+                    <span class="source-option-label">15% KCl (2 mEq/ml)</span>
+                    <span class="source-option-value" id="kcl-volume">0 ml</span>
+                </label>
+                <label class="source-option">
+                    <input type="radio" name="k-source" value="k-acetate" id="k-acetate-radio">
+                    <span class="source-option-label">K acetate (3 mEq/ml)</span>
+                    <span class="source-option-value" id="k-acetate-volume">0 ml</span>
+                </label>
+            </div>
         </div>
-      </div>
-
-      <!-- K -->
-      <div class="electrolyte-item">
-        <div class="electrolyte-header">
-          <div class="electrolyte-input">
-            <label for="k">K (mEq/kg/day)</label>
-            <input type="text" inputmode="decimal" id="k" placeholder="กรอกปริมาณ K">
-          </div>
-          <div style="display:grid; grid-template-columns:1fr; gap:0;"></div>
-        </div>
-
-        <div class="source-selection">
-          <h4>เลือกแหล่ง K ที่ต้องการ:</h4>
-          <label class="source-option">
-            <input type="radio" name="k-source" value="kcl" id="kcl-radio">
-            <span class="source-option-label">15% KCl (2 mEq/ml)</span>
-            <span class="source-option-value" id="kcl-volume">0 ml</span>
-          </label>
-          <label class="source-option">
-            <input type="radio" name="k-source" value="k-acetate" id="k-acetate-radio">
-            <span class="source-option-label">K acetate (3 mEq/ml)</span>
-            <span class="source-option-value" id="k-acetate-volume">0 ml</span>
-          </label>
-        </div>
-      </div>
-
     </section>
-
-    <!-- Micronutrients -->
+    
+    <!-- Micronutrients Section -->
     <section class="section">
-      <h2>Micronutrients</h2>
-      <div class="calculation-section" style="background:#f0fdf4; border:2px solid #bbf7d0;">
-
-        <!-- Peditrace -->
-        <div class="calc-row" style="display:flex; flex-direction:column; align-items:stretch; border-bottom:1px solid #f1f5f9; padding-bottom:15px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div class="calc-label bold">Peditrace® (max 10 ml/day)</div>
-            <div class="calc-result" id="peditrace-volume" style="background:#dcfce7; color:#166534; border:1px solid #86efac;">0 ml</div>
-          </div>
-          <div class="frequency-selection">
-            <h4>ความถี่ในการให้:</h4>
-            <label class="frequency-option">
-              <input type="radio" name="peditrace-freq" value="daily" checked>
-              <span class="frequency-option-label">Per day</span>
-            </label>
-            <label class="frequency-option">
-              <input type="radio" name="peditrace-freq" value="mwf">
-              <span class="frequency-option-label">Mon Wed Fri</span>
-            </label>
-            <label class="frequency-option">
-              <input type="radio" name="peditrace-freq" value="weekly">
-              <span class="frequency-option-label">Per week</span>
-            </label>
-            <div class="day-selector" id="peditrace-day-selector">
-              <select id="peditrace-day">
-                <option value="1">Monday</option>
-                <option value="2">Tuesday</option>
-                <option value="3">Wednesday</option>
-                <option value="4">Thursday</option>
-                <option value="5">Friday</option>
-                <option value="6">Saturday</option>
-                <option value="0">Sunday</option>
-              </select>
+        <h2>Micronutrients</h2>
+        <div class="calculation-section" style="background:#f0fdf4; border:2px solid #bbf7d0;">
+            
+            <!-- Peditrace -->
+            <div class="calc-row" style="display:flex; flex-direction:column; align-items:stretch; 
+                                          border-bottom:1px solid #f1f5f9; padding-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div class="calc-label bold">Peditrace® (max 15 ml/day)</div>
+                    <div class="calc-result" id="peditrace-volume" 
+                         style="background:#dcfce7; color:#166534; border:1px solid #86efac;">
+                        0 ml
+                    </div>
+                </div>
+                <div class="frequency-selection">
+                    <h4>ความถี่ในการให้:</h4>
+                    <label class="frequency-option">
+                        <input type="radio" name="peditrace-freq" value="daily" checked>
+                        <span class="frequency-option-label">Per day</span>
+                    </label>
+                    <label class="frequency-option">
+                        <input type="radio" name="peditrace-freq" value="mwf">
+                        <span class="frequency-option-label">Mon Wed Fri</span>
+                    </label>
+                    <label class="frequency-option">
+                        <input type="radio" name="peditrace-freq" value="weekly">
+                        <span class="frequency-option-label">Per week</span>
+                    </label>
+                    <div class="day-selector" id="peditrace-day-selector">
+                        <select id="peditrace-day">
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                            <option value="0">Sunday</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Cernevit -->
-        <div class="calc-row" style="display:flex; flex-direction:column; align-items:stretch; border-bottom:1px solid #f1f5f9; padding-bottom:15px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div class="calc-label bold">Cernevit® (max 3 ml/day)</div>
-            <div class="calc-result" id="cernevit-volume" style="background:#dcfce7; color:#166534; border:1px solid #86efac;">0 ml</div>
-          </div>
-          <div class="frequency-selection">
-            <h4>ความถี่ในการให้:</h4>
-            <label class="frequency-option">
-              <input type="radio" name="cernevit-freq" value="daily" checked>
-              <span class="frequency-option-label">Per day</span>
-            </label>
-            <label class="frequency-option">
-              <input type="radio" name="cernevit-freq" value="mwf">
-              <span class="frequency-option-label">Mon Wed Fri</span>
-            </label>
-            <label class="frequency-option">
-              <input type="radio" name="cernevit-freq" value="weekly">
-              <span class="frequency-option-label">Per week</span>
-            </label>
-            <div class="day-selector" id="cernevit-day-selector">
-              <select id="cernevit-day">
-                <option value="1">Monday</option>
-                <option value="2">Tuesday</option>
-                <option value="3">Wednesday</option>
-                <option value="4">Thursday</option>
-                <option value="5">Friday</option>
-                <option value="6">Saturday</option>
-                <option value="0">Sunday</option>
-              </select>
+            
+            <!-- Cernevit -->
+            <div class="calc-row" style="display:flex; flex-direction:column; align-items:stretch; 
+                                          border-bottom:1px solid #f1f5f9; padding-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div class="calc-label bold">Cernevit® (max 3 ml/day)</div>
+                    <div class="calc-result" id="cernevit-volume" 
+                         style="background:#dcfce7; color:#166534; border:1px solid #86efac;">
+                        0 ml
+                    </div>
+                </div>
+                <div class="frequency-selection">
+                    <h4>ความถี่ในการให้:</h4>
+                    <label class="frequency-option">
+                        <input type="radio" name="cernevit-freq" value="daily" checked>
+                        <span class="frequency-option-label">Per day</span>
+                    </label>
+                    <label class="frequency-option">
+                        <input type="radio" name="cernevit-freq" value="mwf">
+                        <span class="frequency-option-label">Mon Wed Fri</span>
+                    </label>
+                    <label class="frequency-option">
+                        <input type="radio" name="cernevit-freq" value="weekly">
+                        <span class="frequency-option-label">Per week</span>
+                    </label>
+                    <div class="day-selector" id="cernevit-day-selector">
+                        <select id="cernevit-day">
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                            <option value="0">Sunday</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Vitamin K -->
-        <div class="calc-row" style="display:flex; flex-direction:column; align-items:stretch;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div class="calc-label bold">Vitamin K (max 0.5 ml/day)</div>
-          </div>
-          <div class="frequency-selection">
-            <h4>เลือกวิธีการให้:</h4>
-            <label class="frequency-option" id="vitamin-k-daily-option">
-              <input type="radio" name="vitamin-k-choice" value="daily" checked>
-              <span class="frequency-option-label">Per day</span>
-              <span class="source-option-value" id="vitamin-k-daily" style="margin-left:10px;">0 ml</span>
-            </label>
-            <label class="frequency-option">
-              <input type="radio" name="vitamin-k-choice" value="weekly">
-              <span class="frequency-option-label">Per week</span>
-              <span class="source-option-value" id="vitamin-k-weekly" style="margin-left:10px;">0 ml</span>
-            </label>
-            <div class="day-selector" id="vitamin-k-day-selector">
-              <select id="vitamin-k-day">
-                <option value="1">Monday</option>
-                <option value="2">Tuesday</option>
-                <option value="3">Wednesday</option>
-                <option value="4">Thursday</option>
-                <option value="5">Friday</option>
-                <option value="6">Saturday</option>
-                <option value="0">Sunday</option>
-              </select>
+            
+            <!-- Vitamin K -->
+            <div class="calc-row" style="display:flex; flex-direction:column; align-items:stretch;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div class="calc-label bold">Vitamin K (max 0.5 ml/day)</div>
+                </div>
+                <div class="frequency-selection">
+                    <h4>เลือกวิธีการให้:</h4>
+                    <label class="frequency-option" id="vitamin-k-daily-option">
+                        <input type="radio" name="vitamin-k-choice" value="daily">
+                        <span class="frequency-option-label">Per day</span>
+                        <span class="source-option-value" id="vitamin-k-daily" style="margin-left:10px;">
+                            0 ml
+                        </span>
+                    </label>
+                    <label class="frequency-option">
+                        <input type="radio" name="vitamin-k-choice" value="weekly">
+                        <span class="frequency-option-label">Per week</span>
+                        <span class="source-option-value" id="vitamin-k-weekly" style="margin-left:10px;">
+                            0 ml
+                        </span>
+                    </label>
+                    <div class="day-selector" id="vitamin-k-day-selector">
+                        <select id="vitamin-k-day">
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                            <option value="0">Sunday</option>
+                        </select>
+                    </div>
+                    <label class="frequency-option">
+                        <input type="radio" name="vitamin-k-choice" value="none" checked>
+                        <span class="frequency-option-label" style="color: #dc2626; font-weight: 600;">ไม่เติม</span>
+                    </label>
+                </div>
             </div>
-            <label class="frequency-option">
-              <input type="radio" name="vitamin-k-choice" value="none">
-              <span class="frequency-option-label">ไม่เติม</span>
-            </label>
-          </div>
         </div>
-
-      </div>
     </section>
-
-    <!-- Heparin -->
-    <section class="section">
-      <h2>Add Heparin</h2>
-      <div class="calculation-section">
+    
+    <!-- Heparin Section -->
+<section class="section">
+    <h2>Add Heparin</h2>
+    <div class="calculation-section">
         <div class="calc-row">
-          <div class="calc-label">มี PICC-line หรือไม่?</div>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-              <input type="checkbox" id="picc-line-checkbox" style="transform:scale(1.2);">
-              <span style="font-weight:500;">มี PICC-line</span>
-            </label>
-          </div>
-          <div></div>
-        </div>
-        <div class="calc-row">
-          <div class="calc-label">Heparin</div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="calc-label">มี PICC-line หรือไม่?</div>
             <div style="display:flex; align-items:center; gap:10px;">
-              <span class="calc-result" id="heparin-volume" style="margin-left:5px;">0 ml</span>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="checkbox" id="picc-line-checkbox" style="transform:scale(1.2);">
+                    <span style="font-weight:500;">มี PICC-line</span>
+                </label>
             </div>
-          </div>
-          <div></div>
+            <div></div>
         </div>
-      </div>
-    </section>
-
-    <!-- Milk -->
+        
+        <!-- Heparin Concentration Selection (แสดงเฉพาะเมื่อติ๊ก PICC) -->
+        <div class="calc-row" id="heparin-concentration-row" style="display:none;">
+            <div class="calc-label">เลือกความเข้มข้น Heparin:</div>
+            <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                <label class="frequency-option" style="flex:0 0 auto; min-width:150px;">
+                    <input type="radio" name="heparin-concentration" value="1" checked>
+                    <span class="frequency-option-label">1 unit/ml</span>
+                </label>
+                <label class="frequency-option" style="flex:0 0 auto; min-width:150px;">
+                    <input type="radio" name="heparin-concentration" value="0.5">
+                    <span class="frequency-option-label">0.5 unit/ml</span>
+                </label>
+            </div>
+            <div></div>
+        </div>
+        
+        <div class="calc-row">
+            <div class="calc-label">Heparin</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span class="calc-result" id="heparin-volume" style="margin-left:5px;">0 ml</span>
+                </div>
+            </div>
+            <div></div>
+        </div>
+    </div>
+</section>
+    
+    <!-- Additional Section -->
     <section class="section">
-      <h2>คำนวน Calories จากนม (feed)</h2>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="milk">ปริมาตรนม</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="numeric" id="milk" step="1" placeholder="กรอกปริมาตรนม"/>
-            <span class="unit">ml</span>
-          </div>
+        <h2>Additional</h2>
+        <div class="additional-section">
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="additional-name">กรอกเอง</label>
+                    <input type="text" id="additional-name" placeholder="ระบุชื่อยา/สาร" 
+                           style="padding-right:16px;">
+                </div>
+                <div class="input-field">
+                    <label for="additional-amount">จำนวน</label>
+                    <div class="input-with-unit">
+                        <input type="number" inputmode="decimal" id="additional-amount" 
+                               step="0.01" placeholder="กรอกจำนวน"/>
+                        <span class="unit">
+                            <select id="additional-unit" style="border:1px solid #cbd5e1; 
+                                    background:white; padding:4px 8px; border-radius:4px;
+                                    font-weight:500; color:#475569; cursor:pointer;
+                                    outline:none;">
+                                <option value="ml">ml</option>
+                                <option value="mg">mg</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="input-field">
-          <label for="total-milk">x 8 feed =</label>
-          <div class="input-with-unit">
-            <input type="number" inputmode="numeric" id="total-milk" step="1" placeholder="รวมปริมาตรนม"/>
-            <span class="unit">ml</span>
-          </div>
-        </div>
-      </div>
-      <div class="calculation-section">
-        <div class="calc-row">
-          <div class="calc-label">TF จากการกินนม</div>
-          <div class="calc-result" id="tf-from-milk">0 ml/kg/day</div>
-          <div></div>
-        </div>
-        <div class="calc-row">
-          <div class="calc-label">Calories จากนม</div>
-          <div class="calc-result" id="milk-calories-kg">0 kcal/kg/day</div>
-          <div></div>
-        </div>
-      </div>
     </section>
-
-    <!-- Sterile Water -->
-    <section class="total-section" id="sterile-water-section" style="background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
-      <h2>💧 Sterile Water Volume</h2>
-      <div class="total-calories" id="sterile-water-volume">0</div>
-      <p>ml</p>
+    
+    <!-- Milk Calories Section -->
+    <section class="section">
+        <h2>คำนวน Calories จากนม (feed)</h2>
+        <div class="input-group">
+            <div class="input-field">
+                <label for="milk">ปริมาตรนม</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="numeric" id="milk" step="1" 
+                           placeholder="กรอกปริมาตรนม"/>
+                    <span class="unit">ml</span>
+                </div>
+            </div>
+            <div class="input-field">
+                <label for="total-milk">x 8 feed =</label>
+                <div class="input-with-unit">
+                    <input type="number" inputmode="numeric" id="total-milk" step="1" 
+                           placeholder="รวมปริมาตรนม"/>
+                    <span class="unit">ml</span>
+                </div>
+            </div>
+        </div>
+        <div class="calculation-section">
+            <div class="calc-row">
+                <div class="calc-label">TF จากการกินนม</div>
+                <div class="calc-result" id="tf-from-milk">0 ml/kg/day</div>
+                <div></div>
+            </div>
+            <div class="calc-row">
+                <div class="calc-label">Calories จากนม</div>
+                <div class="calc-result" id="milk-calories-kg">0 kcal/kg/day</div>
+                <div></div>
+            </div>
+        </div>
     </section>
-
-    <!-- Total calories -->
-    <section class="total-section">
-      <h2>🎯 Total calories</h2>
-      <p style="font-size:.9em; opacity:.9; margin-bottom:15px;">(Full calories = 90-120 kcal/kg/day)</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+    
+    <!-- Sterile Water Section -->
+    <section class="total-section" id="sterile-water-section" 
+             style="background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
+        <h2>💧 Sterile Water Volume</h2>
+        <div class="total-calories" id="sterile-water-volume">0</div>
+        <p>ml</p>
+    </section>
+    
+   <!-- Total Calories Section -->
+<section class="total-section">
+    <h2>🎯 Total calories</h2>
+    <p style="font-size:.9em; opacity:.9; margin-bottom:15px;">
+        (Full calories = 90-120 kcal/kg/day)
+    </p>
+    
+    <!-- Grid Layout: Total Calories + NPC:N -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+        <!-- Total Calories/day -->
         <div style="text-align:center;">
-          <h3 style="margin:0 0 10px 0; font-size:1.2em;">Total Calories/day</h3>
-          <div class="total-calories" id="total-calories-day">0</div>
-          <p>kcal/day</p>
+            <h3 style="margin:0 0 10px 0; font-size:1.3em;">Total Calories/day</h3>
+            <div class="total-calories" id="total-calories-day">0</div>
+            <p>kcal/day</p>
         </div>
+        
+        <!-- NPC:N Ratio -->
         <div style="text-align:center;">
-          <h3 style="margin:0 0 10px 0; font-size:1.2em;">Total Calories/kg/day</h3>
-          <div class="total-calories" id="total-calories-kg">0</div>
-          <p>kcal/kg/day</p>
+            <h3 style="margin:0 0 10px 0; font-size:1.3em;">NPC:N</h3>
+            <div class="total-calories" id="npc-n-ratio">0:1</div>
+            <p>&nbsp;</p>
         </div>
-      </div>
-      <div style="background:rgba(255,255,255,0.2); border-radius:12px; padding:20px; margin-top:15px;">
-        <h4 style="margin:0 0 15px 0; font-size:1.1em; text-align:center;">รายละเอียด Calories</h4>
+    </div>
+    
+    <div style="background:#fef3c7; border-radius:12px; padding:20px; margin-top:15px; border:2px solid #fbbf24;">
+        <h4 style="margin:0 0 15px 0; font-size:1.1em; text-align:center; color:#92400e;">
+            รายละเอียด Calories (kcal/kg/day)
+        </h4>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; text-align:center;">
-          <div><p style="margin:0 0 5px 0; font-size:.9em; opacity:.8;">จาก PN</p><div style="font-size:1.3em; font-weight:600;" id="breakdown-pn">0</div><p style="margin:5px 0 0 0; font-size:.8em;">kcal/kg/day</p></div>
-          <div><p style="margin:0 0 5px 0; font-size:.9em; opacity:.8;">จากนม</p><div style="font-size:1.3em; font-weight:600;" id="breakdown-milk">0</div><p style="margin:5px 0 0 0; font-size:.8em;">kcal/kg/day</p></div>
-          <div><p style="margin:0 0 5px 0; font-size:.9em; opacity:.8;">รวมทั้งหมด</p><div style="font-size:1.3em; font-weight:600;" id="breakdown-total">0</div><p style="margin:5px 0 0 0; font-size:.8em;">kcal/kg/day</p></div>
+            <div>
+                <p style="margin:0 0 5px 0; font-size:.9em; color:#92400e; font-weight:600;">จาก PN</p>
+                <div style="font-size:1.3em; font-weight:700; color:#92400e;" id="breakdown-pn">0</div>
+                <p style="margin:5px 0 0 0; font-size:.8em; color:#92400e;">kcal/kg/day</p>
+            </div>
+            <div>
+                <p style="margin:0 0 5px 0; font-size:.9em; color:#92400e; font-weight:600;">จากนม</p>
+                <div style="font-size:1.3em; font-weight:700; color:#92400e;" id="breakdown-milk">0</div>
+                <p style="margin:5px 0 0 0; font-size:.8em; color:#92400e;">kcal/kg/day</p>
+            </div>
+            <div>
+                <p style="margin:0 0 5px 0; font-size:.9em; color:#92400e; font-weight:600;">รวมทั้งหมด</p>
+                <div style="font-size:1.3em; font-weight:700; color:#92400e;" id="breakdown-total">0</div>
+                <p style="margin:5px 0 0 0; font-size:.8em; color:#92400e;">kcal/kg/day</p>
+            </div>
         </div>
-      </div>
+    </div>
+</section>
+    
+    <!-- Total mOsmol Section -->
+    <section class="total-section" id="osmol-section" 
+             style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);">
+        <h2>Total mOsmol/L</h2>
+        <p style="font-size:.9em; opacity:.9; margin-bottom:15px;">
+            (&lt; 900 mOsmol/L ถ้าให้ทาง peripheral)
+        </p>
+        <div class="total-calories" id="total-osmol">0</div>
+        <p>mOsmol/L</p>
     </section>
-
-    <!-- Total mOsmol -->
-    <section class="total-section" id="osmol-section" style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);">
-      <h2>Total mOsmol/L</h2>
-      <p style="font-size:.9em; opacity:.9; margin-bottom:15px;">(&lt; 900 mOsmol/L ถ้าให้ทาง peripheral)</p>
-      <div class="total-calories" id="total-osmol">0</div>
-      <p>mOsmol/L</p>
-    </section>
-
-    <!-- Submit -->
+    
+    <!-- Submit Button -->
     <section class="submit-section">
-      <button id="submitBtn" class="submit-btn">📄 สร้าง TPN Report</button>
+        <button id="submitBtn" class="submit-btn">📄 สร้าง TPN Report</button>
     </section>
+</div>
 
-  </div>
+
 </main>
 
 <script>
-  const defaultConfig = { app_title:"TPN Calculator", subtitle:"สำหรับเด็ก" };
-
-  // ===== Auto Calculate Bag Volume =====
-  function calculateBagVolume(rate) {
-    if (!rate || rate <= 0) return 0;
-    
-    const rawVolume = rate * 24 + 20;
-    
-    // Round up to nearest 10
-    const rounded = Math.ceil(rawVolume / 10) * 10;
-    
-    return rounded;
-  }
-
-  // ===== Product Selection Visual Feedback =====
-  function initProductSelection() {
-    // Handle protein product selection
-    document.querySelectorAll('.product-option[data-product="protein"]').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.product-option[data-product="protein"]').forEach(opt => {
-          opt.classList.remove('selected');
-        });
-        this.classList.add('selected');
-        const radio = this.querySelector('input[type="radio"]');
-        if (radio) radio.checked = true;
-        updateProteinLabel();
-        calculateTPN();
-      });
-    });
-
-    // Handle fat product selection
-    document.querySelectorAll('.product-option[data-product="fat"]').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.product-option[data-product="fat"]').forEach(opt => {
-          opt.classList.remove('selected');
-        });
-        this.classList.add('selected');
-        const radio = this.querySelector('input[type="radio"]');
-        if (radio) radio.checked = true;
-        updateFatLabel();
-        calculateTPN();
-      });
-    });
-
-    // Set initial selected state
-    document.querySelector('.product-option[data-product="protein"] input:checked')?.closest('.product-option').classList.add('selected');
-    document.querySelector('.product-option[data-product="fat"] input:checked')?.closest('.product-option').classList.add('selected');
-  }
-
-  function updateProteinLabel() {
-    const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value;
-    const label = document.getElementById('protein-label');
-    if (!label) return;
-    
-    const names = {
-      'aminoven': '10% Aminoven® infant',
-      'amiparen': '10% Amiparen®',
-      'aminoplasmal': '15% Aminoplasmal®'
+    const defaultConfig = {
+        app_title: "TPN Calculator",
+        subtitle: "สำหรับเด็ก"
     };
-    
-    label.textContent = names[proteinProduct] || '10% Aminoven® infant';
-  }
 
-  function updateFatLabel() {
-    const fatProduct = document.querySelector('input[name="fat-product"]:checked')?.value;
-    const label = document.getElementById('fat-label');
-    if (!label) return;
-    
-    const names = {
-      'smof': '20% SMOF lipid',
-      'intralipid': '20% Intralipid'
-    };
-    
-    label.textContent = names[fatProduct] || '20% SMOF lipid';
-  }
+    // ===== Auto Calculate Bag Volume =====
+    function calculateBagVolume(rate) {
+        if (!rate || rate <= 0) return 0;
+        const rawVolume = rate * 24 + 20;
+        const rounded = Math.ceil(rawVolume / 10) * 10;
+        return rounded;
+    }
 
-  // ===== Autosave/Restore =====
-  const AUTOSAVE_KEY = 'tpnFormAutosave';
+    // ===== Product Selection Visual Feedback =====
+    function initProductSelection() {
+        // Handle protein product selection
+        document.querySelectorAll('.product-option[data-product="protein"]').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.product-option[data-product="protein"]').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+                updateProteinLabel();
+                calculateTPN();
+            });
+        });
 
-  function autosaveCollect() {
-    const ids = ['order-date','patient-hn','patient-name','patient-ward','bw','rate','bag','protein','dextrose','fat','milk','total-milk','p','na','k','ca','mg'];
-    const data = {};
-    ids.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.value ?? ''; });
-    const route = document.querySelector('input[name="tpn-route"]:checked')?.value || '';
-    const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value || 'aminoven';
-    const fatProduct = document.querySelector('input[name="fat-product"]:checked')?.value || 'smof';
-    const naSrc = document.querySelector('input[name="na-source"]:checked')?.value || '';
-    const kSrc  = document.querySelector('input[name="k-source"]:checked')?.value || '';
-    const peditFreq = document.querySelector('input[name="peditrace-freq"]:checked')?.value || '';
-    const cernFreq  = document.querySelector('input[name="cernevit-freq"]:checked')?.value || '';
-    const vitKChoice= document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || '';
-    const peditDay  = document.getElementById('peditrace-day')?.value || '1';
-    const cernDay   = document.getElementById('cernevit-day')?.value || '1';
-    const vitKDay   = document.getElementById('vitamin-k-day')?.value || '1';
-    const hasPicc   = document.getElementById('picc-line-checkbox')?.checked || false;
+        // Handle fat product selection
+        document.querySelectorAll('.product-option[data-product="fat"]').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.product-option[data-product="fat"]').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+                updateFatLabel();
+                calculateTPN();
+            });
+        });
 
-    Object.assign(data, { route, proteinProduct, fatProduct, naSrc, kSrc, peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc });
-    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
-  }
+        // Set initial selected state
+        document.querySelector('.product-option[data-product="protein"] input:checked')?.closest('.product-option').classList.add('selected');
+        document.querySelector('.product-option[data-product="fat"] input:checked')?.closest('.product-option').classList.add('selected');
+    }
 
-  function autosaveRestore() {
-    const raw = localStorage.getItem(AUTOSAVE_KEY);
-    if (!raw) return;
-    try {
-      const data = JSON.parse(raw);
-      Object.entries(data).forEach(([k,v])=>{
-        if (['order-date','patient-hn','patient-name','patient-ward','bw','rate','bag','protein','dextrose','fat','milk','total-milk','p','na','k','ca','mg'].includes(k)) {
-          const el = document.getElementById(k); if (el) el.value = v;
-        }
-      });
-      if (data.route) document.querySelector(`input[name="tpn-route"][value="${data.route}"]`)?.click();
-      if (data.proteinProduct) {
-        const proteinRadio = document.querySelector(`input[name="protein-product"][value="${data.proteinProduct}"]`);
-        if (proteinRadio) {
-          proteinRadio.checked = true;
-          proteinRadio.closest('.product-option').classList.add('selected');
-        }
-      }
-      if (data.fatProduct) {
-        const fatRadio = document.querySelector(`input[name="fat-product"][value="${data.fatProduct}"]`);
-        if (fatRadio) {
-          fatRadio.checked = true;
-          fatRadio.closest('.product-option').classList.add('selected');
-        }
-      }
-      if (data.naSrc) document.querySelector(`input[name="na-source"][value="${data.naSrc}"]`)?.click();
-      if (data.kSrc)  document.querySelector(`input[name="k-source"][value="${data.kSrc}"]`)?.click();
-      if (data.peditFreq) document.querySelector(`input[name="peditrace-freq"][value="${data.peditFreq}"]`)?.click();
-      if (data.cernFreq)  document.querySelector(`input[name="cernevit-freq"][value="${data.cernFreq}"]`)?.click();
-      if (data.vitKChoice) document.querySelector(`input[name="vitamin-k-choice"][value="${data.vitKChoice}"]`)?.click();
+    function updateProteinLabel() {
+        const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value;
+        const label = document.getElementById('protein-label');
+        if (!label) return;
+        const names = {
+            'aminoven': '10% Aminoven® infant',
+            'amiparen': '10% Amiparen®',
+            'aminoplasmal': '15% Aminoplasmal®'
+        };
+        label.textContent = names[proteinProduct] || '10% Aminoven® infant';
+    }
 
-      const pday = document.getElementById('peditrace-day'); if (pday) pday.value = data.peditDay ?? '1';
-      const cday = document.getElementById('cernevit-day');  if (cday) cday.value = data.cernDay ?? '1';
-      const vday = document.getElementById('vitamin-k-day'); if (vday) vday.value = data.vitKDay ?? '1';
+    function updateFatLabel() {
+        const fatProduct = document.querySelector('input[name="fat-product"]:checked')?.value;
+        const label = document.getElementById('fat-label');
+        if (!label) return;
+        const names = {
+            'smof': '20% SMOF lipid',
+            'intralipid': '20% Intralipid'
+        };
+        label.textContent = names[fatProduct] || '20% SMOF lipid';
+    }
 
-      const picc = document.getElementById('picc-line-checkbox'); if (picc) picc.checked = !!data.hasPicc;
-      
-      updateProteinLabel();
-      updateFatLabel();
-    } catch(e) { }
-  }
+    // ===== Autosave/Restore =====
+    const AUTOSAVE_KEY = 'tpnFormAutosave';
 
-  function clearAllData() {
+    function autosaveCollect() {
+        const ids = ['order-date','patient-hn','patient-name','patient-ward','bw','rate','bag',
+                     'protein','dextrose','fat','milk','total-milk','p','na','k','ca','mg','additional-name',
+    'additional-amount','additional-unit'];
+        
+        const data = {};
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value ?? '';
+        });
+
+        const route = document.querySelector('input[name="tpn-route"]:checked')?.value || '';
+        const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value || 'aminoven';
+        const fatProduct = document.querySelector('input[name="fat-product"]:checked')?.value || 'smof';
+        const naSrc = document.querySelector('input[name="na-source"]:checked')?.value || '';
+        const kSrc = document.querySelector('input[name="k-source"]:checked')?.value || '';
+        const peditFreq = document.querySelector('input[name="peditrace-freq"]:checked')?.value || '';
+        const cernFreq = document.querySelector('input[name="cernevit-freq"]:checked')?.value || '';
+        const vitKChoice = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || '';
+        const peditDay = document.getElementById('peditrace-day')?.value || '1';
+        const cernDay = document.getElementById('cernevit-day')?.value || '1';
+        const vitKDay = document.getElementById('vitamin-k-day')?.value || '1';
+        const hasPicc = document.getElementById('picc-line-checkbox')?.checked || false;
+        const heparinConc = document.querySelector('input[name="heparin-concentration"]:checked')?.value || '1';
+        
+        // ✅ เพิ่ม Fat administration options
+        const fatPriming = document.querySelector('input[name="fat-priming"]:checked')?.value || 'priming';
+        const fatDripDuration = document.querySelector('input[name="fat-drip-duration"]:checked')?.value || '24';
+        const fatSplit = document.querySelector('input[name="fat-split"]:checked')?.value || 'no-split';
+
+        Object.assign(data, {
+    route, proteinProduct, fatProduct, naSrc, kSrc,
+    peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,
+    fatPriming, fatDripDuration, fatSplit
+});
+
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+    }
+
+    function autosaveRestore() {
+        const raw = localStorage.getItem(AUTOSAVE_KEY);
+        if (!raw) return;
+        try {
+            const data = JSON.parse(raw);
+            Object.entries(data).forEach(([k,v]) => {
+                if (['order-date','patient-hn','patient-name','patient-ward','bw','rate','bag',
+                     'protein','dextrose','fat','milk','total-milk','p','na','k','ca','mg','additional-name', // << เพิ่ม 3 ช่อง
+    'additional-amount','additional-unit'].includes(k)) { // << เพิ่ม 3 ช่อง
+                    const el = document.getElementById(k);
+                    if (el) el.value = v;
+                }
+            });
+
+            if (data.route) document.querySelector(`input[name="tpn-route"][value="${data.route}"]`)?.click();
+            
+            if (data.proteinProduct) {
+                const proteinRadio = document.querySelector(`input[name="protein-product"][value="${data.proteinProduct}"]`);
+                if (proteinRadio) {
+                    proteinRadio.checked = true;
+                    proteinRadio.closest('.product-option').classList.add('selected');
+                }
+            }
+            
+            if (data.fatProduct) {
+                const fatRadio = document.querySelector(`input[name="fat-product"][value="${data.fatProduct}"]`);
+                if (fatRadio) {
+                    fatRadio.checked = true;
+                    fatRadio.closest('.product-option').classList.add('selected');
+                }
+            }
+
+            if (data.naSrc) document.querySelector(`input[name="na-source"][value="${data.naSrc}"]`)?.click();
+            if (data.kSrc) document.querySelector(`input[name="k-source"][value="${data.kSrc}"]`)?.click();
+            if (data.peditFreq) document.querySelector(`input[name="peditrace-freq"][value="${data.peditFreq}"]`)?.click();
+            if (data.cernFreq) document.querySelector(`input[name="cernevit-freq"][value="${data.cernFreq}"]`)?.click();
+            if (data.vitKChoice) document.querySelector(`input[name="vitamin-k-choice"][value="${data.vitKChoice}"]`)?.click();
+            
+            // ✅ กู้คืน Fat administration options
+            if (data.fatPriming) document.querySelector(`input[name="fat-priming"][value="${data.fatPriming}"]`)?.click();
+            if (data.fatDripDuration) document.querySelector(`input[name="fat-drip-duration"][value="${data.fatDripDuration}"]`)?.click();
+            if (data.fatSplit) document.querySelector(`input[name="fat-split"][value="${data.fatSplit}"]`)?.click();
+
+            const pday = document.getElementById('peditrace-day');
+            if (pday) pday.value = data.peditDay ?? '1';
+            const cday = document.getElementById('cernevit-day');
+            if (cday) cday.value = data.cernDay ?? '1';
+            const vday = document.getElementById('vitamin-k-day');
+            if (vday) vday.value = data.vitKDay ?? '1';
+           const picc = document.getElementById('picc-line-checkbox');
+if (picc) {
+    picc.checked = !!data.hasPicc;
+    // แสดง/ซ่อน heparin concentration row ตามสถานะ PICC
+    const heparinRow = document.getElementById('heparin-concentration-row');
+    if (data.hasPicc && heparinRow) {
+        heparinRow.style.display = 'grid';
+    }
+}
+
+if (data.heparinConc) {
+    document.querySelector(`input[name="heparin-concentration"][value="${data.heparinConc}"]`)?.click();
+}
+
+            updateProteinLabel();
+            updateFatLabel();
+        } catch(e) { }
+    }
+
+   function clearAllData() {
     if (!confirm('⚠️ คุณต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?')) return;
-    
-    const ids = ['patient-hn','patient-name','patient-ward','bw','rate','bag','protein','dextrose','fat','milk','total-milk','p','na','k','ca','mg'];
+
+    const ids = ['patient-hn','patient-name','patient-ward','bw','rate','bag',
+                 'protein','dextrose','fat','milk','total-milk','p','na','k','ca','mg',
+                 'additional-name','additional-amount'];
     ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
+        const el = document.getElementById(id);
+        if (el) el.value = '';
     });
-    
+
     const dateEl = document.getElementById('order-date');
     if (dateEl) {
-      const today = new Date();
-      dateEl.value = today.toISOString().split('T')[0];
+        const today = new Date();
+        dateEl.value = today.toISOString().split('T')[0];
     }
-    
+
     document.querySelector('input[name="tpn-route"][value="central"]')?.click();
-    
+
     // Reset product selections
     const aminovenRadio = document.querySelector('input[name="protein-product"][value="aminoven"]');
     if (aminovenRadio) {
-      aminovenRadio.checked = true;
-      document.querySelectorAll('.product-option[data-product="protein"]').forEach(opt => opt.classList.remove('selected'));
-      aminovenRadio.closest('.product-option').classList.add('selected');
+        aminovenRadio.checked = true;
+        document.querySelectorAll('.product-option[data-product="protein"]').forEach(opt => opt.classList.remove('selected'));
+        aminovenRadio.closest('.product-option').classList.add('selected');
     }
-    
+
     const smofRadio = document.querySelector('input[name="fat-product"][value="smof"]');
     if (smofRadio) {
-      smofRadio.checked = true;
-      document.querySelectorAll('.product-option[data-product="fat"]').forEach(opt => opt.classList.remove('selected'));
-      smofRadio.closest('.product-option').classList.add('selected');
+        smofRadio.checked = true;
+        document.querySelectorAll('.product-option[data-product="fat"]').forEach(opt => opt.classList.remove('selected'));
+        smofRadio.closest('.product-option').classList.add('selected');
     }
-    
+
     document.querySelector('input[name="na-source"]')?.checked && (document.querySelector('input[name="na-source"]').checked = false);
     document.querySelector('input[name="k-source"]')?.checked && (document.querySelector('input[name="k-source"]').checked = false);
     document.querySelector('input[name="peditrace-freq"][value="daily"]')?.click();
     document.querySelector('input[name="cernevit-freq"][value="daily"]')?.click();
-    document.querySelector('input[name="vitamin-k-choice"][value="daily"]')?.click();
+    document.querySelector('input[name="vitamin-k-choice"][value="none"]')?.click();
+
+    const peditDay = document.getElementById('peditrace-day');
+    if (peditDay) peditDay.value = '1';
+    const cernDay = document.getElementById('cernevit-day');
+    if (cernDay) cernDay.value = '1';
+    const vitKDay = document.getElementById('vitamin-k-day');
+    if (vitKDay) vitKDay.value = '1';
     
-    const peditDay = document.getElementById('peditrace-day'); if (peditDay) peditDay.value = '1';
-    const cernDay = document.getElementById('cernevit-day'); if (cernDay) cernDay.value = '1';
-    const vitKDay = document.getElementById('vitamin-k-day'); if (vitKDay) vitKDay.value = '1';
+   // ✅ Reset Heparin - ยกเลิกการติ๊ก PICC และซ่อน concentration
+const picc = document.getElementById('picc-line-checkbox');
+if (picc) {
+    picc.checked = false;
+    const heparinRow = document.getElementById('heparin-concentration-row');
+    if (heparinRow) heparinRow.style.display = 'none';
     
-    const picc = document.getElementById('picc-line-checkbox'); if (picc) picc.checked = false;
+    // ✅ Uncheck ทั้งหมด - ไม่เลือกอะไรเลย
+    const heparin1 = document.querySelector('input[name="heparin-concentration"][value="1"]');
+    const heparin05 = document.querySelector('input[name="heparin-concentration"][value="0.5"]');
+    if (heparin1) heparin1.checked = false;
+    if (heparin05) heparin05.checked = false;
+}
     
+    // ✅ Reset Fat Administration Options
+    document.querySelector('input[name="fat-priming"][value="priming"]')?.click();
+    document.querySelector('input[name="fat-drip-duration"][value="24"]')?.click();
+    document.querySelector('input[name="fat-split"][value="no-split"]')?.click();
+    
+    // Reset additional unit
+    const additionalUnit = document.getElementById('additional-unit');
+    if (additionalUnit) additionalUnit.value = 'ml';
+
+    if (window.clearStickerImage) {
+        window.clearStickerImage();
+    }
+
     localStorage.removeItem(AUTOSAVE_KEY);
-    
     updateProteinLabel();
     updateFatLabel();
+    updateFatDisplay();
     calculateTPN();
-    
     alert('✅ ล้างข้อมูลเรียบร้อยแล้ว');
-  }
+}
 
-  // ===== Helpers =====
-  function shouldIncludeMicronutrient(freq, selectedDay, orderDate) {
-    if (!orderDate) return false;
-    const date = new Date(orderDate);
-    const dayOfWeek = date.getDay();
-    if (freq === 'daily') return true;
-    if (freq === 'mwf') return [1,3,5].includes(dayOfWeek);
-    if (freq === 'weekly') return dayOfWeek === parseInt(selectedDay);
-    return false;
-  }
+    // ===== Helper Functions =====
+    function shouldIncludeMicronutrient(freq, selectedDay, orderDate) {
+        if (!orderDate) return false;
+        const date = new Date(orderDate);
+        const dayOfWeek = date.getDay();
+        if (freq === 'daily') return true;
+        if (freq === 'mwf') return [1,3,5].includes(dayOfWeek);
+        if (freq === 'weekly') return dayOfWeek === parseInt(selectedDay);
+        return false;
+    }
 
-  function getDayName(dateStr) {
-    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const d = new Date(dateStr);
-    return days[d.getDay()];
-  }
+    function getDayName(dateStr) {
+        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        const d = new Date(dateStr);
+        return days[d.getDay()];
+    }
 
-  function r1(v){ 
-    if(!isFinite(v)||v===0) return 0; 
-    const h=Math.floor(v*100); 
-    const d2=h%10; 
-    return d2===9? Math.ceil(v*10)/10 : Math.floor(v*10)/10; 
-  }
-  
-  function r2(v){ 
-    if(!isFinite(v)||v===0) return 0; 
-    const h=Math.floor(v*1000); 
-    const d3=h%10; 
-    return d3===9? Math.ceil(v*100)/100 : Math.floor(v*100)/100; 
-  }
-  
-  function r0(v){ 
-    if(!isFinite(v)||v===0) return 0; 
-    const m=v*10; 
-    const d1=Math.floor(m)%10; 
-    return d1===9? Math.ceil(v) : Math.floor(v); 
-  }
+    function r1(v) {
+        if (!isFinite(v) || v === 0) return 0;
+        const h = Math.floor(v * 100);
+        const d2 = h % 10;
+        return d2 === 9 ? Math.ceil(v * 10) / 10 : Math.floor(v * 10) / 10;
+    }
 
-  function calculateTPN(){
-    const bw = parseFloat(document.getElementById('bw').value) || 0;
-    const rate = parseFloat(document.getElementById('rate').value) || 0;
-    const bag = parseFloat(document.getElementById('bag').value) || 0;
-    const protein = parseFloat(document.getElementById('protein').value) || 0;
-    const dextrose = parseFloat(document.getElementById('dextrose').value) || 0;
-    const fat = parseFloat(document.getElementById('fat').value) || 0;
-    const milk = parseFloat(document.getElementById('milk').value) || 0;
-    const totalMilk = parseFloat(document.getElementById('total-milk').value) || (milk*8);
-    const p = parseFloat(document.getElementById('p').value) || 0;
-    const na = parseFloat(document.getElementById('na').value) || 0;
-    const k = parseFloat(document.getElementById('k').value) || 0;
-    const ca = parseFloat(document.getElementById('ca').value) || 0;
-    const mg = parseFloat(document.getElementById('mg').value) || 0;
+    function r2(v) {
+        if (!isFinite(v) || v === 0) return 0;
+        const h = Math.floor(v * 1000);
+        const d3 = h % 10;
+        return d3 === 9 ? Math.ceil(v * 100) / 100 : Math.floor(v * 100) / 100;
+    }
 
-    const orderDate = document.getElementById('order-date').value;
+    function r0(v) {
+        if (!isFinite(v) || v === 0) return 0;
+        const m = v * 10;
+        const d1 = Math.floor(m) % 10;
+        return d1 === 9 ? Math.ceil(v) : Math.floor(v);
+    }
 
-    // Get selected protein product
-    const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value || 'aminoven';
-    
-    // Calculate protein volume based on product
-    let proteinVol_raw;
-    if (proteinProduct === 'aminoplasmal') {
-      // 15% Aminoplasmal: 15g per 100ml = 0.15g per ml
-      // Volume (ml) = (BW × protein) / 0.15
-      proteinVol_raw = (bw * protein) / 0.15;
-    } else {
-      // 10% Aminoven or Amiparen: 10g per 100ml = 0.10g per ml
-      // Volume (ml) = (BW × protein × 100) / 10
-      proteinVol_raw = (bw * protein * 100) / 10;
+    // ===== Main TPN Calculation Function =====
+    function calculateTPN() {
+        const bw = parseFloat(document.getElementById('bw').value) || 0;
+        const rate = parseFloat(document.getElementById('rate').value) || 0;
+        const bag = parseFloat(document.getElementById('bag').value) || 0;
+        const protein = parseFloat(document.getElementById('protein').value) || 0;
+        const dextrose = parseFloat(document.getElementById('dextrose').value) || 0;
+        const fat = parseFloat(document.getElementById('fat').value) || 0;
+        const milk = parseFloat(document.getElementById('milk').value) || 0;
+        const totalMilk = parseFloat(document.getElementById('total-milk').value) || (milk * 8);
+        const p = parseFloat(document.getElementById('p').value) || 0;
+        const na = parseFloat(document.getElementById('na').value) || 0;
+        const k = parseFloat(document.getElementById('k').value) || 0;
+        const ca = parseFloat(document.getElementById('ca').value) || 0;
+        const mg = parseFloat(document.getElementById('mg').value) || 0;
+        const orderDate = document.getElementById('order-date').value;
+
+        // Get selected protein product
+        const proteinProduct = document.querySelector('input[name="protein-product"]:checked')?.value || 'aminoven';
+
+        // Calculate protein volume based on product
+        let proteinVol_raw;
+        if (proteinProduct === 'aminoplasmal') {
+            proteinVol_raw = (bw * protein) / 0.15;
+        } else {
+            proteinVol_raw = (bw * protein * 100) / 10;
+        }
+
+        const proteinCal_raw = bw * protein * 4;
+        const proteinOsm_raw = bag > 0 ? (protein * bw * 1000 * 10) / bag : 0;
+
+        const dextroseVol_raw = ((dextrose * bag) / 100) * 2;
+        const dextroseCal_raw = (dextrose * bag * 3.4) / 100;
+        const dextroseOsm_raw = bag > 0 ? (dextrose * 1000 * 5) / 100 : 0;
+        const gir_raw = (bw > 0) ? (dextrose * rate) / (6 * bw) : 0;
+
+        const fatVol_1 = r1(fat * bw * 5);
+        const fatCal_raw = fat * bw * 10;
+
+        const tfMilk_raw = (bw > 0) ? totalMilk / bw : 0;
+
+        const pVol_1 = r1(p * bw);
+        const naFromGly = pVol_1 * 2;
+        const naReq_raw = na * bw;
+        const rNa_raw = Math.max(0, naReq_raw - naFromGly);
+        const naclVol_1 = rNa_raw > 0 ? r1(rNa_raw / 0.5) : 0;
+        const nacl20Vol_1 = rNa_raw > 0 ? r1(rNa_raw / 3.4) : 0;
+        const naAcVol_1 = rNa_raw > 0 ? r1(rNa_raw / 3.0) : 0;
+
+        const totalK_raw = k * bw;
+        const kclVol_1 = totalK_raw > 0 ? r1(totalK_raw / 2.0) : 0;
+        const kAcVol_1 = totalK_raw > 0 ? r1(totalK_raw / 3.0) : 0;
+
+        const caVol_1 = r1((ca * bw) / 0.25);
+        const mgVol_2 = r2((mg * bw) / 2.0);
+
+        const peditFreq = document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily';
+        const peditDay = document.getElementById('peditrace-day')?.value || '1';
+        const includePeditrace = shouldIncludeMicronutrient(peditFreq, peditDay, orderDate);
+
+        const cernFreq = document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily';
+        const cernDay = document.getElementById('cernevit-day')?.value || '1';
+        const includeCernevit = shouldIncludeMicronutrient(cernFreq, cernDay, orderDate);
+
+        let pedit_raw = 1 * bw;
+        let peditExceeded = false;
+        if (pedit_raw > 15) {
+            pedit_raw = 15;
+            peditExceeded = true;
+        }
+        const pedit_1 = includePeditrace ? r1(pedit_raw) : 0;
+
+        let cern_raw = 1 * bw;
+        let cernExceeded = false;
+        if (cern_raw > 3) {
+            cern_raw = 3;
+            cernExceeded = true;
+        }
+        const cern_1 = includeCernevit ? r1(cern_raw) : 0;
+
+        const vitK_day_raw_calc = (10 * bw / 1000) * 0.5;
+        let vitK_day_raw = vitK_day_raw_calc;
+        let vitKExceeded = false;
+        if (vitK_day_raw > 0.5) {
+            vitK_day_raw = 0.5;
+            vitKExceeded = true;
+        }
+        const vitK_week_raw = vitK_day_raw * 7;
+
+        const vkChoice = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily';
+        const vkDay = document.getElementById('vitamin-k-day')?.value || '1';
+        let includeVitaminK = false;
+        if (vkChoice === 'daily') includeVitaminK = true;
+        else if (vkChoice === 'weekly') includeVitaminK = shouldIncludeMicronutrient('weekly', vkDay, orderDate);
+
+        const picc = document.getElementById('picc-line-checkbox')?.checked || false;
+const heparinConcentration = document.querySelector('input[name="heparin-concentration"]:checked')?.value || '1';
+const divisor = (heparinConcentration === '1') ? 50 : 100;
+const hep_calc_1 = r1(bag > 0 ? bag / divisor : 0);
+const hep_disp_1 = picc ? hep_calc_1 : 0;
+        
+        // Get additional values
+        const additionalAmount = parseFloat(document.getElementById('additional-amount').value) || 0;
+        const additionalUnit = document.getElementById('additional-unit').value;
+        const additionalVolume = (additionalUnit === 'ml') ? additionalAmount : 0;
+
+        let totalUsed = 0;
+        totalUsed += proteinVol_raw;
+        totalUsed += dextroseVol_raw;
+        totalUsed += pVol_1;
+        totalUsed += caVol_1;
+        totalUsed += mgVol_2;
+        totalUsed += pedit_1;
+        totalUsed += cern_1;
+        totalUsed += hep_disp_1;
+        totalUsed += additionalVolume;
+
+        const naSource = document.querySelector('input[name="na-source"]:checked')?.value;
+        if (naSource === 'nacl') totalUsed += naclVol_1;
+        if (naSource === 'nacl20') totalUsed += nacl20Vol_1;
+        if (naSource === 'na-acetate') totalUsed += naAcVol_1;
+
+        const kSource = document.querySelector('input[name="k-source"]:checked')?.value;
+        if (kSource === 'kcl') totalUsed += kclVol_1;
+        if (kSource === 'k-acetate') totalUsed += kAcVol_1;
+
+        if (includeVitaminK) {
+            if (vkChoice === 'daily') totalUsed += vitK_day_raw;
+            else if (vkChoice === 'weekly') totalUsed += vitK_week_raw;
+        }
+
+        const swVol = Math.floor(bag - totalUsed);
+        const elyteOsm_raw = bag > 0 ? ((na + k) * bw * 2 * 1000) / bag : 0;
+        const totalOsm_raw = proteinOsm_raw + dextroseOsm_raw + elyteOsm_raw;
+
+        // Update DOM (ต้อง update ตารางก่อน เพื่อใช้ค่าที่แสดงในการคำนวณ)
+        document.getElementById('protein-volume').textContent = r1(proteinVol_raw).toFixed(1);
+        document.getElementById('protein-calories').textContent = r1(proteinCal_raw).toFixed(1);
+        document.getElementById('protein-osmol').textContent = r1(proteinOsm_raw).toFixed(1);
+        document.getElementById('dextrose-volume').textContent = r1(dextroseVol_raw).toFixed(1);
+        document.getElementById('dextrose-calories').textContent = r1(dextroseCal_raw).toFixed(1);
+        document.getElementById('dextrose-osmol').textContent = r1(dextroseOsm_raw).toFixed(1);
+        document.getElementById('gir-result').textContent = r1(gir_raw).toFixed(1) + ' mg/kg/min';
+        document.getElementById('fat-volume').textContent = fatVol_1.toFixed(1);
+        document.getElementById('fat-calories').textContent = r1(fatCal_raw).toFixed(1);
+
+        // ✅ คำนวณ Total Calories โดยดึงจากค่าในตารางที่แสดงแล้ว (หลังปัดเศษ)
+        const displayedProteinCal = parseFloat(document.getElementById('protein-calories').textContent) || 0;
+        const displayedDextroseCal = parseFloat(document.getElementById('dextrose-calories').textContent) || 0;
+        const displayedFatCal = parseFloat(document.getElementById('fat-calories').textContent) || 0;
+        
+        const pnCalDay = displayedProteinCal + displayedDextroseCal + displayedFatCal;
+        const pnCalKg = bw > 0 ? pnCalDay / bw : 0;
+        const milkCalDay = totalMilk * 20 / 30;
+        const milkCalKg = bw > 0 ? milkCalDay / bw : 0;
+        const totalCalDay = pnCalDay + milkCalDay;
+        const dispPN = r0(pnCalKg);
+        const dispMilk = r0(milkCalKg);
+        const dispTotalKg = dispPN + dispMilk;
+        document.getElementById('tf-from-milk').textContent = r0(tfMilk_raw) + ' ml/kg/day';
+        document.getElementById('milk-calories-kg').textContent = dispMilk + ' kcal/kg/day';
+        document.getElementById('p-volume').textContent = pVol_1.toFixed(1) + ' ml';
+        document.getElementById('na-from-glycophos').textContent = r1(naFromGly).toFixed(1) + ' mEq';
+        document.getElementById('nacl-volume').textContent = naclVol_1.toFixed(1) + ' ml';
+        document.getElementById('nacl20-volume').textContent = nacl20Vol_1.toFixed(1) + ' ml';
+        document.getElementById('na-acetate-volume').textContent = naAcVol_1.toFixed(1) + ' ml';
+        document.getElementById('kcl-volume').textContent = kclVol_1.toFixed(1) + ' ml';
+        document.getElementById('k-acetate-volume').textContent = kAcVol_1.toFixed(1) + ' ml';
+        document.getElementById('ca-volume').textContent = caVol_1.toFixed(1) + ' ml';
+        document.getElementById('mg-volume').textContent = mgVol_2.toFixed(2) + ' ml';
+
+        const pedEl = document.getElementById('peditrace-volume');
+        if (!includePeditrace) {
+            pedEl.textContent = '0 ml (ไม่ให้วันนี้)';
+            pedEl.style.background = '#fef3c7';
+            pedEl.style.color = '#92400e';
+            pedEl.style.border = '1px solid #fcd34d';
+        } else {
+            pedEl.textContent = pedit_1.toFixed(1) + ' ml';
+            pedEl.style.background = (peditExceeded ? '#dc2626' : '#dcfce7');
+            pedEl.style.color = (peditExceeded ? 'white' : '#166534');
+            pedEl.style.border = (peditExceeded ? '1px solid #dc2626' : '1px solid #86efac');
+        }
+
+        const cerEl = document.getElementById('cernevit-volume');
+        if (!includeCernevit) {
+            cerEl.textContent = '0 ml (ไม่ให้วันนี้)';
+            cerEl.style.background = '#fef3c7';
+            cerEl.style.color = '#92400e';
+            cerEl.style.border = '1px solid #fcd34d';
+        } else {
+            cerEl.textContent = cern_1.toFixed(1) + ' ml';
+            cerEl.style.background = (cernExceeded ? '#dc2626' : '#dcfce7');
+            cerEl.style.color = (cernExceeded ? 'white' : '#166534');
+            cerEl.style.border = (cernExceeded ? '1px solid #dc2626' : '1px solid #86efac');
+        }
+
+        const dailyRadio = document.querySelector('input[name="vitamin-k-choice"][value="daily"]');
+        const weeklyRadio = document.querySelector('input[name="vitamin-k-choice"][value="weekly"]');
+        const dailyOption = document.getElementById('vitamin-k-daily-option');
+        const dailyEl = document.getElementById('vitamin-k-daily');
+        const weeklyEl = document.getElementById('vitamin-k-weekly');
+
+        if (vitK_day_raw < 0.01) {
+            dailyEl.textContent = vitK_day_raw.toFixed(3) + ' ml (เตรียมไม่ได้)';
+            dailyEl.style.background = '#fef3c7';
+            dailyEl.style.color = '#92400e';
+            dailyEl.style.border = '1px solid #fcd34d';
+            if (dailyRadio) {
+                dailyRadio.disabled = true;
+                if (dailyOption) {
+                    dailyOption.style.opacity = '0.5';
+                    dailyOption.style.cursor = 'not-allowed';
+                }
+            }
+            if (dailyRadio && dailyRadio.checked && weeklyRadio) {
+                weeklyRadio.checked = true;
+            }
+        } else {
+            dailyEl.textContent = vitK_day_raw.toFixed(3) + ' ml';
+            dailyEl.style.background = (vitKExceeded ? '#dc2626' : '#dbeafe');
+            dailyEl.style.color = (vitKExceeded ? 'white' : '#1e40af');
+            dailyEl.style.border = (vitKExceeded ? '1px solid #dc2626' : '1px solid #bfdbfe');
+            if (dailyRadio) {
+                dailyRadio.disabled = false;
+                if (dailyOption) {
+                    dailyOption.style.opacity = '1';
+                    dailyOption.style.cursor = 'pointer';
+                }
+            }
+        }
+
+        weeklyEl.textContent = vitK_week_raw.toFixed(3) + ' ml';
+        weeklyEl.style.background = '#dbeafe';
+        weeklyEl.style.color = '#1e40af';
+        weeklyEl.style.border = '1px solid #bfdbfe';
+
+        document.getElementById('heparin-volume').textContent = hep_disp_1.toFixed(1) + ' ml';
+        document.getElementById('sterile-water-volume').textContent = swVol;
+
+        const swSec = document.getElementById('sterile-water-section');
+        swSec.style.background = swVol < 0 ? 
+            'linear-gradient(135deg,#ef4444 0%,#dc2626 100%)' : 
+            'linear-gradient(135deg,#06b6d4 0%,#0891b2 100%)';
+
+        document.getElementById('total-osmol').textContent = '~' + r0(totalOsm_raw);
+
+        const osmolSec = document.getElementById('osmol-section');
+        osmolSec.style.background = r0(totalOsm_raw) > 900 ? 
+            'linear-gradient(135deg,#ef4444 0%,#dc2626 100%)' : 
+            'linear-gradient(135deg,#10b981 0%,#059669 100%)';
+
+        document.getElementById('total-calories-day').textContent = r0(totalCalDay);
+document.getElementById('breakdown-pn').textContent = dispPN;
+document.getElementById('breakdown-milk').textContent = dispMilk;
+document.getElementById('breakdown-total').textContent = dispTotalKg;
+
+// ✅ คำนวณ NPC:N
+const proteinGrams = protein * bw;
+const nitrogenGrams = proteinGrams / 6.25;
+const nonProteinCalories = displayedDextroseCal + displayedFatCal;
+let npcnRatio = 0;
+
+if (nitrogenGrams > 0) {
+    npcnRatio = Math.round(nonProteinCalories / nitrogenGrams);
+}
+
+document.getElementById('npc-n-ratio').textContent = npcnRatio > 0 ? `${npcnRatio}:1` : '0:1';
+
+autosaveCollect();
     }
     
-    const proteinCal_raw = bw*protein*4;
-    const proteinOsm_raw = bag>0 ? (protein*bw*1000*10)/bag : 0;
-
-    const dextroseVol_raw = ((dextrose*bag)/100)*2;
-    const dextroseCal_raw = (dextrose*bag*3.4)/100;
-    const dextroseOsm_raw = bag>0 ? (dextrose*1000*5)/100 : 0;
-
-    const gir_raw = (bw>0) ? (dextrose*rate)/(6*bw) : 0;
-
-    // Fat calculation (same for both products since both are 20%)
-    const fatVol_1 = r1(fat*bw*5);
-    const fatCal_raw = fat*bw*10;
-
-    const tfMilk_raw = (bw>0) ? totalMilk/bw : 0;
-
-    const pVol_1 = r1(p*bw);
-    const naFromGly = pVol_1*2;
-    const naReq_raw = na*bw;
-    const rNa_raw = Math.max(0, naReq_raw - naFromGly);
-
-    const naclVol_1 = rNa_raw>0 ? r1(rNa_raw/0.5) : 0;
-    const naAcVol_1 = rNa_raw>0 ? r1(rNa_raw/3.0) : 0;
-
-    const totalK_raw = k*bw;
-    const kclVol_1 = totalK_raw>0 ? r1(totalK_raw/2.0) : 0;
-    const kAcVol_1 = totalK_raw>0 ? r1(totalK_raw/3.0) : 0;
-
-    const caVol_1 = r1((ca*bw)/0.25);
-    const mgVol_2 = r2((mg*bw)/2.0);
-
-    const peditFreq = document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily';
-    const peditDay = document.getElementById('peditrace-day')?.value || '1';
-    const includePeditrace = shouldIncludeMicronutrient(peditFreq, peditDay, orderDate);
-
-    const cernFreq = document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily';
-    const cernDay = document.getElementById('cernevit-day')?.value || '1';
-    const includeCernevit = shouldIncludeMicronutrient(cernFreq, cernDay, orderDate);
-
-    let pedit_raw = 1*bw; let peditExceeded=false; if(pedit_raw>10){ pedit_raw=10; peditExceeded=true; }
-    const pedit_1 = includePeditrace ? r1(pedit_raw) : 0;
-
-    let cern_raw = 1*bw; let cernExceeded=false; if(cern_raw>3){ cern_raw=3; cernExceeded=true; }
-    const cern_1 = includeCernevit ? r1(cern_raw) : 0;
-
-    const vitK_day_raw_calc = (10*bw/1000)*0.5;
-    let vitK_day_raw = vitK_day_raw_calc;
-    let vitKExceeded = false;
-    if(vitK_day_raw > 0.5){ vitK_day_raw = 0.5; vitKExceeded = true; }
-    const vitK_week_raw = vitK_day_raw*7;
-
-    const vkChoice = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily';
-    const vkDay = document.getElementById('vitamin-k-day')?.value || '1';
-    let includeVitaminK = false;
-    if(vkChoice === 'daily') includeVitaminK = true;
-    else if(vkChoice === 'weekly') includeVitaminK = shouldIncludeMicronutrient('weekly', vkDay, orderDate);
-
-    const picc = document.getElementById('picc-line-checkbox')?.checked || false;
-    const hep_calc_1 = r1(bag>0 ? bag/50 : 0);
-    const hep_disp_1 = picc ? hep_calc_1 : 0;
-
-    let totalUsed = 0;
-    totalUsed += proteinVol_raw;
-    totalUsed += dextroseVol_raw;
-    totalUsed += pVol_1;
-    totalUsed += caVol_1;
-    totalUsed += mgVol_2;
-    totalUsed += pedit_1;
-    totalUsed += cern_1;
-    totalUsed += hep_disp_1;
-
-    const naSource = document.querySelector('input[name="na-source"]:checked')?.value;
-    if(naSource === 'nacl') totalUsed += naclVol_1;
-    if(naSource === 'na-acetate') totalUsed += naAcVol_1;
-
-    const kSource = document.querySelector('input[name="k-source"]:checked')?.value;
-    if(kSource === 'kcl') totalUsed += kclVol_1;
-    if(kSource === 'k-acetate') totalUsed += kAcVol_1;
-
-    if(includeVitaminK) {
-      if(vkChoice==='daily') totalUsed += vitK_day_raw;
-      else if(vkChoice==='weekly') totalUsed += vitK_week_raw;
+    // Fat Administration Display Update
+    function updateFatDisplay() {
+        const bw = parseFloat(document.getElementById('bw').value) || 0;
+        const fat = parseFloat(document.getElementById('fat').value) || 0;
+        
+        // Get fat volume (base)
+        const baseFatVol = fat * bw * 5;
+        
+        // Check priming option
+        const priming = document.querySelector('input[name="fat-priming"]:checked')?.value || 'priming';
+        const fatVolWithPriming = (priming === 'priming') ? baseFatVol + 6 : baseFatVol;
+        
+        // ✅ Update fat priming volume display
+        const fatPrimingTextEl = document.getElementById('fat-priming-text');
+        if (fatPrimingTextEl) {
+            fatPrimingTextEl.textContent = '= ' + r1(fatVolWithPriming) + ' ml';
+        }
+        
+        // Calculate fat rate
+        const dripDuration = parseFloat(document.querySelector('input[name="fat-drip-duration"]:checked')?.value) || 24;
+        const fatRate = (bw > 0 && dripDuration > 0) ? (fat / dripDuration) : 0;
+        
+        // Update fat rate display
+        const fatRateEl = document.getElementById('fat-rate-result');
+        if (fatRateEl) {
+            fatRateEl.textContent = fatRate.toFixed(3) + ' g/kg/hr';
+        }
+        
+        // Check split option
+        const split = document.querySelector('input[name="fat-split"]:checked')?.value || 'no-split';
+        const splitInfoEl = document.getElementById('fat-split-info');
+        const splitTextEl = document.getElementById('fat-split-text');
+        
+        if (split === 'split-2' && splitInfoEl && splitTextEl) {
+            const volPerSyr = r1(fatVolWithPriming / 2);
+            // ✅ เงื่อนไข: <= 50 ml → syr, > 50 ml → ขวด
+            const unit = volPerSyr <= 50 ? 'syr' : 'ขวด';
+            splitTextEl.textContent = volPerSyr.toFixed(1) + ' ml × 2 ' + unit;
+            splitInfoEl.style.display = 'block';
+        } else if (splitInfoEl) {
+            splitInfoEl.style.display = 'none';
+        }
     }
 
-    const swVol = Math.floor(bag - totalUsed);
-
-    const elyteOsm_raw = bag>0 ? ((na+k)*bw*2*1000)/bag : 0;
-    const totalOsm_raw = proteinOsm_raw + dextroseOsm_raw + elyteOsm_raw;
-
-    const pnCalDay = proteinCal_raw + dextroseCal_raw + fatCal_raw;
-    const pnCalKg = bw>0 ? pnCalDay/bw : 0;
-    const milkCalDay = totalMilk*20/30;
-    const milkCalKg = bw>0 ? milkCalDay/bw : 0;
-    const totalCalDay = pnCalDay + milkCalDay;
-
-    const dispPN = r0(pnCalKg);
-    const dispMilk = r0(milkCalKg);
-    const dispTotalKg = dispPN + dispMilk;
-
-    document.getElementById('protein-volume').textContent = r1(proteinVol_raw).toFixed(1);
-    document.getElementById('protein-calories').textContent = r1(proteinCal_raw).toFixed(1);
-    document.getElementById('protein-osmol').textContent = r1(proteinOsm_raw).toFixed(1);
-
-    document.getElementById('dextrose-volume').textContent = r1(dextroseVol_raw).toFixed(1);
-    document.getElementById('dextrose-calories').textContent = r1(dextroseCal_raw).toFixed(1);
-    document.getElementById('dextrose-osmol').textContent = r1(dextroseOsm_raw).toFixed(1);
-
-    document.getElementById('gir-result').textContent = r1(gir_raw).toFixed(1) + ' mg/kg/min';
-
-    document.getElementById('fat-volume').textContent = fatVol_1.toFixed(1);
-    document.getElementById('fat-calories').textContent = r1(fatCal_raw).toFixed(1);
-
-    document.getElementById('tf-from-milk').textContent = r0(tfMilk_raw) + ' ml/kg/day';
-    document.getElementById('milk-calories-kg').textContent = dispMilk + ' kcal/kg/day';
-
-    document.getElementById('p-volume').textContent = pVol_1.toFixed(1) + ' ml';
-    document.getElementById('na-from-glycophos').textContent = r1(naFromGly).toFixed(1) + ' mEq';
-    document.getElementById('nacl-volume').textContent = naclVol_1.toFixed(1) + ' ml';
-    document.getElementById('na-acetate-volume').textContent = naAcVol_1.toFixed(1) + ' ml';
-
-    document.getElementById('kcl-volume').textContent = kclVol_1.toFixed(1) + ' ml';
-    document.getElementById('k-acetate-volume').textContent = kAcVol_1.toFixed(1) + ' ml';
-
-    document.getElementById('ca-volume').textContent = caVol_1.toFixed(1) + ' ml';
-    document.getElementById('mg-volume').textContent = mgVol_2.toFixed(2) + ' ml';
-
-    const pedEl = document.getElementById('peditrace-volume');
-    if (!includePeditrace) {
-      pedEl.textContent = '0 ml (ไม่ให้วันนี้)';
-      pedEl.style.background = '#fef3c7';
-      pedEl.style.color = '#92400e';
-      pedEl.style.border = '1px solid #fcd34d';
-    } else {
-      pedEl.textContent = pedit_1.toFixed(1) + ' ml';
-      pedEl.style.background = (peditExceeded ? '#dc2626' : '#dcfce7');
-      pedEl.style.color = (peditExceeded ? 'white' : '#166534');
-      pedEl.style.border = (peditExceeded ? '1px solid #dc2626' : '1px solid #86efac');
+    function extractNumberString(text) {
+        if (text === undefined || text === null) return '0';
+        const s = String(text);
+        const m = s.match(/-?\d+(\.\d+)?/);
+        return m ? m[0] : '0';
     }
 
-    const cerEl = document.getElementById('cernevit-volume');
-    if (!includeCernevit) {
-      cerEl.textContent = '0 ml (ไม่ให้วันนี้)';
-      cerEl.style.background = '#fef3c7';
-      cerEl.style.color = '#92400e';
-      cerEl.style.border = '1px solid #fcd34d';
-    } else {
-      cerEl.textContent = cern_1.toFixed(1) + ' ml';
-      cerEl.style.background = (cernExceeded ? '#dc2626' : '#dcfce7');
-      cerEl.style.color = (cernExceeded ? 'white' : '#166534');
-      cerEl.style.border = (cernExceeded ? '1px solid #dc2626' : '1px solid #86efac');
+    function getProteinProductName() {
+        const value = document.querySelector('input[name="protein-product"]:checked')?.value;
+        const names = {
+            'aminoven': '10% Aminoven® infant',
+            'amiparen': '10% Amiparen®',
+            'aminoplasmal': '15% Aminoplasmal®'
+        };
+        return names[value] || '10% Aminoven® infant';
     }
 
-    const dailyRadio = document.querySelector('input[name="vitamin-k-choice"][value="daily"]');
-    const weeklyRadio = document.querySelector('input[name="vitamin-k-choice"][value="weekly"]');
-    const noneRadio = document.querySelector('input[name="vitamin-k-choice"][value="none"]');
-    const dailyOption = document.getElementById('vitamin-k-daily-option');
-    const dailyEl = document.getElementById('vitamin-k-daily');
-    const weeklyEl = document.getElementById('vitamin-k-weekly');
-
-    if(vitK_day_raw < 0.01){
-      // Cannot prepare per day, switch to per week if daily is selected
-      dailyEl.textContent = vitK_day_raw.toFixed(3) + ' ml (เตรียมไม่ได้)';
-      dailyEl.style.background = '#fef3c7';
-      dailyEl.style.color = '#92400e';
-      dailyEl.style.border = '1px solid #fcd34d';
-      if(dailyRadio){ 
-        dailyRadio.disabled=true; 
-        if(dailyOption){ 
-          dailyOption.style.opacity='0.5'; 
-          dailyOption.style.cursor='not-allowed'; 
-        } 
-      }
-      // Auto-switch to weekly if daily is currently selected
-      if(dailyRadio && dailyRadio.checked && weeklyRadio) {
-        weeklyRadio.checked = true;
-      }
-    } else {
-      dailyEl.textContent = vitK_day_raw.toFixed(3) + ' ml';
-      dailyEl.style.background = (vitKExceeded ? '#dc2626' : '#dbeafe');
-      dailyEl.style.color = (vitKExceeded ? 'white' : '#1e40af');
-      dailyEl.style.border = (vitKExceeded ? '1px solid #dc2626' : '1px solid #bfdbfe');
-      if(dailyRadio){ 
-        dailyRadio.disabled=false; 
-        if(dailyOption){ 
-          dailyOption.style.opacity='1'; 
-          dailyOption.style.cursor='pointer'; 
-        } 
-      }
-    }
-    weeklyEl.textContent = vitK_week_raw.toFixed(3) + ' ml';
-    weeklyEl.style.background = '#dbeafe';
-    weeklyEl.style.color = '#1e40af';
-    weeklyEl.style.border = '1px solid #bfdbfe';
-
-    document.getElementById('heparin-volume').textContent = hep_disp_1.toFixed(1) + ' ml';
-
-    document.getElementById('sterile-water-volume').textContent = swVol;
-    const swSec = document.getElementById('sterile-water-section');
-    swSec.style.background = swVol<0 ? 'linear-gradient(135deg,#ef4444 0%,#dc2626 100%)'
-                                     : 'linear-gradient(135deg,#06b6d4 0%,#0891b2 100%)';
-
-    document.getElementById('total-osmol').textContent = '~' + r0(totalOsm_raw);
-    const osmolSec = document.getElementById('osmol-section');
-    osmolSec.style.background = r0(totalOsm_raw) > 900 ? 'linear-gradient(135deg,#ef4444 0%,#dc2626 100%)'
-                                                       : 'linear-gradient(135deg,#10b981 0%,#059669 100%)';
-
-    document.getElementById('total-calories-day').textContent = r0(totalCalDay);
-    document.getElementById('total-calories-kg').textContent = dispTotalKg;
-    document.getElementById('breakdown-pn').textContent = dispPN;
-    document.getElementById('breakdown-milk').textContent = dispMilk;
-    document.getElementById('breakdown-total').textContent = dispTotalKg;
-
-    autosaveCollect();
-  }
-
-  function extractNumberString(text) {
-    if (text === undefined || text === null) return '0';
-    const s = String(text);
-    const m = s.match(/-?\d+(\.\d+)?/);
-    return m ? m[0] : '0';
-  }
-
-  function getProteinProductName() {
-    const value = document.querySelector('input[name="protein-product"]:checked')?.value;
-    const names = {
-      'aminoven': '10% Aminoven® infant',
-      'amiparen': '10% Amiparen®',
-      'aminoplasmal': '15% Aminoplasmal®'
-    };
-    return names[value] || '10% Aminoven® infant';
-  }
-
-  function getFatProductName() {
-    const value = document.querySelector('input[name="fat-product"]:checked')?.value;
-    const names = {
-      'smof': '20% SMOF lipid',
-      'intralipid': '20% Intralipid'
-    };
-    return names[value] || '20% SMOF lipid';
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const dateEl = document.getElementById('order-date');
-    if (dateEl && !dateEl.value) {
-      const today = new Date();
-      const dateStr = today.toISOString().split('T')[0];
-      dateEl.value = dateStr;
+    function getFatProductName() {
+        const value = document.querySelector('input[name="fat-product"]:checked')?.value;
+        const names = {
+            'smof': '20% SMOF lipid',
+            'intralipid': '20% Intralipid'
+        };
+        return names[value] || '20% SMOF lipid';
     }
 
-    initProductSelection();
-    autosaveRestore();
+    // ===== DOM Content Loaded Event =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateEl = document.getElementById('order-date');
+        if (dateEl && !dateEl.value) {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            dateEl.value = dateStr;
+        }
 
-    const setSelectorDisplay = () => {
-      const pf = document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily';
-      document.getElementById('peditrace-day-selector').style.display = (pf==='weekly') ? 'block' : 'none';
-      const cf = document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily';
-      document.getElementById('cernevit-day-selector').style.display = (cf==='weekly') ? 'block' : 'none';
-      const vk = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily';
-      document.getElementById('vitamin-k-day-selector').style.display = (vk==='weekly') ? 'block' : 'none';
-    };
-    setSelectorDisplay();
+        initProductSelection();
+        autosaveRestore();
 
-    document.getElementById('clearBtn')?.addEventListener('click', clearAllData);
+        const setSelectorDisplay = () => {
+            const pf = document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily';
+            document.getElementById('peditrace-day-selector').style.display = (pf === 'weekly') ? 'block' : 'none';
+            const cf = document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily';
+            document.getElementById('cernevit-day-selector').style.display = (cf === 'weekly') ? 'block' : 'none';
+            const vk = document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily';
+            document.getElementById('vitamin-k-day-selector').style.display = (vk === 'weekly') ? 'block' : 'none';
+        };
+        setSelectorDisplay();
 
-    // Auto-calculate bag when rate changes
-    const rateEl = document.getElementById('rate');
-    const bagEl = document.getElementById('bag');
-    
-    if (rateEl && bagEl) {
-      rateEl.addEventListener('input', function() {
-        const rate = parseFloat(this.value) || 0;
-        if (rate > 0) {
-          const calculatedBag = calculateBagVolume(rate);
-          bagEl.value = calculatedBag;
+        document.getElementById('clearBtn')?.addEventListener('click', clearAllData);
+
+        // Auto-calculate bag when rate changes
+        const rateEl = document.getElementById('rate');
+        const bagEl = document.getElementById('bag');
+        if (rateEl && bagEl) {
+            rateEl.addEventListener('input', function() {
+                const rate = parseFloat(this.value) || 0;
+                if (rate > 0) {
+                    const calculatedBag = calculateBagVolume(rate);
+                    bagEl.value = calculatedBag;
+                }
+                calculateTPN();
+            });
+        }
+
+        ['bw','bag','protein','dextrose','fat','p','na','k','ca','mg','order-date'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => {
+                    calculateTPN();
+                    if (id === 'bw' || id === 'fat') {
+                        updateFatDisplay();
+                    }
+                });
+            }
+        });
+
+        const milkEl = document.getElementById('milk');
+        if (milkEl) {
+            milkEl.addEventListener('input', function() {
+                const milk = parseFloat(this.value) || 0;
+                const t = document.getElementById('total-milk');
+                if (t) t.value = (milk * 8).toFixed(0);
+                calculateTPN();
+            });
+        }
+
+        const totMilkEl = document.getElementById('total-milk');
+        if (totMilkEl) {
+            totMilkEl.addEventListener('input', () => {
+                calculateTPN();
+            });
+        }
+
+        document.querySelectorAll('input[name="na-source"]').forEach(r => r.addEventListener('change', () => {
+            calculateTPN();
+        }));
+        document.querySelectorAll('input[name="k-source"]').forEach(r => r.addEventListener('change', () => {
+            calculateTPN();
+        }));
+
+   const picc = document.getElementById('picc-line-checkbox');
+if (picc) {
+    picc.addEventListener('change', function() {
+        const heparinRow = document.getElementById('heparin-concentration-row');
+        if (this.checked) {
+            heparinRow.style.display = 'grid';
+            // ✅ เมื่อติ๊ก PICC ใหม่ ให้ auto select 1 unit/ml เป็น default
+            const heparin1 = document.querySelector('input[name="heparin-concentration"][value="1"]');
+            if (heparin1 && !document.querySelector('input[name="heparin-concentration"]:checked')) {
+                heparin1.checked = true;
+            }
+        } else {
+            heparinRow.style.display = 'none';
         }
         calculateTPN();
-      });
-    }
+    });
+}
+        document.querySelectorAll('input[name="heparin-concentration"]').forEach(r => {
+    r.addEventListener('change', () => {
+        calculateTPN();
+    });
+});
+        // Fat administration event listeners
+        document.querySelectorAll('input[name="fat-priming"]').forEach(r => {
+            r.addEventListener('change', () => {
+                calculateTPN();
+                updateFatDisplay();
+            });
+        });
+        
+        document.querySelectorAll('input[name="fat-drip-duration"]').forEach(r => {
+            r.addEventListener('change', () => {
+                updateFatDisplay();
+            });
+        });
+        
+        document.querySelectorAll('input[name="fat-split"]').forEach(r => {
+            r.addEventListener('change', () => {
+                updateFatDisplay();
+            });
+        });
+        
+        // Additional inputs event listeners
+        const additionalAmountEl = document.getElementById('additional-amount');
+        const additionalUnitEl = document.getElementById('additional-unit');
+        if (additionalAmountEl) {
+            additionalAmountEl.addEventListener('input', () => {
+                calculateTPN();
+            });
+        }
+        if (additionalUnitEl) {
+            additionalUnitEl.addEventListener('change', () => {
+                calculateTPN();
+            });
+        }
 
-    ['bw','bag','protein','dextrose','fat','p','na','k','ca','mg','order-date'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){ el.addEventListener('input', ()=>{ calculateTPN(); }); }
+        document.querySelectorAll('input[name="peditrace-freq"]').forEach(r => {
+            r.addEventListener('change', function() {
+                document.getElementById('peditrace-day-selector').style.display = this.value === 'weekly' ? 'block' : 'none';
+                calculateTPN();
+            });
+        });
+
+        document.querySelectorAll('input[name="cernevit-freq"]').forEach(r => {
+            r.addEventListener('change', function() {
+                document.getElementById('cernevit-day-selector').style.display = this.value === 'weekly' ? 'block' : 'none';
+                calculateTPN();
+            });
+        });
+
+        document.querySelectorAll('input[name="vitamin-k-choice"]').forEach(r => {
+            r.addEventListener('change', function() {
+                document.getElementById('vitamin-k-day-selector').style.display = this.value === 'weekly' ? 'block' : 'none';
+                calculateTPN();
+            });
+        });
+
+        document.getElementById('peditrace-day')?.addEventListener('change', () => {
+            calculateTPN();
+        });
+        document.getElementById('cernevit-day')?.addEventListener('change', () => {
+            calculateTPN();
+        });
+        document.getElementById('vitamin-k-day')?.addEventListener('change', () => {
+            calculateTPN();
+        });
+
+        calculateTPN();
+        updateFatDisplay();
     });
 
-    const milkEl=document.getElementById('milk');
-    if(milkEl){
-      milkEl.addEventListener('input', function(){
-        const milk=parseFloat(this.value)||0;
-        const t=document.getElementById('total-milk');
-        if(t) t.value=(milk*8).toFixed(0);
-        calculateTPN();
-      });
-    }
-    const totMilkEl=document.getElementById('total-milk');
-    if(totMilkEl){ totMilkEl.addEventListener('input', ()=>{ calculateTPN(); }); }
+    // ===== Submit Button Handler =====
+    document.getElementById('submitBtn')?.addEventListener('click', function() {
+        const bw = document.getElementById('bw')?.value;
+        const orderDate = document.getElementById('order-date')?.value;
 
-    document.querySelectorAll('input[name="na-source"]').forEach(r=>r.addEventListener('change', ()=>{ calculateTPN(); }));
-    document.querySelectorAll('input[name="k-source"]').forEach(r=>r.addEventListener('change', ()=>{ calculateTPN(); }));
-    const picc = document.getElementById('picc-line-checkbox');
-    if(picc){ picc.addEventListener('change', ()=>{ calculateTPN(); }); }
+        if (!bw || !orderDate) {
+            alert('⚠️ กรุณากรอก Body Weight และ Order Date');
+            return;
+        }
 
-    document.querySelectorAll('input[name="peditrace-freq"]').forEach(r=>{
-      r.addEventListener('change', function(){
-        document.getElementById('peditrace-day-selector').style.display = this.value==='weekly' ? 'block' : 'none';
-        calculateTPN();
-      });
-    });
-    document.querySelectorAll('input[name="cernevit-freq"]').forEach(r=>{
-      r.addEventListener('change', function(){
-        document.getElementById('cernevit-day-selector').style.display = this.value==='weekly' ? 'block' : 'none';
-        calculateTPN();
-      });
-    });
-    document.querySelectorAll('input[name="vitamin-k-choice"]').forEach(r=>{
-      r.addEventListener('change', function(){
-        document.getElementById('vitamin-k-day-selector').style.display = this.value==='weekly' ? 'block' : 'none';
-        calculateTPN();
-      });
-    });
+        const hasStickerImage = window.hasStickerImage && window.hasStickerImage();
+        const hn = document.getElementById('patient-hn')?.value.trim();
+        const name = document.getElementById('patient-name')?.value.trim();
+        const ward = document.getElementById('patient-ward')?.value.trim();
+        const hasManualData = hn && name && ward;
 
-    document.getElementById('peditrace-day')?.addEventListener('change', ()=>{ calculateTPN(); });
-    document.getElementById('cernevit-day')?.addEventListener('change', ()=>{ calculateTPN(); });
-    document.getElementById('vitamin-k-day')?.addEventListener('change', ()=>{ calculateTPN(); });
+        if (!hasStickerImage && !hasManualData) {
+            alert('⚠️ กรุณาถ่ายรูป Patient Sticker หรือกรอกข้อมูล HN, ชื่อ, Ward ให้ครบถ้วน');
+            return;
+        }
 
-    calculateTPN();
+        console.log('✅ Validation passed:', { hasStickerImage, hasManualData });
+
+        const dayName = getDayName(orderDate);
+        const dsel = id => document.getElementById(id)?.textContent || document.getElementById(id)?.value || '';
+
+        const reportData = {
+            orderDate,
+            orderDayName: dayName,
+            route: document.querySelector('input[name="tpn-route"]:checked')?.value || 'central',
+            proteinProduct: getProteinProductName(),
+            fatProduct: getFatProductName(),
+            hn: hn || '',
+            name: name || '',
+            ward: ward || '',
+            additionalName: document.getElementById('additional-name')?.value.trim() || '',
+    additionalAmount: document.getElementById('additional-amount')?.value || '0',
+    additionalUnit: document.getElementById('additional-unit')?.value || 'ml',
+    stickerImage: window.getStickerImage ? window.getStickerImage() : null,
+            stickerImage: window.getStickerImage ? window.getStickerImage() : null,
+            bw,
+            rate: document.getElementById('rate')?.value || '0',
+            bag: document.getElementById('bag')?.value || '0',
+            protein: document.getElementById('protein')?.value || '0',
+            dextrose: document.getElementById('dextrose')?.value || '0',
+            fat: document.getElementById('fat')?.value || '0',
+            milk: document.getElementById('milk')?.value || '0',
+            totalMilk: document.getElementById('total-milk')?.value || '0',
+            p: document.getElementById('p')?.value || '0',
+            na: document.getElementById('na')?.value || '0',
+            k: document.getElementById('k')?.value || '0',
+            ca: document.getElementById('ca')?.value || '0',
+            mg: document.getElementById('mg')?.value || '0',
+            proteinVol: extractNumberString(dsel('protein-volume')),
+            proteinCal: extractNumberString(dsel('protein-calories')),
+            dextroseVol: extractNumberString(dsel('dextrose-volume')),
+            dextroseCal: extractNumberString(dsel('dextrose-calories')),
+            fatVol: extractNumberString(dsel('fat-volume')),
+            fatCal: extractNumberString(dsel('fat-calories')),
+            gir: dsel('gir-result'),
+            pVol: extractNumberString(dsel('p-volume')),
+            naFromGly: extractNumberString(dsel('na-from-glycophos')),
+            naSource: document.querySelector('input[name="na-source"]:checked')?.value || '',
+            naclVol: extractNumberString(dsel('nacl-volume')),
+            nacl20Vol: extractNumberString(dsel('nacl20-volume')),
+            naAcVol: extractNumberString(dsel('na-acetate-volume')),
+            kSource: document.querySelector('input[name="k-source"]:checked')?.value || '',
+            kclVol: extractNumberString(dsel('kcl-volume')),
+            kAcVol: extractNumberString(dsel('k-acetate-volume')),
+            caVol: extractNumberString(dsel('ca-volume')),
+            mgVol: extractNumberString(dsel('mg-volume')),
+            peditrace: extractNumberString(dsel('peditrace-volume')),
+            peditFreq: document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily',
+            peditDay: document.getElementById('peditrace-day')?.value || '1',
+            cernevit: extractNumberString(dsel('cernevit-volume')),
+            cernFreq: document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily',
+            cernDay: document.getElementById('cernevit-day')?.value || '1',
+            vitKChoice: document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily',
+            vitKDay: document.getElementById('vitamin-k-day')?.value || '1',
+            vitKDaily: extractNumberString(dsel('vitamin-k-daily')),
+            vitKWeekly: extractNumberString(dsel('vitamin-k-weekly')),
+            hasPicc: document.getElementById('picc-line-checkbox')?.checked || false,
+            heparinVol: extractNumberString(dsel('heparin-volume')),
+            heparinConc: document.querySelector('input[name="heparin-concentration"]:checked')?.value || '1',
+            sterileWater: extractNumberString(dsel('sterile-water-volume')),
+            totalOsmol: extractNumberString(dsel('total-osmol')),
+            totalCalDay: extractNumberString(dsel('total-calories-day')),
+            totalCalKg: extractNumberString(dsel('breakdown-total')),
+            pnCalKg: extractNumberString(dsel('breakdown-pn')),
+            milkCalKg: extractNumberString(dsel('breakdown-milk')),
+            tfFromMilk: dsel('tf-from-milk'),
+            // Fat administration options
+           fatPriming: document.querySelector('input[name="fat-priming"]:checked')?.value || 'priming',
+    fatDripDuration: document.querySelector('input[name="fat-drip-duration"]:checked')?.value || '24',
+    fatSplit: document.querySelector('input[name="fat-split"]:checked')?.value || 'no-split',
+    npcnRatio: (document.getElementById('npc-n-ratio')?.textContent || '0:1').replace(':1', '')
+};
+// — สร้าง list ของ Additional —
+const additionalList = [];
+if (reportData.additionalName) {
+  additionalList.push({
+    name: reportData.additionalName,
+    input: '-',   // ถ้าอยากโชว์ input badge แทน ให้แก้เป็น addl.input
+    volume: reportData.additionalUnit === 'ml'
+             ? reportData.additionalAmount
+             : '',
+    note:   reportData.additionalUnit === 'mg'
+             ? reportData.additionalAmount + ' mg'
+             : ''
   });
+}
+// ผนึกลง reportData
+reportData.additionalList = additionalList;
+        localStorage.setItem('tpnReportData', JSON.stringify(reportData));
+        autosaveCollect();
+        console.log('✅ Report data saved, redirecting...');
+        window.location.href = 'report.html';
+    });
 
-  document.getElementById('submitBtn')?.addEventListener('click', function() {
-    const hn = document.getElementById('patient-hn')?.value.trim();
-    const name = document.getElementById('patient-name')?.value.trim();
-    const ward = document.getElementById('patient-ward')?.value.trim();
-    const bw = document.getElementById('bw')?.value;
-    const orderDate = document.getElementById('order-date')?.value;
-
-    if (!hn || !name || !ward || !bw || !orderDate) {
-      alert('⚠️ กรุณากรอกข้อมูลให้ครบถ้วน');
-      return;
+    // ✅ Auto Crop Sticker Function
+    function autoCropSticker(sourceCanvas) {
+        const cropTop = 0.15;
+        const cropBottom = 0.25;
+        const originalWidth = sourceCanvas.width;
+        const originalHeight = sourceCanvas.height;
+        const newHeight = originalHeight * (1 - cropTop - cropBottom);
+        const startY = originalHeight * cropTop;
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = originalWidth;
+        croppedCanvas.height = newHeight;
+        const ctx = croppedCanvas.getContext('2d');
+        ctx.drawImage(sourceCanvas, 0, startY, originalWidth, newHeight, 0, 0, originalWidth, newHeight);
+        return croppedCanvas;
     }
 
-    const dayName = getDayName(orderDate);
-    const dsel = id => document.getElementById(id)?.textContent || document.getElementById(id)?.value || '';
+    // ✅ Advanced Image Enhancement Function
+    function enhanceImageAdvanced(canvas) {
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+            const contrast = 1.3;
+            const adjusted = ((gray - 128) * contrast) + 128;
+            const clamped = Math.max(0, Math.min(255, adjusted));
+            data[i] = data[i + 1] = data[i + 2] = clamped;
+        }
+        ctx.putImageData(imageData, 0, 0);
+        const sharpened = ctx.getImageData(0, 0, width, height);
+        const sharpData = sharpened.data;
+        const original = imageData.data;
+        const kernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                for (let c = 0; c < 3; c++) {
+                    let sum = 0;
+                    for (let ky = -1; ky <= 1; ky++) {
+                        for (let kx = -1; kx <= 1; kx++) {
+                            const idx = ((y + ky) * width + (x + kx)) * 4 + c;
+                            const kidx = (ky + 1) * 3 + (kx + 1);
+                            sum += original[idx] * kernel[kidx];
+                        }
+                    }
+                    const idx = (y * width + x) * 4 + c;
+                    sharpData[idx] = Math.max(0, Math.min(255, sum));
+                }
+            }
+        }
+        ctx.putImageData(sharpened, 0, 0);
+        const finalData = ctx.getImageData(0, 0, width, height);
+        const final = finalData.data;
+        const threshold = 170;
+        for (let i = 0; i < final.length; i += 4) {
+            const brightness = final[i];
+            if (brightness > threshold) {
+                final[i] = final[i + 1] = final[i + 2] = 255;
+            } else {
+                final[i] = final[i + 1] = final[i + 2] = Math.max(0, brightness - 30);
+            }
+        }
+        ctx.putImageData(finalData, 0, 0);
+    }
+    // ========== Patient Sticker Camera Feature ==========
+    (function initStickerCamera() {
+        const openCameraBtn = document.getElementById('openCameraBtn');
+        const clearStickerBtn = document.getElementById('clearStickerBtn');
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraVideo = document.getElementById('cameraVideo');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const closeCameraBtn = document.getElementById('closeCameraBtn');
+        const stickerPreviewContainer = document.getElementById('stickerPreviewContainer');
+        const stickerPreview = document.getElementById('stickerPreview');
+        const toggleManualInputBtn = document.getElementById('toggleManualInputBtn');
+        const manualInputSection = document.getElementById('manualInputSection');
+        const toggleIcon = document.getElementById('toggleIcon');
 
-    const reportData = {
-      orderDate,
-      orderDayName: dayName,
-      route: document.querySelector('input[name="tpn-route"]:checked')?.value || 'central',
-      proteinProduct: getProteinProductName(),
-      fatProduct: getFatProductName(),
-      hn, name, ward, bw,
-      rate: document.getElementById('rate')?.value || '0',
-      bag: document.getElementById('bag')?.value || '0',
-      protein: document.getElementById('protein')?.value || '0',
-      dextrose: document.getElementById('dextrose')?.value || '0',
-      fat: document.getElementById('fat')?.value || '0',
-      milk: document.getElementById('milk')?.value || '0',
-      totalMilk: document.getElementById('total-milk')?.value || '0',
-      p: document.getElementById('p')?.value || '0',
-      na: document.getElementById('na')?.value || '0',
-      k: document.getElementById('k')?.value || '0',
-      ca: document.getElementById('ca')?.value || '0',
-      mg: document.getElementById('mg')?.value || '0',
+        let currentStream = null;
+        let stickerImageData = null;
 
-      proteinVol: extractNumberString(dsel('protein-volume')),
-      proteinCal: extractNumberString(dsel('protein-calories')),
-      dextroseVol: extractNumberString(dsel('dextrose-volume')),
-      dextroseCal: extractNumberString(dsel('dextrose-calories')),
-      fatVol: extractNumberString(dsel('fat-volume')),
-      fatCal: extractNumberString(dsel('fat-calories')),
+        // Toggle manual input section
+        if (toggleManualInputBtn) {
+            toggleManualInputBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const isHidden = manualInputSection.style.display === 'none' || !manualInputSection.style.display;
+                manualInputSection.style.display = isHidden ? 'block' : 'none';
+                toggleIcon.textContent = isHidden ? '▲' : '▼';
+                this.style.background = isHidden ? '#e0f2fe' : '#f8fafc';
+                this.style.borderColor = isHidden ? '#4facfe' : '#e2e8f0';
+                console.log('Toggle clicked, now:', isHidden ? 'OPEN' : 'CLOSED');
+            });
+        }
 
-      gir: dsel('gir-result'),
+        // Open camera
+        if (openCameraBtn) {
+            openCameraBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                try {
+                    currentStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 1920, min: 1280 },
+                            height: { ideal: 1080, min: 720 }
+                        }
+                    });
+                    cameraVideo.srcObject = currentStream;
+                    cameraModal.style.display = 'flex';
+                } catch(err) {
+                    alert('❌ ไม่สามารถเปิดกล้องได้: ' + err.message);
+                }
+            });
+        }
 
-      pVol: extractNumberString(dsel('p-volume')),
-      naFromGly: extractNumberString(dsel('na-from-glycophos')),
-      naSource: document.querySelector('input[name="na-source"]:checked')?.value || '',
-      naclVol: extractNumberString(dsel('nacl-volume')),
-      naAcVol: extractNumberString(dsel('na-acetate-volume')),
+// Capture photo
+if (captureBtn) {
+    captureBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const processingMsg = document.createElement('div');
+        processingMsg.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:white; padding:20px 30px; border-radius:12px; z-index:10000; font-size:16px; font-weight:600;';
+        processingMsg.textContent = '⚙️ กำลังประมวลผลภาพ...';
+        document.body.appendChild(processingMsg);
+        
+        setTimeout(() => {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraVideo.videoWidth;
+            cameraCanvas.height = cameraVideo.videoHeight;
+            context.drawImage(cameraVideo, 0, 0);
+            
+            // ✅ Step 1: Auto Crop
+            const croppedCanvas = autoCropSticker(cameraCanvas);
+            
+            // ✅ Step 2: Enhance
+            enhanceImageAdvanced(croppedCanvas);
+            
+            // ✅ Save
+            const imageDataUrl = croppedCanvas.toDataURL('image/jpeg', 0.95);
+            stickerImageData = imageDataUrl;
+            showStickerPreview(imageDataUrl);
+            closeCamera();
+            
+            document.body.removeChild(processingMsg);
+        }, 100);
+    });
+}
+        // Close camera
+        if (closeCameraBtn) {
+            closeCameraBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeCamera();
+            });
+        }
 
-      kSource: document.querySelector('input[name="k-source"]:checked')?.value || '',
-      kclVol: extractNumberString(dsel('kcl-volume')),
-      kAcVol: extractNumberString(dsel('k-acetate-volume')),
+        function closeCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            cameraModal.style.display = 'none';
+        }
 
-      caVol: extractNumberString(dsel('ca-volume')),
-      mgVol: extractNumberString(dsel('mg-volume')),
+        // Show sticker preview
+        function showStickerPreview(dataUrl) {
+            stickerPreview.src = dataUrl;
+            stickerPreviewContainer.style.display = 'block';
+            clearStickerBtn.style.display = 'inline-flex';
+            const currentData = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+            currentData.stickerImage = dataUrl;
+            localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(currentData));
+        }
 
-      peditrace: extractNumberString(dsel('peditrace-volume')),
-      peditFreq: document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily',
-      peditDay: document.getElementById('peditrace-day')?.value || '1',
+        // Clear sticker
+        if (clearStickerBtn) {
+            clearStickerBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!confirm('ต้องการลบรูป Sticker ใช่หรือไม่?')) return;
+                clearStickerImage();
+            });
+        }
 
-      cernevit: extractNumberString(dsel('cernevit-volume')),
-      cernFreq: document.querySelector('input[name="cernevit-freq"]:checked')?.value || 'daily',
-      cernDay: document.getElementById('cernevit-day')?.value || '1',
+        function clearStickerImage() {
+            stickerImageData = null;
+            stickerPreview.src = '';
+            stickerPreviewContainer.style.display = 'none';
+            clearStickerBtn.style.display = 'none';
+            const currentData = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+            delete currentData.stickerImage;
+            localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(currentData));
+        }
 
-      vitKChoice: document.querySelector('input[name="vitamin-k-choice"]:checked')?.value || 'daily',
-      vitKDay: document.getElementById('vitamin-k-day')?.value || '1',
-      vitKDaily: extractNumberString(dsel('vitamin-k-daily')),
-      vitKWeekly: extractNumberString(dsel('vitamin-k-weekly')),
+        // Restore from autosave
+        try {
+            const savedData = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+            if (savedData.stickerImage) {
+                stickerImageData = savedData.stickerImage;
+                showStickerPreview(stickerImageData);
+            }
+        } catch(e) {}
 
-      hasPicc: document.getElementById('picc-line-checkbox')?.checked || false,
-      heparinVol: extractNumberString(dsel('heparin-volume')),
-
-      sterileWater: extractNumberString(dsel('sterile-water-volume')),
-      totalOsmol: extractNumberString(dsel('total-osmol')),
-
-      totalCalDay: extractNumberString(dsel('total-calories-day')),
-      totalCalKg: extractNumberString(dsel('total-calories-kg')),
-      pnCalKg: extractNumberString(dsel('breakdown-pn')),
-      milkCalKg: extractNumberString(dsel('breakdown-milk')),
-      tfFromMilk: dsel('tf-from-milk')
-    };
-
-    localStorage.setItem('tpnReportData', JSON.stringify(reportData));
-    autosaveCollect();
-    window.location.href = 'report.html';
-  });
+        // Export functions
+        window.hasStickerImage = function() {
+            return !!stickerImageData;
+        };
+        window.getStickerImage = function() {
+            return stickerImageData;
+        };
+        window.clearStickerImage = clearStickerImage;
+    })();
 </script>
+
 </body>
 </html>
