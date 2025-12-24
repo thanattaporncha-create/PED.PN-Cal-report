@@ -1419,7 +1419,74 @@
             </div>
         </div>
     </section>
-    
+    <!-- Add Zinc Section -->
+<section class="section">
+    <h2>Add Zinc</h2>
+    <div class="calculation-section">
+        <!-- Row 1: Checkbox Preterm -->
+        <div class="calc-row">
+            <div class="calc-label">Preterm หรือไม่?</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="checkbox" id="preterm-checkbox" style="transform:scale(1.2);">
+                    <span style="font-weight:500;">Preterm</span>
+                </label>
+            </div>
+            <div></div>
+        </div>
+        
+        <!-- Row 2: คำแนะนำและตัวเลือก (แสดงเมื่อ check Preterm) -->
+        <div id="zinc-recommendation" style="display:none;">
+            <div class="calc-row" style="background:#fef3c7; padding:12px; border-radius:8px; margin-bottom:15px;">
+                <div class="calc-label" style="color:#92400e;">
+                    💡 แนะนำ Add Zinc Sulfate (500 mcg/ml) เพิ่ม
+                </div>
+                <div class="calc-result" id="zinc-recommended" 
+                     style="background:#fcd34d; color:#92400e; border:1px solid #f59e0b;">
+                    0 ml
+                </div>
+                <div></div>
+            </div>
+            
+            <!-- เลือกวิธีการ -->
+            <div style="margin-top:15px;">
+                <h4 style="margin:0 0 12px 0; color:#2d3748; font-size:0.95em; font-weight:600;">
+                    เลือกวิธีการ:
+                </h4>
+                
+                <label class="frequency-option" style="margin-bottom:10px;">
+                    <input type="radio" name="zinc-choice" value="add" id="zinc-add-radio">
+                    <span class="frequency-option-label">เติม Zinc Sulfate</span>
+                    <input type="number" inputmode="decimal" id="zinc-volume" step="0.01" 
+                           style="width:80px; margin-left:10px; padding:6px 10px; 
+                                  border:2px solid #e2e8f0; border-radius:6px; font-size:0.95em;"
+                           placeholder="0.00">
+                    <span style="margin-left:5px;">ml</span>
+                </label>
+                
+                <label class="frequency-option">
+                    <input type="radio" name="zinc-choice" value="none" checked>
+                    <span class="frequency-option-label" style="color:#dc2626; font-weight:600;">
+                        ไม่เติม
+                    </span>
+                </label>
+            </div>
+            
+            <!-- แสดงข้อมูล Zinc ที่ได้รับจาก Peditrace -->
+            <div style="margin-top:15px; padding:12px; background:#e0f2fe; border-radius:8px; border:2px solid #38bdf8;">
+                <div style="font-size:0.9em; color:#0369a1; font-weight:600; margin-bottom:6px;">
+                    ℹ️ Zinc ที่ได้รับจาก Peditrace ตอนนี้:
+                </div>
+                <div style="font-size:1.1em; color:#0c4a6e; font-weight:700;">
+                    <span id="zinc-from-peditrace">0</span> mcg
+                </div>
+                <div style="font-size:0.85em; color:#64748b; margin-top:4px; font-style:italic;">
+                    (คำนวณจาก: Peditrace volume × 250 mcg/ml)
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     <!-- Heparin Section -->
 <section class="section">
     <h2>Add Heparin</h2>
@@ -1708,10 +1775,15 @@
         const fatPriming = document.querySelector('input[name="fat-priming"]:checked')?.value || 'priming';
         const fatDripDuration = document.querySelector('input[name="fat-drip-duration"]:checked')?.value || '24';
         const fatSplit = document.querySelector('input[name="fat-split"]:checked')?.value || 'no-split';
-
+const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
+        const zincChoice = document.querySelector('input[name="zinc-choice"]:checked')?.value || 'none';
+        const zincVolume = document.getElementById('zinc-volume')?.value || '0';
+      
         Object.assign(data, {
     route, proteinProduct, fatProduct, naSrc, kSrc,
-    peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,
+    peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,isPreterm,
+            zincChoice,
+            zincVolume
     fatPriming, fatDripDuration, fatSplit
 });
 
@@ -1780,7 +1852,23 @@ if (picc) {
 if (data.heparinConc) {
     document.querySelector(`input[name="heparin-concentration"][value="${data.heparinConc}"]`)?.click();
 }
-
+// ✅ Restore Zinc
+            const pretermCheck = document.getElementById('preterm-checkbox');
+            if (pretermCheck && data.isPreterm) {
+                pretermCheck.checked = true;
+                const zincRec = document.getElementById('zinc-recommendation');
+                if (zincRec) zincRec.style.display = 'block';
+            }
+            
+            if (data.zincChoice) {
+                const zincRadio = document.querySelector(`input[name="zinc-choice"][value="${data.zincChoice}"]`);
+                if (zincRadio) zincRadio.checked = true;
+            }
+            
+            if (data.zincVolume) {
+                const zincVolInput = document.getElementById('zinc-volume');
+                if (zincVolInput) zincVolInput.value = data.zincVolume;
+            }
             updateProteinLabel();
             updateFatLabel();
         } catch(e) { }
@@ -1846,7 +1934,17 @@ if (picc) {
     if (heparin1) heparin1.checked = false;
     if (heparin05) heparin05.checked = false;
 }
-    
+    // Reset Zinc
+        const pretermCheck = document.getElementById('preterm-checkbox');
+        if (pretermCheck) {
+            pretermCheck.checked = false;
+            const zincRec = document.getElementById('zinc-recommendation');
+            if (zincRec) zincRec.style.display = 'none';
+        }
+        document.querySelector('input[name="zinc-choice"][value="none"]')?.click();
+        const zincVolInput = document.getElementById('zinc-volume');
+        if (zincVolInput) zincVolInput.value = '';
+       
     // ✅ Reset Fat Administration Options
     document.querySelector('input[name="fat-priming"][value="priming"]')?.click();
     document.querySelector('input[name="fat-drip-duration"][value="24"]')?.click();
@@ -2175,6 +2273,21 @@ if (nitrogenGrams > 0) {
 
 document.getElementById('npc-n-ratio').textContent = npcnRatio > 0 ? `${npcnRatio}:1` : '0:1';
 
+        // ===== Zinc Calculation =====
+        let zincVolume = 0;
+        const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
+        const zincChoice = document.querySelector('input[name="zinc-choice"]:checked')?.value;
+        
+        if (isPreterm && zincChoice === 'add') {
+            zincVolume = parseFloat(document.getElementById('zinc-volume').value) || 0;
+        }
+        
+        // เพิ่ม zinc volume ใน totalUsed
+        totalUsed += zincVolume;
+        
+        // คำนวณ Zinc ที่ได้จาก Peditrace
+        const zincFromPeditrace = pedit_1 * 250; // Peditrace มี 250 mcg/ml
+        document.getElementById('zinc-from-peditrace').textContent = r0(zincFromPeditrace);
 autosaveCollect();
     }
     
@@ -2409,6 +2522,57 @@ if (picc) {
             calculateTPN();
         });
 
+    // ===== Zinc Event Listeners =====
+        const pretermCheckbox = document.getElementById('preterm-checkbox');
+        const zincRecommendation = document.getElementById('zinc-recommendation');
+        const zincVolumeInput = document.getElementById('zinc-volume');
+        
+        if (pretermCheckbox) {
+            pretermCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    zincRecommendation.style.display = 'block';
+                    calculateZincRecommendation();
+                } else {
+                    zincRecommendation.style.display = 'none';
+                    // Reset to "ไม่เติม"
+                    document.querySelector('input[name="zinc-choice"][value="none"]').checked = true;
+                }
+                calculateTPN();
+            });
+        }
+        
+        // เมื่อเลือก zinc choice
+        document.querySelectorAll('input[name="zinc-choice"]').forEach(r => {
+            r.addEventListener('change', () => {
+                calculateTPN();
+            });
+        });
+        
+        // เมื่อแก้ zinc volume
+        if (zincVolumeInput) {
+            zincVolumeInput.addEventListener('input', () => {
+                calculateTPN();
+            });
+        }
+        
+        // ฟังก์ชันคำนวณ Zinc แนะนำ
+        function calculateZincRecommendation() {
+            const bw = parseFloat(document.getElementById('bw').value) || 0;
+            const recommendedZinc = bw * 0.3;
+            document.getElementById('zinc-recommended').textContent = recommendedZinc.toFixed(2) + ' ml';
+            document.getElementById('zinc-volume').value = recommendedZinc.toFixed(2);
+        }
+        
+        // เมื่อ BW เปลี่ยน ให้คำนวณ Zinc ใหม่ (ถ้าเปิด Preterm อยู่)
+        const bwEl = document.getElementById('bw');
+        if (bwEl) {
+            const originalBwListener = bwEl.oninput;
+            bwEl.addEventListener('input', function() {
+                if (pretermCheckbox?.checked) {
+                    calculateZincRecommendation();
+                }
+            });
+        }
         calculateTPN();
         updateFatDisplay();
     });
@@ -2497,6 +2661,10 @@ if (picc) {
             hasPicc: document.getElementById('picc-line-checkbox')?.checked || false,
             heparinVol: extractNumberString(dsel('heparin-volume')),
             heparinConc: document.querySelector('input[name="heparin-concentration"]:checked')?.value || '1',
+            isPreterm: document.getElementById('preterm-checkbox')?.checked || false,
+            zincChoice: document.querySelector('input[name="zinc-choice"]:checked')?.value || 'none',
+            zincVolume: document.getElementById('zinc-volume')?.value || '0',
+            zincFromPeditrace: document.getElementById('zinc-from-peditrace')?.textContent || '0'
             sterileWater: extractNumberString(dsel('sterile-water-volume')),
             totalOsmol: extractNumberString(dsel('total-osmol')),
             totalCalDay: extractNumberString(dsel('total-calories-day')),
