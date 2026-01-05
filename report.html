@@ -337,6 +337,46 @@ body {
     width: 200px;
     height: auto;
 }
+.signature-display {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+}
+
+.signature-display h3 {
+    margin: 0 0 15px 0;
+    font-size: 1em;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.signature-content {
+    display: flex;
+    align-items: flex-end;
+    gap: 30px;
+}
+
+.signature-image {
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: white;
+    max-width: 300px;
+    height: auto;
+}
+
+.signature-name {
+    font-size: 1em;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.signature-label {
+    font-size: 0.85em;
+    color: #64748b;
+    margin-bottom: 5px;
+}
 </style>
 
 
@@ -448,7 +488,20 @@ body {
           </tbody>
       </table>
   </div>
-
+<!-- Signature Display -->
+  <div class="signature-display" id="signature-display" style="display: none;">
+      <h3>✍️ ผู้ตรวจสอบ</h3>
+      <div class="signature-content">
+          <div>
+              <div class="signature-label">ลายเซ็น:</div>
+              <img id="display-signature-image" class="signature-image" src="" alt="Signature">
+          </div>
+          <div>
+              <div class="signature-label">ชื่อ:</div>
+              <div class="signature-name" id="display-signature-name"></div>
+          </div>
+      </div>
+  </div>
   <div class="footer">
       <p>Generated on <span id="generated-date"></span></p>
       <p style="margin-top: 5px;">โรงพยาบาลขอนแก่น TPN Calculator for Pediatrics © 2025</p>
@@ -466,6 +519,16 @@ body {
     // ✅ บันทึกข้อมูล fat options กลับไปที่ autosave
     const AUTOSAVE_KEY = 'tpnFormAutosave';
     const currentAutosave = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+      // Display signature if available
+    if (data.signatureImage && data.signatureName) {
+        const signatureDisplay = document.getElementById('signature-display');
+        const signatureImage = document.getElementById('display-signature-image');
+        const signatureName = document.getElementById('display-signature-name');
+        
+        signatureImage.src = data.signatureImage;
+        signatureName.textContent = data.signatureName;
+        signatureDisplay.style.display = 'block';
+    }
     
     // อัพเดทค่า fat options จาก report data
     if (data.fatPriming) currentAutosave.fatPriming = data.fatPriming;
