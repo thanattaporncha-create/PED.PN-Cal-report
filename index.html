@@ -793,7 +793,129 @@
         gap: 15px !important;
     }
 }
+/* Signature Pad Styles */
+.signature-section {
+    background: #f0f9ff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 2px solid #4facfe;
+}
 
+.signature-section h2 {
+    color: #2d3748;
+    margin: 0 0 20px 0;
+    font-size: 1.4em;
+    font-weight: 600;
+}
+
+.signature-name-selection {
+    margin-bottom: 20px;
+}
+
+.signature-name-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.signature-name-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.signature-name-option:hover {
+    background: #f0f9ff;
+    border-color: #4facfe;
+}
+
+.signature-name-option.selected {
+    background: #e0f2fe;
+    border-color: #0284c7;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2);
+}
+
+.signature-name-option input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.2);
+    cursor: pointer;
+    accent-color: #4facfe;
+}
+
+.custom-name-input {
+    margin-top: 10px;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100%;
+    display: none;
+}
+
+.custom-name-input.active {
+    display: block;
+}
+
+.signature-canvas-container {
+    background: white;
+    border: 2px dashed #4facfe;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.signature-canvas-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 10px;
+    display: block;
+}
+
+#signatureCanvas {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: crosshair;
+    display: block;
+    width: 100%;
+    height: 200px;
+    touch-action: none;
+}
+
+.signature-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.signature-btn {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.signature-btn:hover {
+    background: #4b5563;
+}
+
+.signature-btn.clear {
+    background: #ef4444;
+}
+
+.signature-btn.clear:hover {
+    background: #dc2626;
+}
 </style>
 <style>
     @view-transition {
@@ -1661,7 +1783,42 @@
         <div class="total-calories" id="total-osmol">0</div>
         <p>mOsmol/L</p>
     </section>
-    
+    <!-- Signature Section -->
+    <section class="signature-section">
+        <h2>✍️ ลายเซ็นผู้ตรวจสอบ</h2>
+        
+        <!-- Name Selection -->
+        <div class="signature-name-selection">
+            <label class="signature-name-option">
+                <input type="radio" name="signature-name" value="ภก.นินท์ พลเรือง" checked>
+                <span style="font-weight: 500; color: #2d3748;">ภก.นินท์ พลเรือง</span>
+            </label>
+            
+            <label class="signature-name-option">
+                <input type="radio" name="signature-name" value="custom">
+                <span style="font-weight: 500; color: #2d3748;">ระบุชื่อเอง</span>
+            </label>
+            
+            <input type="text" 
+                   id="customSignatureName" 
+                   class="custom-name-input" 
+                   placeholder="กรอกชื่อผู้ตรวจสอบ (เช่น ภก.ชื่อ นามสกุล)"
+                   maxlength="100">
+        </div>
+        
+        <!-- Signature Canvas -->
+        <div class="signature-canvas-container">
+            <label class="signature-canvas-label">เซ็นชื่อที่นี่:</label>
+            <canvas id="signatureCanvas"></canvas>
+        </div>
+        
+        <!-- Actions -->
+        <div class="signature-actions">
+            <button type="button" class="signature-btn clear" id="clearSignatureBtn">
+                🗑️ ล้างลายเซ็น
+            </button>
+        </div>
+    </section>
     <!-- Submit Button -->
     <section class="submit-section">
         <button id="submitBtn" class="submit-btn">📄 สร้าง TPN Report</button>
@@ -1780,11 +1937,12 @@ const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
         const zincVolume = document.getElementById('zinc-volume')?.value || '0';
       
         Object.assign(data, {
-            route, proteinProduct, fatProduct, naSrc, kSrc,
-            peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,
-            fatPriming, fatDripDuration, fatSplit,
-            isPreterm, zincChoice, zincVolume
-        });
+    route, proteinProduct, fatProduct, naSrc, kSrc,
+    peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,
+    fatPriming, fatDripDuration, fatSplit,
+    isPreterm, zincChoice, zincVolume,
+    signatureName  // ← เพิ่มบรรทัดนี้
+});
         localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
     }
 
@@ -1867,7 +2025,15 @@ if (data.heparinConc) {
                 const zincVolInput = document.getElementById('zinc-volume');
                 if (zincVolInput) zincVolInput.value = data.zincVolume;
             }
-            
+            if (data.signatureName) {
+                if (data.signatureName === 'ภก.นินท์ พลเรือง') {
+                    document.querySelector('input[name="signature-name"][value="ภก.นินท์ พลเรือง"]')?.click();
+                } else {
+                    document.querySelector('input[name="signature-name"][value="custom"]')?.click();
+                    const customInput = document.getElementById('customSignatureName');
+                    if (customInput) customInput.value = data.signatureName;
+                }
+            }
             updateProteinLabel();
             updateFatLabel();
    // ✅ คำนวณทุกอย่างก่อน (รวม Zinc from Peditrace)
@@ -1970,7 +2136,11 @@ if (picc) {
     if (window.clearStickerImage) {
         window.clearStickerImage();
     }
-
+// Reset signature
+    document.querySelector('input[name="signature-name"][value="ภก.นินท์ พลเรือง"]')?.click();
+    const customInput = document.getElementById('customSignatureName');
+    if (customInput) customInput.value = '';
+    clearSignature();
     localStorage.removeItem(AUTOSAVE_KEY);
     updateProteinLabel();
     updateFatLabel();
@@ -2373,7 +2543,141 @@ autosaveCollect();
         };
         return names[value] || '20% SMOF lipid';
     }
+// ===== Signature Pad Functions =====
+    let signaturePad = null;
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
 
+    function initSignaturePad() {
+        const canvas = document.getElementById('signatureCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        const container = canvas.parentElement;
+        canvas.width = container.clientWidth - 30;
+        canvas.height = 200;
+
+        // Drawing settings
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getMousePos(canvas, e);
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+
+            const pos = getMousePos(canvas, e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            saveSignature();
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function getMousePos(canvas, e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        signaturePad = { canvas, ctx };
+    }
+
+    function clearSignature() {
+        if (!signaturePad) return;
+        const { canvas, ctx } = signaturePad;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        saveSignature();
+    }
+
+    function saveSignature() {
+        if (!signaturePad) return;
+        const signatureData = signaturePad.canvas.toDataURL('image/png');
+        const currentData = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+        currentData.signatureImage = signatureData;
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(currentData));
+    }
+
+    function restoreSignature() {
+        const savedData = JSON.parse(localStorage.getItem(AUTOSAVE_KEY) || '{}');
+        if (savedData.signatureImage && signaturePad) {
+            const img = new Image();
+            img.onload = function() {
+                signaturePad.ctx.drawImage(img, 0, 0);
+            };
+            img.src = savedData.signatureImage;
+        }
+    }
+
+    function getSignatureName() {
+        const selected = document.querySelector('input[name="signature-name"]:checked');
+        if (!selected) return '';
+        
+        if (selected.value === 'custom') {
+            return document.getElementById('customSignatureName')?.value.trim() || '';
+        }
+        return selected.value;
+    }
+
+    function hasSignature() {
+        if (!signaturePad) return false;
+        const { canvas, ctx } = signaturePad;
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        return imageData.data.some(channel => channel !== 0);
+    }
     // ===== DOM Content Loaded Event =====
     document.addEventListener('DOMContentLoaded', function() {
         const dateEl = document.getElementById('order-date');
@@ -2385,7 +2689,38 @@ autosaveCollect();
 
         initProductSelection();
         autosaveRestore();
+// Initialize signature pad
+        initSignaturePad();
+        restoreSignature();
 
+        // Signature name selection
+        document.querySelectorAll('input[name="signature-name"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const customInput = document.getElementById('customSignatureName');
+                document.querySelectorAll('.signature-name-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.closest('.signature-name-option').classList.add('selected');
+                
+                if (this.value === 'custom') {
+                    customInput.classList.add('active');
+                } else {
+                    customInput.classList.remove('active');
+                }
+                autosaveCollect();
+            });
+        });
+
+        document.getElementById('customSignatureName')?.addEventListener('input', () => {
+            autosaveCollect();
+        });
+
+        document.getElementById('clearSignatureBtn')?.addEventListener('click', () => {
+            clearSignature();
+        });
+
+        // Set initial selected state
+        document.querySelector('input[name="signature-name"]:checked')?.closest('.signature-name-option').classList.add('selected');
         const setSelectorDisplay = () => {
             const pf = document.querySelector('input[name="peditrace-freq"]:checked')?.value || 'daily';
             document.getElementById('peditrace-day-selector').style.display = (pf === 'weekly') ? 'block' : 'none';
@@ -2707,6 +3042,9 @@ if (reportData.additionalName) {
 }
 // ผนึกลง reportData
 reportData.additionalList = additionalList;
+        // Add signature data
+        reportData.signatureName = signatureName;
+        reportData.signatureImage = signaturePad ? signaturePad.canvas.toDataURL('image/png') : null;
         localStorage.setItem('tpnReportData', JSON.stringify(reportData));
         autosaveCollect();
         console.log('✅ Report data saved, redirecting...');
