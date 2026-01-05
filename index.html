@@ -1935,7 +1935,9 @@
 const isPreterm = document.getElementById('preterm-checkbox')?.checked || false;
         const zincChoice = document.querySelector('input[name="zinc-choice"]:checked')?.value || 'none';
         const zincVolume = document.getElementById('zinc-volume')?.value || '0';
-      
+       
+        const signatureName = getSignatureName();  // ← เพิ่มบรรทัดนี้
+        
         Object.assign(data, {
     route, proteinProduct, fatProduct, naSrc, kSrc,
     peditFreq, cernFreq, vitKChoice, peditDay, cernDay, vitKDay, hasPicc, heparinConc,
