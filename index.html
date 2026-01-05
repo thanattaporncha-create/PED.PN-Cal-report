@@ -2036,6 +2036,26 @@ if (data.heparinConc) {
                     if (customInput) customInput.value = data.signatureName;
                 }
             }
+            // ✅ Restore Signature
+if (data.signatureName) {
+    if (data.signatureName === 'ภก.นินท์ พลเรือง') {
+        document.querySelector('input[name="signature-name"][value="ภก.นินท์ พลเรือง"]')?.click();
+    } else {
+        document.querySelector('input[name="signature-name"][value="custom"]')?.click();
+        const customInput = document.getElementById('customSignatureName');
+        if (customInput) customInput.value = data.signatureName;
+    }
+}
+
+// ✅ Restore Signature Image
+if (data.signatureImage && signaturePad) {
+    const img = new Image();
+    img.onload = function() {
+        signaturePad.ctx.clearRect(0, 0, signaturePad.canvas.width, signaturePad.canvas.height);
+        signaturePad.ctx.drawImage(img, 0, 0);
+    };
+    img.src = data.signatureImage;
+}
             updateProteinLabel();
             updateFatLabel();
    // ✅ คำนวณทุกอย่างก่อน (รวม Zinc from Peditrace)
