@@ -540,6 +540,10 @@ body {
     if (data.isPreterm !== undefined) currentAutosave.isPreterm = data.isPreterm;
     if (data.zincChoice) currentAutosave.zincChoice = data.zincChoice;
     if (data.zincVolume) currentAutosave.zincVolume = data.zincVolume;
+
+    // ✅ เพิ่ม Signature data
+    if (data.signatureName) currentAutosave.signatureName = data.signatureName;
+    if (data.signatureImage) currentAutosave.signatureImage = data.signatureImage;
     
     localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(currentAutosave));
     
@@ -556,6 +560,16 @@ body {
     }
 
     const data = JSON.parse(localStorage.getItem('tpnReportData') || '{}');
+    // ✅ Display signature if available
+if (data.signatureImage && data.signatureName) {
+    const signatureDisplay = document.getElementById('signature-display');
+    const signatureImage = document.getElementById('display-signature-image');
+    const signatureName = document.getElementById('display-signature-name');
+    
+    signatureImage.src = data.signatureImage;
+    signatureName.textContent = data.signatureName;
+    signatureDisplay.style.display = 'block';
+}
 
     if (data.stickerImage) {
         const stickerContainer = document.getElementById('sticker-container');
