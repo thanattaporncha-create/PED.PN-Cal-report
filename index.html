@@ -2948,6 +2948,18 @@ if (picc) {
 
         console.log('✅ Validation passed:', { hasStickerImage, hasManualData });
 
+        // Validate signature
+        const signatureName = getSignatureName();
+        if (!signatureName) {
+            alert('⚠️ กรุณาเลือกชื่อผู้ตรวจสอบ');
+            return;
+        }
+
+        if (!hasSignature()) {
+            alert('⚠️ กรุณาเซ็นชื่อก่อนสร้างรายงาน');
+            return;
+        }
+
         const dayName = getDayName(orderDate);
         const dsel = id => document.getElementById(id)?.textContent || document.getElementById(id)?.value || '';
 
@@ -3043,6 +3055,7 @@ if (reportData.additionalName) {
 // ผนึกลง reportData
 reportData.additionalList = additionalList;
         // Add signature data
+        const signatureName = getSignatureName();  // ← เพิ่มบรรทัดนี้ใหม่
         reportData.signatureName = signatureName;
         reportData.signatureImage = signaturePad ? signaturePad.canvas.toDataURL('image/png') : null;
         localStorage.setItem('tpnReportData', JSON.stringify(reportData));
