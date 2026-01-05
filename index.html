@@ -3054,10 +3054,11 @@ if (reportData.additionalName) {
 }
 // ผนึกลง reportData
 reportData.additionalList = additionalList;
+
         // Add signature data
-        const signatureName = getSignatureName();  // ← เพิ่มบรรทัดนี้ใหม่
         reportData.signatureName = signatureName;
         reportData.signatureImage = signaturePad ? signaturePad.canvas.toDataURL('image/png') : null;
+
         localStorage.setItem('tpnReportData', JSON.stringify(reportData));
         autosaveCollect();
         console.log('✅ Report data saved, redirecting...');
