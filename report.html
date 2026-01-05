@@ -125,6 +125,7 @@ body {
 
 .composition-table tr:nth-child(even) { background: #f8fafc; }
 .highlight-row { background: #fef3c7 !important; font-weight: 600; }
+.highlight-row.orange { background: #fed7aa !important; }
 .input-badge {
     background: #e0f2fe;
     color: #0369a1;
@@ -792,7 +793,8 @@ if (data.signatureImage && data.signatureName) {
             input: 'Preterm',
             volume: parseFloat(zincVol).toFixed(2),
             note: '',
-            highlight: false
+            highlight: true,  // ← เปลี่ยนเป็น true
+        highlightColor: 'orange'  // ← เพิ่มบรรทัดนี้
         });
     }
     // ✅ แสดง Heparin เมื่อมี PICC line (อยู่ก่อน Fat)
@@ -870,19 +872,24 @@ if (Array.isArray(data.additionalList)) {
     });
 
     compositions.forEach(comp => {
-        const row = document.createElement('tr');
-        if (comp.highlight) row.classList.add('highlight-row');
-        const volumeCellStyle = comp.fat
-            ? 'text-align: center; font-weight: 600; color: #dc2626;'
-            : 'text-align: center; font-weight: 600;';
-        row.innerHTML = `
-            <td>${comp.name}</td>
-            <td style="text-align: center;"><span class="input-badge">${comp.input}</span></td>
-            <td style="${volumeCellStyle}">${comp.volume} ml</td>
-            <td style="text-align: center; font-size: 8pt;">${comp.note || ''}</td>
-        `;
-        tbody.appendChild(row);
-    });
+    const row = document.createElement('tr');
+    if (comp.highlight) {
+        row.classList.add('highlight-row');
+        if (comp.highlightColor === 'orange') {
+            row.classList.add('orange');
+        }
+    }
+    const volumeCellStyle = comp.fat
+        ? 'text-align: center; font-weight: 600; color: #dc2626;'
+        : 'text-align: center; font-weight: 600;';
+    row.innerHTML = `
+        <td>${comp.name}</td>
+        <td style="text-align: center;"><span class="input-badge">${comp.input}</span></td>
+        <td style="${volumeCellStyle}">${comp.volume} ml</td>
+        <td style="text-align: center; font-size: 8pt;">${comp.note || ''}</td>
+    `;
+    tbody.appendChild(row);
+});
 
     const bwNum = parseFloat(String(data.bw).replace(/[^0-9.]/g, '')) || 0;
     const pnCalKg = parseFloat(String(data.pnCalKg).replace(/[^0-9.]/g, '')) || 0;
