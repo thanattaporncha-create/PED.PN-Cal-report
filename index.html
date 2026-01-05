@@ -1594,20 +1594,6 @@
                 </label>
             </div>
             
-            <!-- แสดงข้อมูล Zinc ที่ได้รับจาก Peditrace -->
-            <div style="margin-top:15px; padding:12px; background:#e0f2fe; border-radius:8px; border:2px solid #38bdf8;">
-                <div style="font-size:0.9em; color:#0369a1; font-weight:600; margin-bottom:6px;">
-                    ℹ️ Zinc ที่ได้รับจาก Peditrace ตอนนี้:
-                </div>
-                <div style="font-size:1.1em; color:#0c4a6e; font-weight:700;">
-                    <span id="zinc-from-peditrace">0</span> mcg
-                </div>
-                <div style="font-size:0.85em; color:#64748b; margin-top:4px; font-style:italic;">
-                    (คำนวณจาก: Peditrace volume × 250 mcg/ml)
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
     <!-- Heparin Section -->
 <section class="section">
@@ -2011,22 +1997,28 @@ if (data.heparinConc) {
     document.querySelector(`input[name="heparin-concentration"][value="${data.heparinConc}"]`)?.click();
 }
 // ✅ Restore Zinc
-            const pretermCheck = document.getElementById('preterm-checkbox');
-            if (pretermCheck && data.isPreterm) {
-                pretermCheck.checked = true;
-                const zincRec = document.getElementById('zinc-recommendation');
-                if (zincRec) zincRec.style.display = 'block';
-            }
-            
-            if (data.zincChoice) {
-                const zincRadio = document.querySelector(`input[name="zinc-choice"][value="${data.zincChoice}"]`);
-                if (zincRadio) zincRadio.checked = true;
-            }
-            
-            if (data.zincVolume) {
-                const zincVolInput = document.getElementById('zinc-volume');
-                if (zincVolInput) zincVolInput.value = data.zincVolume;
-            }
+const pretermCheck = document.getElementById('preterm-checkbox');
+if (pretermCheck && data.isPreterm) {
+    pretermCheck.checked = true;
+    const zincRec = document.getElementById('zinc-recommendation');
+    if (zincRec) zincRec.style.display = 'block';
+    
+    // ✅ เพิ่ม: ถ้าไม่มี zincChoice ใน autosave (tick ครั้งแรก)
+    // → ให้ default เป็น "add"
+    if (!data.zincChoice) {
+        document.querySelector('input[name="zinc-choice"][value="add"]').checked = true;
+    }
+}
+
+if (data.zincChoice) {
+    const zincRadio = document.querySelector(`input[name="zinc-choice"][value="${data.zincChoice}"]`);
+    if (zincRadio) zincRadio.checked = true;
+}
+
+if (data.zincVolume) {
+    const zincVolInput = document.getElementById('zinc-volume');
+    if (zincVolInput) zincVolInput.value = data.zincVolume;
+}
             if (data.signatureName) {
                 if (data.signatureName === 'ภก.นินท์ พลเรือง') {
                     document.querySelector('input[name="signature-name"][value="ภก.นินท์ พลเรือง"]')?.click();
@@ -2350,10 +2342,6 @@ const hep_disp_1 = picc ? hep_calc_1 : 0;
         
         // เพิ่ม zinc volume ใน totalUsed
         totalUsed += zincVolume;
-        
-        // คำนวณ Zinc ที่ได้จาก Peditrace
-        const zincFromPeditrace = pedit_1 * 250; // Peditrace มี 250 mcg/ml
-        document.getElementById('zinc-from-peditrace').textContent = r0(zincFromPeditrace);
 
         const swVol = Math.floor(bag - totalUsed);
         const elyteOsm_raw = bag > 0 ? ((na + k) * bw * 2 * 1000) / bag : 0;
@@ -2897,19 +2885,21 @@ if (picc) {
         const zincRecommendation = document.getElementById('zinc-recommendation');
         const zincVolumeInput = document.getElementById('zinc-volume');
         
-        if (pretermCheckbox) {
-            pretermCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    zincRecommendation.style.display = 'block';
-                    calculateZincRecommendation();
-                } else {
-                    zincRecommendation.style.display = 'none';
-                    // Reset to "ไม่เติม"
-                    document.querySelector('input[name="zinc-choice"][value="none"]').checked = true;
-                }
-                calculateTPN();
-            });
+     if (pretermCheckbox) {
+    pretermCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            zincRecommendation.style.display = 'block';
+            calculateZincRecommendation();
+            // ✅ เปลี่ยนเป็น Default "เติม Zinc"
+            document.querySelector('input[name="zinc-choice"][value="add"]').checked = true;
+        } else {
+            zincRecommendation.style.display = 'none';
+            // Reset to "ไม่เติม"
+            document.querySelector('input[name="zinc-choice"][value="none"]').checked = true;
         }
+        calculateTPN();
+    });
+}
         
         // เมื่อเลือก zinc choice
         document.querySelectorAll('input[name="zinc-choice"]').forEach(r => {
